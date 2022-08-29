@@ -4,11 +4,14 @@ import com.mattmx.ktgui.components.button.IGuiButton
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 interface IGuiScreen {
+
+    fun onOpen(event: InventoryOpenEvent, player: Player) {}
 
     fun getSlots(button: IGuiButton) : List<Int>
 

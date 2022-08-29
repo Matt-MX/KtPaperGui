@@ -11,6 +11,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerMoveEvent
@@ -35,6 +36,12 @@ open class GuiScreen(
     var chat: ((AsyncPlayerChatEvent) -> Unit)? = null
     var quit: ((PlayerQuitEvent) -> Unit)? = null
     var move: ((PlayerMoveEvent) -> Unit)? = null
+
+    var open: ((InventoryOpenEvent, Player) -> Unit)? = null
+
+    override fun onOpen(event: InventoryOpenEvent, player: Player) {
+        open?.invoke(event, player)
+    }
 
     /**
      * Return the default size of the inventory type
@@ -103,7 +110,9 @@ open class GuiScreen(
                 inv.setItem(slot, item.formatIntoItemStack(player))
             } catch (e: IndexOutOfBoundsException) { KotlinBukkitGui.log.warning("GUI with title $title had an issue when building. Slot $slot points to an invalid item!") }
         }
-        player.openInventory(inv)
+        player.openInventory(inv)?.let {
+            onOpen(InventoryOpenEvent(it), player)
+        }
         // open gui for player
         player.setOpenGui(this)
     }
