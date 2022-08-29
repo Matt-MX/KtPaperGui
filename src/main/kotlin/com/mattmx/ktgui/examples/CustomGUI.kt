@@ -58,7 +58,7 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
             onChange = { button, event, state ->
                 event?.whoClicked?.sendMessage(Chat.format("&8&l⤷ &#7f52ffToggled thing to $state"))
             }
-        ) childOf this slot 10
+        ) slot 10 childOf this
         /**
          * Random example of using callbacks to do different things
          */

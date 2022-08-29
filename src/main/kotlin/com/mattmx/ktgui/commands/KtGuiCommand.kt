@@ -26,6 +26,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                     if (args.size > 1) {
                         when (args[1].lowercase()) {
                             "normal" -> GuiManager.guis["example_normal"]?.createCopyAndOpen(sender)
+                            "java" -> GuiManager.guis["example_java"]?.createCopyAndOpen(sender)
                             "builder" -> GuiBuilderExample.buildAndOpen(sender)
                             else -> sender.sendMessage(Chat.format("${prefix}Invalid example gui name."))
                         }
@@ -46,7 +47,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                 }
             }
         } else {
-            sender.sendMessage("${preprefix}By MattMX, running KtGui v${KotlinBukkitGui.version}!")
+            sender.sendMessage(Chat.format("${preprefix}By MattMX, running KtGui v${KotlinBukkitGui.version}!"))
         }
         return false
     }
@@ -64,7 +65,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                 .toList()
         } else if (args.size == 2) {
             if (args[0].lowercase() == "example") {
-                return Stream.of("normal", "builder")
+                return Stream.of("normal", "builder", "java")
                     .filter { it.startsWith(current) }
                     .toList()
             }

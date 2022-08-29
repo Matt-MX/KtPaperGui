@@ -59,7 +59,7 @@ open class GuiScreen(
     }
 
     override fun size(): Int {
-        return items.size
+        return pointers.size
     }
 
     override fun setSlot(button: IGuiButton, slot: Int): GuiScreen {

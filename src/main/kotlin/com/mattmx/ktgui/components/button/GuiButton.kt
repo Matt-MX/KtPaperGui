@@ -45,6 +45,11 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
         return this
     }
 
+    fun slots(slots: List<Int>) : GuiButton {
+        slots.forEach { slot(it) }
+        return this
+    }
+
     fun slots(vararg slots: Int) : GuiButton {
         slots.forEach { slot(it) }
         return this
@@ -140,7 +145,9 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
          val istack = formatIntoItemStack(player)
         // get all slots that this item exists in
         // update every slot to this new itemstack
-        parent?.getSlots(this)?.forEach { slot -> player.inventory.setItem(slot, istack) }
+        parent?.getSlots(this)?.forEach { slot ->
+            player.openInventory.setItem(slot, istack)
+        }
         return this
     }
 }
