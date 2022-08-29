@@ -1,4 +1,4 @@
-package com.mattmx.ktguis.components
+package com.mattmx.ktgui.components
 
 import org.bukkit.entity.Player
 

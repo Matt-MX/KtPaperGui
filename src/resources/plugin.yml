@@ -1,6 +1,6 @@
 name: KtGuis
 version: '${project.version}'
-main: com.mattmx.ktguis.KotlinBukkitGui
+main: com.mattmx.ktgui.KotlinBukkitGui
 api-version: 1.17
 prefix: KtGuis
 authors: [ MattMX ]

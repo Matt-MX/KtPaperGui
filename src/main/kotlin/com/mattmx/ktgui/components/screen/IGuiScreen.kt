@@ -1,5 +1,6 @@
-package com.mattmx.ktguis.components
+package com.mattmx.ktgui.components.screen
 
+import com.mattmx.ktgui.components.button.IGuiButton
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -9,15 +10,21 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 interface IGuiScreen {
 
+    fun getSlots(button: IGuiButton) : List<Int>
+
+    fun totalSlots() : Int
+
     fun size() : Int { return 0 }
 
     fun setSlot(button: IGuiButton, slot: Int) : IGuiScreen
 
-    fun createAndOpen(player: Player) : IGuiScreen
+    fun createCopyAndOpen(player: Player) : IGuiScreen
 
     fun open(player: Player)
 
-    fun create(player: Player) : IGuiScreen
+    fun copyAndFormat(player: Player) : IGuiScreen
+
+    fun copy() : IGuiScreen
 
     fun destroy() {}
 

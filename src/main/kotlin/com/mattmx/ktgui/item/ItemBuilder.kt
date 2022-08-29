@@ -1,4 +1,4 @@
-package com.mattmx.ktguis.item
+package com.mattmx.ktgui.item
 
 import org.bukkit.Color
 import org.bukkit.Material

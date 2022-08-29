@@ -1,7 +1,7 @@
-package com.mattmx.ktguis.extensions
+package com.mattmx.ktgui.extensions
 
-import com.mattmx.ktguis.GuiManager
-import com.mattmx.ktguis.components.IGuiScreen
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.components.screen.IGuiScreen
 import org.bukkit.entity.Player
 
 fun Player.getOpenGui() : IGuiScreen? {

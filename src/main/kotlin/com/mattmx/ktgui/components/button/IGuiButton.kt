@@ -1,5 +1,6 @@
-package com.mattmx.ktguis.components
+package com.mattmx.ktgui.components.button
 
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 
@@ -18,4 +19,6 @@ interface IGuiButton {
      * Called when something else in the gui is clicked
      */
     fun notClicked(e: InventoryClickEvent)
+
+    fun formatIntoItemStack(player: Player? = null) : ItemStack?
 }

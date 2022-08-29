@@ -1,6 +1,10 @@
-package com.mattmx.ktguis.components
+package com.mattmx.ktgui.components.button
 
-import com.mattmx.ktguis.item.ItemBuilder
+import com.mattmx.ktgui.components.ClickEvents
+import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.extensions.setEnchantments
+import com.mattmx.ktgui.item.ItemBuilder
+import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -9,7 +13,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 
 // todo give option to have different click events for different types of click
-class GuiButton : IGuiButton, Formattable {
+open class GuiButton(material: Material = Material.STONE) : IGuiButton {
     var parent: IGuiScreen? = null
 
     var item : ItemStack? = null
@@ -18,32 +22,53 @@ class GuiButton : IGuiButton, Formattable {
     var notClicked: ((InventoryClickEvent) -> Unit)? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null
 
+    var slots: ArrayList<Int>? = null
+
+    init {
+        item = ItemStack(material)
+    }
+
     infix fun lore(l: (MutableList<String>) -> Unit) : GuiButton {
         item?.itemMeta?.let {
-            if (it.lore == null) it.lore = mutableListOf()
-            l.invoke(it.lore!!)
+            val newLores = mutableListOf<String>()
+            l.invoke(newLores)
+            it.lore = newLores
+            item?.itemMeta = it
         }
         return this
     }
 
     infix fun named(name: String) : GuiButton {
-        item?.itemMeta?.setDisplayName(name)
+        val imeta = item?.itemMeta
+        imeta?.setDisplayName(name)
+        item?.itemMeta = imeta
+        return this
+    }
+
+    fun slots(vararg slots: Int) : GuiButton {
+        slots.forEach { slot(it) }
         return this
     }
 
     infix fun slot(slot: Int) : GuiButton {
-        parent?.setSlot(this, slot)
+        parent?.also {
+            it.setSlot(this, slot)
+        } ?: run {
+            if (slots == null) slots = arrayListOf()
+            slots!!.add(slot)
+        }
         return this
     }
 
     infix fun childOf(screen: IGuiScreen): GuiButton {
         this.parent = screen
         parent?.addChild(this)
+        if (slots != null) slots!!.forEach { slot(it) }
         return this
     }
 
     infix fun materialOf(string: String) : GuiButton {
-        return materialOf(string)
+        return materialOf(string, Material.STONE)
     }
 
     fun materialOf(string: String, fallback: Material = Material.STONE) : GuiButton {
@@ -81,7 +106,11 @@ class GuiButton : IGuiButton, Formattable {
     }
 
     fun enchant(ce: (MutableMap<Enchantment, Int>) -> Unit) : GuiButton {
-        item?.let { ce.invoke(it.enchantments) }
+        val enchantments = item?.itemMeta?.enchants?.toMutableMap() ?: mutableMapOf()
+        ce.invoke(enchantments)
+        val imeta = item?.itemMeta
+        imeta?.setEnchantments(enchantments)
+        item?.itemMeta = imeta
         return this
     }
 
@@ -93,7 +122,25 @@ class GuiButton : IGuiButton, Formattable {
         notClicked?.let { notClicked!!.invoke(e) }
     }
 
-    override fun format(p: Player) {
-        // todo do some papi stuff
+    override fun formatIntoItemStack(player: Player?) : ItemStack? {
+        // format itemstack and return
+        val i = item?.clone()
+        player?.let { p ->
+            i?.let {
+                val imeta = it.itemMeta
+                imeta?.setDisplayName(Chat.format(imeta.displayName, p))
+                imeta?.lore = imeta?.lore?.map { line -> Chat.format(line, p) }
+                it.itemMeta = imeta
+            }
+        }
+        return i
+    }
+
+    fun update(player: Player) : GuiButton {
+         val istack = formatIntoItemStack(player)
+        // get all slots that this item exists in
+        // update every slot to this new itemstack
+        parent?.getSlots(this)?.forEach { slot -> player.inventory.setItem(slot, istack) }
+        return this
     }
 }

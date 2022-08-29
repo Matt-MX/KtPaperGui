@@ -1,6 +1,6 @@
-package com.mattmx.ktguis.utils
+package com.mattmx.ktgui.utils
 
-import com.mattmx.ktguis.KotlinBukkitGui
+import com.mattmx.ktgui.KotlinBukkitGui
 import me.clip.placeholderapi.PlaceholderAPI
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player

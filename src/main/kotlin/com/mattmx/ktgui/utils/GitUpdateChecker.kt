@@ -1,7 +1,6 @@
-package com.mattmx.ktguis.utils
+package com.mattmx.ktgui.utils
 
 import com.google.gson.JsonParser
-import com.mattmx.ktguis.KotlinBukkitGui
 import java.net.URL
 
 class GitUpdateChecker(

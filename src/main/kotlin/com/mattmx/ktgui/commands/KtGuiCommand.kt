@@ -1,14 +1,14 @@
-package com.mattmx.ktguis.commands
+package com.mattmx.ktgui.commands
 
-import com.mattmx.ktguis.GuiManager
-import com.mattmx.ktguis.KotlinBukkitGui
-import com.mattmx.ktguis.utils.Chat
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.KotlinBukkitGui
+import com.mattmx.ktgui.examples.GuiBuilderExample
+import com.mattmx.ktgui.utils.Chat
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
-import java.lang.StringBuilder
 import java.util.stream.Stream
 
 val preprefix = "&8&l⤷ &#7f52ff"
@@ -25,8 +25,8 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                     }
                     if (args.size > 1) {
                         when (args[1].lowercase()) {
-                            "normal" -> GuiManager.guis["example_normal"]?.createAndOpen(sender)
-                            "builder" -> GuiManager.guis["example_builder"]?.createAndOpen(sender)
+                            "normal" -> GuiManager.guis["example_normal"]?.createCopyAndOpen(sender)
+                            "builder" -> GuiBuilderExample.buildAndOpen(sender)
                             else -> sender.sendMessage(Chat.format("${prefix}Invalid example gui name."))
                         }
                     } else {
