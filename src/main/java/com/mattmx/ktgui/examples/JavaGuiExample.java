@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 
 public class JavaGuiExample extends GuiScreen {
     public JavaGuiExample() {
-        super("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffJava Example GUI", 3, null);
+        super("&#7f52ffJava Example GUI", 3, null);
         new GuiButton()
                 .material(Material.DIRT)
                 .named("&#7F52FF&lJava")
@@ -33,7 +33,7 @@ public class JavaGuiExample extends GuiScreen {
                 false,
                 (button, event, value) -> {
                     event.getWhoClicked().sendMessage(Chat.INSTANCE.format(
-                            "&8&l⤷ &#7f52ffJust a quick example to show that all functionality is 1:1 from KtGui -> Java. (" + value + ")",
+                            "&#7f52ffJust a quick example to show that all functionality is 1:1 from KtGui -> Java. (" + value + ")",
                             (Player) event.getWhoClicked()));
                     return null;
                 }).slot(22).childOf(this);
