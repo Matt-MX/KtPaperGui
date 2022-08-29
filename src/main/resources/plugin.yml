@@ -1,0 +1,13 @@
+name: KtGuis
+version: '${project.version}'
+main: com.mattmx.ktguis.KotlinBukkitGui
+api-version: 1.17
+prefix: KtGuis
+authors: [ MattMX ]
+description: Declarative GUI Library for Bukkit.
+softdepend:
+  - PlaceholderAPI
+commands:
+  ktgui:
+    description: Debug command and command to open example GUIs
+    permission: ktgui.command
