@@ -77,7 +77,7 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
                 }
             }.lore {
                 it.add("&8Party time!")
-            } named "&#7F52FF&lWhat does this button do?" slot 13 childOf this
+            } named "&#7F52FF&lWhat does this button do?" material Material.FIREWORK_ROCKET slot 13 childOf this
         /**
          * A final example of buttons for callback.
          */

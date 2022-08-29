@@ -119,8 +119,9 @@ open class GuiScreen(
 
     override fun copy(): GuiScreen {
         val screen = GuiScreen(title)
-        screen.items = items
-        screen.pointers = pointers
+        // todo: Fix issue with items not copying correctly
+        screen.items = items.toMutableList() as ArrayList<IGuiButton>
+        screen.pointers = pointers.toMutableMap() as HashMap<Int, Int>
         screen.type = type
         screen.rows = rows
         screen.click = click
@@ -173,7 +174,7 @@ open class GuiScreen(
             it.accept(e)
             return
         }
-        val index = pointers[e.slot]
+        val index = pointers[e.rawSlot]
         index?.let {
             val item = items[it]
             item.thisClicked(e)
