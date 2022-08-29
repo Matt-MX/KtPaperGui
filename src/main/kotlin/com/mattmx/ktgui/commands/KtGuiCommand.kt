@@ -2,7 +2,7 @@ package com.mattmx.ktgui.commands
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
-import com.mattmx.ktgui.examples.GuiBuilderExample
+import com.mattmx.ktgui.examples.DynamicExample
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -27,7 +27,9 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                         when (args[1].lowercase()) {
                             "normal" -> GuiManager.guis["example_normal"]?.createCopyAndOpen(sender)
                             "java" -> GuiManager.guis["example_java"]?.createCopyAndOpen(sender)
-                            "builder" -> GuiBuilderExample.buildAndOpen(sender)
+                            "furnace" -> DynamicExample.furnaceInventoryExample(sender)
+                            "builder" -> DynamicExample.serverChangerExample(sender)
+                            "yaml" -> DynamicExample.poorYamlExample(sender)
                             else -> sender.sendMessage(Chat.format("${prefix}Invalid example gui name."))
                         }
                     } else {
@@ -65,7 +67,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                 .toList()
         } else if (args.size == 2) {
             if (args[0].lowercase() == "example") {
-                return Stream.of("normal", "builder", "java")
+                return Stream.of("normal", "builder", "java", "furnace", "yaml")
                     .filter { it.startsWith(current) }
                     .toList()
             }

@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.components.button
 
+import com.mattmx.ktgui.components.screen.IGuiScreen
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -21,4 +22,6 @@ interface IGuiButton {
     fun notClicked(e: InventoryClickEvent)
 
     fun formatIntoItemStack(player: Player? = null) : ItemStack?
+
+    fun copy(parent: IGuiScreen) : IGuiButton
 }

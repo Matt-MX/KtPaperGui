@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.components.button
 
+import com.mattmx.ktgui.components.screen.IGuiScreen
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -11,7 +12,7 @@ open class GuiToggleButton(
     var onChange: ((GuiToggleButton, InventoryClickEvent?, Boolean) -> Unit)? = null
 ) : GuiButton() {
 
-    protected var current = default
+    private var current = default
 
     init {
         this.item = if (default) enabledItem else disabledItem
@@ -22,7 +23,7 @@ open class GuiToggleButton(
         super.thisClicked(e)
     }
 
-    fun onChange(cb: (GuiToggleButton, InventoryClickEvent?, Boolean) -> Unit) : GuiToggleButton {
+    fun onChange(cb: (GuiToggleButton, InventoryClickEvent?, Boolean) -> Unit): GuiToggleButton {
         onChange = cb
         return this
     }
@@ -36,5 +37,11 @@ open class GuiToggleButton(
         current = value
         item = if (current) enabledItem else disabledItem
         update(player)
+    }
+
+    override fun copy(parent: IGuiScreen): GuiToggleButton {
+        val button = GuiToggleButton(enabledItem, disabledItem, default, onChange)
+        button.parent = parent
+        return button
     }
 }

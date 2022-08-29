@@ -2,9 +2,9 @@ package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.ClickEvents
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.extensions.format
 import com.mattmx.ktgui.extensions.setEnchantments
 import com.mattmx.ktgui.item.ItemBuilder
-import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -18,7 +18,7 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
 
     var item : ItemStack? = null
 
-    private var click = ClickEvents()
+    var click = ClickEvents()
     var notClicked: ((InventoryClickEvent) -> Unit)? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null
 
@@ -38,14 +38,15 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
         return this
     }
 
-    infix fun named(name: String) : GuiButton {
+    infix fun named(name: String?) : GuiButton {
+        if (name == null) return this
         val imeta = item?.itemMeta
         imeta?.setDisplayName(name)
         item?.itemMeta = imeta
         return this
     }
 
-    fun slots(slots: List<Int>) : GuiButton {
+    infix fun slots(slots: List<Int>) : GuiButton {
         slots.forEach { slot(it) }
         return this
     }
@@ -72,12 +73,12 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
         return this
     }
 
-    infix fun materialOf(string: String) : GuiButton {
+    infix fun materialOf(string: String?) : GuiButton {
         return materialOf(string, Material.STONE)
     }
 
-    fun materialOf(string: String, fallback: Material = Material.STONE) : GuiButton {
-        val mat = Material.values().firstOrNull { it.name.lowercase() == string.lowercase().replace(" ", "_") }
+    fun materialOf(string: String?, fallback: Material = Material.STONE) : GuiButton {
+        val mat = Material.values().firstOrNull { it.name.lowercase() == string?.lowercase()?.replace(" ", "_") }
         mat?.also { material(it) } ?: material(fallback)
         return this
     }
@@ -130,14 +131,7 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
     override fun formatIntoItemStack(player: Player?) : ItemStack? {
         // format itemstack and return
         val i = item?.clone()
-        player?.let { p ->
-            i?.let {
-                val imeta = it.itemMeta
-                imeta?.setDisplayName(Chat.format(imeta.displayName, p))
-                imeta?.lore = imeta?.lore?.map { line -> Chat.format(line, p) }
-                it.itemMeta = imeta
-            }
-        }
+        i?.format(player)
         return i
     }
 
@@ -149,5 +143,15 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
             player.openInventory.setItem(slot, istack)
         }
         return this
+    }
+
+    override fun copy(parent: IGuiScreen) : GuiButton {
+        val copy = GuiButton()
+        copy.parent = parent
+        copy.item = item
+        copy.click = click
+        copy.notClicked = notClicked
+        copy.close = close
+        return copy
     }
 }

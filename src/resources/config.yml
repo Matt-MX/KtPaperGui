@@ -1,0 +1,19 @@
+test:
+  title: "&cYAML Gui"
+  rows: 3
+  items:
+    1:
+      name: "&b&lCan you believe it!"
+      material: BEACON
+      slot: 13
+      lore:
+        - "&7This gui was read entirely from a"
+        - "&7yaml file!"
+        - "&7I got bored, this is actually like, not a good idea lol"
+      enchantments:
+        - "sharpness:5"
+      click:
+        left:
+          - "[as:PLAYER]me Hello world"
+        right:
+          - "[as:CONSOLE]me Hello world"

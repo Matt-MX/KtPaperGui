@@ -119,8 +119,8 @@ open class GuiScreen(
 
     override fun copy(): GuiScreen {
         val screen = GuiScreen(title)
-        // todo: Fix issue with items not copying correctly (use data classes)
-        screen.items = items.toMutableList() as ArrayList<IGuiButton>
+        // todo: Fix issue with items not copying correctly (use data classes)3
+        screen.items = items.map { it.copy(screen) }.toMutableList() as ArrayList<IGuiButton>
         screen.pointers = pointers.toMutableMap() as HashMap<Int, Int>
         screen.type = type
         screen.rows = rows

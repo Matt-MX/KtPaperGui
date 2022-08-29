@@ -10,6 +10,7 @@ import java.util.logging.Logger
 
 class KotlinBukkitGui : JavaPlugin() {
     override fun onEnable() {
+        plugin = this
         version = description.version
         log = this.logger
         Bukkit.getScheduler().runTaskAsynchronously(this) { ->
@@ -29,6 +30,7 @@ class KotlinBukkitGui : JavaPlugin() {
 
     companion object {
         val papi: Boolean = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null
+        var plugin: JavaPlugin? = null
         lateinit var version: String
         lateinit var log: Logger
     }
