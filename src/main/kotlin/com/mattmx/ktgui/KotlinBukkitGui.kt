@@ -1,6 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.KtGuiCommand
+import com.mattmx.ktgui.examples.ConfigScreenExample
 import com.mattmx.ktgui.examples.CustomGUI
 import com.mattmx.ktgui.examples.JavaGuiExample
 import com.mattmx.ktgui.utils.GitUpdateChecker
@@ -25,6 +26,7 @@ class KotlinBukkitGui : JavaPlugin() {
         GuiManager.init(this)
         GuiManager.register("example_normal", CustomGUI())
         GuiManager.register("example_java", JavaGuiExample())
+        GuiManager.register("example_config", ConfigScreenExample())
         Bukkit.getPluginCommand("ktgui")?.setExecutor(KtGuiCommand())
     }
 

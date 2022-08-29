@@ -4,6 +4,7 @@ import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.examples.DynamicExample
 import com.mattmx.ktgui.utils.Chat
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -27,6 +28,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                         when (args[1].lowercase()) {
                             "normal" -> GuiManager.guis["example_normal"]?.createCopyAndOpen(sender)
                             "java" -> GuiManager.guis["example_java"]?.createCopyAndOpen(sender)
+                            "config" -> GuiManager.guis["example_config"]?.createCopyAndOpen(sender)
                             "furnace" -> DynamicExample.furnaceInventoryExample(sender)
                             "builder" -> DynamicExample.serverChangerExample(sender)
                             "yaml" -> DynamicExample.poorYamlExample(sender)
@@ -43,7 +45,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                         builder.add("${preprefix}Id: &#E24462${id} &#7F52FFButtons: &#E24462${gui.size()}")
                     }
                     GuiManager.players.forEach { (uuid, gui) ->
-                        builder.add("${preprefix}UUID: &#E24462${uuid} Class: &#E24462${gui.javaClass.name}")
+                        builder.add("${preprefix}User: &#E24462${Bukkit.getPlayer(uuid)?.name} Class: &#E24462${gui}")
                     }
                     builder.forEach { sender.sendMessage(Chat.format(it)) }
                 }
@@ -67,7 +69,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                 .toList()
         } else if (args.size == 2) {
             if (args[0].lowercase() == "example") {
-                return Stream.of("normal", "builder", "java", "furnace", "yaml")
+                return Stream.of("normal", "builder", "java", "furnace", "yaml", "config")
                     .filter { it.startsWith(current) }
                     .toList()
             }
