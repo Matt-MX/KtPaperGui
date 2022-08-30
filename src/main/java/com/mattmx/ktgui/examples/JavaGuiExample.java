@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.examples;
 
+import com.mattmx.ktgui.GuiManager;
 import com.mattmx.ktgui.components.button.GuiButton;
 import com.mattmx.ktgui.components.button.GuiToggleButton;
 import com.mattmx.ktgui.components.screen.GuiScreen;
@@ -25,7 +26,8 @@ public class JavaGuiExample extends GuiScreen {
                     lore.add(" ");
                     lore.add("&8&o(Java still doodoo)");
                     return null; // Idk why java wants a return value for a callback but ite cool
-                }).slots(IntStream.rangeClosed(10, 16).boxed().collect(Collectors.toList()))
+                })
+                .slots(10, 11, 12, 13, 14, 15, 16)
                 .childOf(this);
         new GuiToggleButton(
                 new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled").make(),

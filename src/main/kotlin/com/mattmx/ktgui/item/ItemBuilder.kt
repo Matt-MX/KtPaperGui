@@ -14,7 +14,7 @@ import java.util.function.Consumer
 
 class ItemBuilder {
     private var item: ItemStack
-    private var itemM: ItemMeta?
+    private var itemMeta: ItemMeta?
 
     /**
      * Init item chainable via given Material parameter.
@@ -26,7 +26,7 @@ class ItemBuilder {
      */
     constructor(itemType: Material?) {
         item = ItemStack(itemType!!)
-        itemM = item.itemMeta
+        itemMeta = item.itemMeta
     }
 
     /**
@@ -39,7 +39,7 @@ class ItemBuilder {
      */
     constructor(itemStack: ItemStack) {
         item = itemStack
-        itemM = item.itemMeta
+        itemMeta = item.itemMeta
     }
 
     /**
@@ -49,16 +49,16 @@ class ItemBuilder {
      */
     constructor() {
         item = ItemStack(Material.AIR)
-        itemM = item.itemMeta
+        itemMeta = item.itemMeta
     }
 
     fun replaceName(regex: String?, replace: String?): ItemBuilder {
-        itemM!!.setDisplayName(itemM!!.displayName.replace(regex!!, replace!!))
+        itemMeta!!.setDisplayName(itemMeta!!.displayName.replace(regex!!, replace!!))
         return this
     }
 
     fun clearName(): ItemBuilder {
-        itemM!!.setDisplayName(null)
+        itemMeta!!.setDisplayName(null)
         return this
     }
 
@@ -208,7 +208,7 @@ class ItemBuilder {
      * @since 1.0
      */
     fun enchantment(enchantment: Enchantment, level: Int): ItemBuilder {
-        itemM?.addEnchant(enchantment, level, true)
+        itemMeta?.addEnchant(enchantment, level, true)
         return this
     }
 
@@ -225,7 +225,7 @@ class ItemBuilder {
      * @since 1.0
      */
     fun enchantment(enchantment: Enchantment): ItemBuilder {
-        itemM?.addEnchant(enchantment, 1, true)
+        itemMeta?.addEnchant(enchantment, 1, true)
         return this
     }
 
@@ -259,16 +259,16 @@ class ItemBuilder {
      * @since 1.0
      */
     //    public ItemBuilder enchantments(final Enchantment[] enchantments){
-    //        itemM.getEnchantments().clear();
+    //        itemMeta.getEnchantments().clear();
     //        for(Enchantment enchantment : enchantments){
-    //            itemM.addUnsafeEnchantment(enchantment, 1);
+    //            itemMeta.addUnsafeEnchantment(enchantment, 1);
     //        }
     //        return this;
     //    }
     fun enchantments(enchantments: Map<Enchantment, Int>): ItemBuilder {
-        itemM?.enchants?.clear()
+        itemMeta?.enchants?.clear()
         enchantments.keys.forEach(Consumer { e: Enchantment ->
-            itemM?.addEnchant(
+            itemMeta?.addEnchant(
                 e,
                 enchantments[e]!!, true
             )
@@ -278,7 +278,7 @@ class ItemBuilder {
 
     fun addEnchantments(enchantments: Map<Enchantment, Int>): ItemBuilder {
         enchantments.keys.forEach(Consumer { e: Enchantment ->
-            itemM?.addEnchant(
+            itemMeta?.addEnchant(
                 e,
                 enchantments[e]!!, true
             )
@@ -315,8 +315,8 @@ class ItemBuilder {
         for (e in item.enchantments.keys) {
             item.removeEnchantment(e)
         }
-        for (e in itemM?.enchants?.keys!!) {
-            itemM?.removeEnchant(e)
+        for (e in itemMeta?.enchants?.keys!!) {
+            itemMeta?.removeEnchant(e)
         }
         return this
     }
@@ -428,7 +428,7 @@ class ItemBuilder {
      * @return the ItemMeta of the ItemStack.
      */
     fun meta(): ItemMeta? {
-        return itemM
+        return itemMeta
     }
 
     /**
@@ -437,14 +437,14 @@ class ItemBuilder {
      * @return the ItemStack of the ItemBuilder instance.
      */
     fun make(): ItemStack {
-        item.itemMeta = itemM?.clone()
+        item.itemMeta = itemMeta?.clone()
         return item.clone()
     }
 
     fun copy(): ItemBuilder {
         val ib = ItemBuilder(item.type)
         ib.item = item.clone()
-        ib.itemM = itemM?.clone()
+        ib.itemMeta = itemMeta?.clone()
         return ib
     }
 
@@ -452,7 +452,7 @@ class ItemBuilder {
         fun from(i: ItemStack): ItemBuilder {
             val builder = ItemBuilder(i.type)
             builder.item = i
-            builder.itemM = i.itemMeta
+            builder.itemMeta = i.itemMeta
             return builder
         }
     }

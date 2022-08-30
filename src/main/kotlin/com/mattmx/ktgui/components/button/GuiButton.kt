@@ -13,16 +13,17 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 
 // todo give option to have different click events for different types of click
-open class GuiButton(material: Material = Material.STONE) : IGuiButton {
-    var parent: IGuiScreen? = null
+open class GuiButton(
+    material: Material = Material.STONE,
+    var item: ItemStack? = null
+) : IGuiButton {
+    protected var parent: IGuiScreen? = null
 
-    var item : ItemStack? = null
+    protected var click = ClickEvents()
+    protected var notClicked: ((InventoryClickEvent) -> Unit)? = null
+    protected var close: ((InventoryCloseEvent) -> Unit)? = null
 
-    var click = ClickEvents()
-    var notClicked: ((InventoryClickEvent) -> Unit)? = null
-    var close: ((InventoryCloseEvent) -> Unit)? = null
-
-    var slots: ArrayList<Int>? = null
+    protected var slots: ArrayList<Int>? = null
 
     init {
         item = ItemStack(material)
@@ -56,7 +57,7 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
         return this
     }
 
-    infix fun slot(slot: Int) : GuiButton {
+    override infix fun slot(slot: Int) : GuiButton {
         parent?.also {
             it.setSlot(this, slot)
         } ?: run {
@@ -66,7 +67,7 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
         return this
     }
 
-    infix fun childOf(screen: IGuiScreen): GuiButton {
+    override infix fun childOf(screen: IGuiScreen): GuiButton {
         this.parent = screen
         parent?.addChild(this)
         if (slots != null) slots!!.forEach { slot(it) }
@@ -103,7 +104,7 @@ open class GuiButton(material: Material = Material.STONE) : IGuiButton {
     }
 
     override fun getItemStack(): ItemStack? {
-        return null
+        return item
     }
 
     fun click(ce: (ClickEvents) -> Unit) : GuiButton {

@@ -31,7 +31,7 @@ object DynamicExample {
         /**
          * Example of how to fill a GUI with items
          */
-        GuiButton() material Material.WHITE_STAINED_GLASS_PANE slots IntStream.rangeClosed(0, gui.totalSlots() - 1).boxed().toList() childOf gui named " "
+        GuiButton() material Material.WHITE_STAINED_GLASS_PANE slots (0 until gui.totalSlots()).toList() childOf gui named " "
         /**
          * Creating a gui widgets and registering them
          */

@@ -32,12 +32,10 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
             .click {
                 it.generic = { e -> (e.whoClicked as Player).playSound(e.whoClicked.location, Sound.UI_BUTTON_CLICK, 1f ,1f) }
             } ofBuilder skull childOf this slot 27
-
         /**
          * Fill the bottom slots with gray stained glass panes.
-         * (I'm so glad I added this lol)
          */
-        GuiButton(Material.GRAY_STAINED_GLASS_PANE).slots(28, 29, 30, 31, 32, 33, 34) named " " childOf this
+        GuiButton(Material.GRAY_STAINED_GLASS_PANE) slots (28..34).toList() named " " childOf this
         /**
          * We can also easily make close buttons with just a few lines of code.
          */

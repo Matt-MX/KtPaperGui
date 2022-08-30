@@ -24,4 +24,8 @@ interface IGuiButton {
     fun formatIntoItemStack(player: Player? = null) : ItemStack?
 
     fun copy(parent: IGuiScreen) : IGuiButton
+
+    infix fun slot(slot: Int) : IGuiButton
+
+    infix fun childOf(parent: IGuiScreen) : IGuiButton
 }

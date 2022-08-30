@@ -31,17 +31,13 @@ open class GuiScreen(
     // slot : items[index]
     var pointers = hashMapOf<Int, Int>()
 
-    var click: ClickEvents? = null
-    var close: ((InventoryCloseEvent) -> Unit)? = null
-    var chat: ((AsyncPlayerChatEvent) -> Unit)? = null
-    var quit: ((PlayerQuitEvent) -> Unit)? = null
-    var move: ((PlayerMoveEvent) -> Unit)? = null
+    protected var click: ClickEvents? = null
+    protected var close: ((InventoryCloseEvent) -> Unit)? = null
+    protected var chat: ((AsyncPlayerChatEvent) -> Unit)? = null
+    protected var quit: ((PlayerQuitEvent) -> Unit)? = null
+    protected var move: ((PlayerMoveEvent) -> Unit)? = null
 
-    var open: ((InventoryOpenEvent, Player) -> Unit)? = null
-
-    override fun onOpen(event: InventoryOpenEvent, player: Player) {
-        open?.invoke(event, player)
-    }
+    protected var open: ((Player) -> Unit)? = null
 
     /**
      * Return the default size of the inventory type
@@ -69,6 +65,10 @@ open class GuiScreen(
         } else items.indexOf(button)
         pointers[slot] = pointerIndex
         return this
+    }
+
+    fun slotsUsed() : List<Int> {
+        return pointers.keys.toMutableList()
     }
 
     infix fun type(type: InventoryType): GuiScreen {
@@ -110,16 +110,17 @@ open class GuiScreen(
                 inv.setItem(slot, item.formatIntoItemStack(player))
             } catch (e: IndexOutOfBoundsException) { KotlinBukkitGui.log.warning("GUI with title $title had an issue when building. Slot $slot points to an invalid item!") }
         }
-        player.openInventory(inv)?.let {
-            onOpen(InventoryOpenEvent(it), player)
-        }
-        // open gui for player
         player.setOpenGui(this)
+        player.openInventory(inv)
+        open?.invoke(player)
+        // open gui for player
+//        pointers.forEach { (slot, index) ->
+//            println("slot: $slot index: $index -> ${items[index].getItemStack()?.type}")
+//        }
     }
 
-    override fun copy(): GuiScreen {
+    override fun copy(): IGuiScreen {
         val screen = GuiScreen(title)
-        // todo: Fix issue with items not copying correctly (use data classes)3
         screen.items = items.map { it.copy(screen) }.toMutableList() as ArrayList<IGuiButton>
         screen.pointers = pointers.toMutableMap() as HashMap<Int, Int>
         screen.type = type
@@ -129,11 +130,12 @@ open class GuiScreen(
         screen.chat = chat
         screen.close = close
         screen.quit = quit
+        screen.open = open
         return screen
     }
 
     override fun copyAndFormat(player: Player): GuiScreen {
-        val screen = copy()
+        val screen = copy() as GuiScreen
         screen.format(player)
         return screen
     }
@@ -155,6 +157,11 @@ open class GuiScreen(
 
     fun close(ic: (InventoryCloseEvent) -> Unit): GuiScreen {
         close = ic
+        return this
+    }
+
+    fun open(oc: (Player) -> Unit) : GuiScreen {
+        open = oc
         return this
     }
 

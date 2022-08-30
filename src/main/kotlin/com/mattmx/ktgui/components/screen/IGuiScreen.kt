@@ -11,8 +11,6 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 interface IGuiScreen {
 
-    fun onOpen(event: InventoryOpenEvent, player: Player) {}
-
     fun getSlots(button: IGuiButton) : List<Int>
 
     fun totalSlots() : Int
