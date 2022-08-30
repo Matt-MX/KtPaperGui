@@ -22,7 +22,7 @@ open class GuiMultiPageScreen(
         open { p ->
             update(p)
         }
-        click {ce ->
+        click { ce ->
             ce.generic = { e ->
                 if (e.rawSlot in minSlot until maxSlot) {
                     val index = e.rawSlot + (page * pageSize()) - minSlot

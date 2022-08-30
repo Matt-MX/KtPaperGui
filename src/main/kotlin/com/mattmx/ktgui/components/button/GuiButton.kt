@@ -26,7 +26,7 @@ open class GuiButton(
     protected var slots: ArrayList<Int>? = null
 
     init {
-        item = ItemStack(material)
+        if (item == null) item = ItemStack(material)
     }
 
     infix fun lore(l: (MutableList<String>) -> Unit) : GuiButton {

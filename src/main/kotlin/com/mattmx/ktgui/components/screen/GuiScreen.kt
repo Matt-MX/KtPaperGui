@@ -64,6 +64,7 @@ open class GuiScreen(
             items.size - 1
         } else items.indexOf(button)
         pointers[slot] = pointerIndex
+//        println("${button.javaClass.name} $pointerIndex <- $slot ${items.size - 1}")
         return this
     }
 
@@ -108,7 +109,10 @@ open class GuiScreen(
             try {
                 val item = items[index]
                 inv.setItem(slot, item.formatIntoItemStack(player))
-            } catch (e: IndexOutOfBoundsException) { KotlinBukkitGui.log.warning("GUI with title $title had an issue when building. Slot $slot points to an invalid item!") }
+            } catch (e: IndexOutOfBoundsException) {
+                KotlinBukkitGui.log.warning("GUI with title $title had an issue when building. Slot $slot points to an invalid item!")
+                e.printStackTrace()
+            }
         }
         player.setOpenGui(this)
         player.openInventory(inv)
