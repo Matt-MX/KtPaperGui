@@ -13,7 +13,7 @@ class LoreCycleButton(
     item: ItemStack? = null,
     private var selected: Int = 0,
     private var changed: ((LoreCycleButton, InventoryClickEvent?) -> Unit)? = null,
-    private val lores: MutableList<LoreOption> = mutableListOf()
+    private val lores: MutableList<LoreEntry> = mutableListOf()
 ) : GuiButton(material, item) {
     private var selectableLores = mutableListOf<Int>()
 
@@ -54,7 +54,7 @@ class LoreCycleButton(
      * <null, String> (Denoting a normal Lore line)
      * <String, String> (ID pointing to lore value)
      */
-    infix fun specialLore(l: (MutableList<LoreOption>) -> Unit): GuiButton {
+    infix fun specialLore(l: (MutableList<LoreEntry>) -> Unit): GuiButton {
         l.invoke(lores)
         // get all selectable lores
         selectableLores.clear()
@@ -85,11 +85,11 @@ class LoreCycleButton(
         return selectableLores[selected]
     }
 
-    fun lores() : MutableList<LoreOption> {
+    fun lores() : MutableList<LoreEntry> {
         return lores.toMutableList()
     }
 
-    fun optionalLores() : MutableList<LoreOption> {
+    fun optionalLores() : MutableList<LoreEntry> {
         return selectableLores.map { lores[it] }.toMutableList()
     }
 
@@ -111,7 +111,7 @@ class LoreCycleButton(
         return i
     }
 
-    data class LoreOption(
+    data class LoreEntry(
         var id: String?,
         var line: String,
         var lineSelected: String)
