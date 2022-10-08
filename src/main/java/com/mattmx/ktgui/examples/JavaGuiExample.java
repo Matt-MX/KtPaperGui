@@ -31,13 +31,11 @@ public class JavaGuiExample extends GuiScreen {
                 .childOf(this);
         new GuiToggleButton(
                 new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled").make(),
-                new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled").make(),
-                false,
-                (button, event, value) -> {
-                    event.getWhoClicked().sendMessage(Chat.INSTANCE.format(
-                            "&#7f52ffJust a quick example to show that all functionality is 1:1 from KtGui -> Java. (" + value + ")",
-                            (Player) event.getWhoClicked()));
-                    return null;
-                }).slot(22).childOf(this);
+                new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled").make()
+        ).onChange(e -> {
+            e.getPlayer().sendMessage(Chat.INSTANCE.format(
+                    "&#7f52ffJust a quick example to show that all functionality is 1:1 from KtGui -> Java. (" + ((GuiToggleButton) e.getButton()).enabled() + ")", e.getPlayer()));
+            return null;
+        }).slot(22).childOf(this);
     }
 }

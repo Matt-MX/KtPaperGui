@@ -8,14 +8,12 @@ import org.bukkit.inventory.ItemStack
 open class GuiToggleButton(
     val enabledItem: ItemStack,
     val disabledItem: ItemStack,
-    var default: Boolean = false,
-    var onChange: ((GuiToggleButton, InventoryClickEvent?, Boolean) -> Unit)? = null
 ) : GuiButton() {
-
-    private var current = default
+    private var current = false
+    var changed: ((ButtonClickedEvent) -> Unit)? = null
 
     init {
-        this.item = if (default) enabledItem else disabledItem
+        this.item = if (current) enabledItem else disabledItem
     }
 
     override fun thisClicked(e: InventoryClickEvent) {
@@ -23,14 +21,23 @@ open class GuiToggleButton(
         super.thisClicked(e)
     }
 
-    fun onChange(cb: (GuiToggleButton, InventoryClickEvent?, Boolean) -> Unit): GuiToggleButton {
-        onChange = cb
+    fun enabledOnDefault(state: Boolean) : GuiToggleButton {
+        current = state
         return this
     }
 
-    fun changeState(player: Player, e: InventoryClickEvent? = null) {
+    inline fun onChange(noinline cb: ButtonClickedEvent.() -> Unit): GuiToggleButton {
+        changed = cb
+        return this
+    }
+
+    fun enabled() : Boolean {
+        return current
+    }
+
+    fun changeState(player: Player, e: InventoryClickEvent) {
         setState(!current, player)
-        onChange?.invoke(this, e, current)
+        changed?.invoke(ButtonClickedEvent(player, e, this))
     }
 
     fun setState(value: Boolean, player: Player) {
@@ -40,7 +47,9 @@ open class GuiToggleButton(
     }
 
     override fun copy(parent: IGuiScreen): GuiToggleButton {
-        val button = GuiToggleButton(enabledItem, disabledItem, default, onChange)
+        val button = GuiToggleButton(enabledItem, disabledItem)
+        button.current = current
+        button.changed = changed
         button.parent = parent
         return button
     }

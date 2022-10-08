@@ -20,11 +20,11 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
              */
             GuiToggleButton(
                 enabled.copy().lore("&8This is item $it").make(),
-                disabled.copy().lore("&8This is item $it").make(),
-                false
-            ) { _, e, s ->
-                e?.whoClicked?.sendMessage(Chat.color("&cChanged button $it! ($s)"))
-            } childOf this slot slot
+                disabled.copy().lore("&8This is item $it").make())
+                .enabledOnDefault(true)
+                .onChange {
+                    player.sendMessage(Chat.color("&cChanged button ${it}! (${(button as GuiToggleButton).enabled()})"))
+                }
             slot += 2
         }
         /**
@@ -34,14 +34,14 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
          *
          * Provide a MutableMap<String, ItemStack> on initialization.
          */
-        GuiCycleButton(
-            map = mutableMapOf(
-                "dirt" to ItemBuilder(Material.DIRT).name("&6Dirt").lore("&8Click to cycle").make(),
-                "grass_block" to ItemBuilder(Material.GRASS_BLOCK).lore("&8Click to cycle").name("&6Grass Block")
-                    .make(),
-                "diamond" to ItemBuilder(Material.DIAMOND_BLOCK).lore("&8Click to cycle").name("&bDiamond Block").make()
-            )
-        ) childOf this slot 10
+        GuiCycleButton()
+            .items {
+                this["dirt"] = ItemBuilder(Material.DIRT).name("&6Dirt").lore("&8Click to cycle").make()
+                this["grass_block"] = ItemBuilder(Material.GRASS_BLOCK).lore("&8Click to cycle").name("&6Grass Block").make()
+                this["diamond"] to ItemBuilder(Material.DIAMOND_BLOCK).lore("&8Click to cycle").name("&bDiamond Block").make()
+            }.changed {
+                player.sendMessage(Chat.color("&7You changed to ${(button as GuiCycleButton).getSelectedId()}"))
+            } childOf this slot 10
         /**
          * You may want to allow the user to read all options instead
          * of having to cycle through them all to find them.

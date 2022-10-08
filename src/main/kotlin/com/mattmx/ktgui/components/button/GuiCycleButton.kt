@@ -9,25 +9,30 @@ import org.bukkit.inventory.ItemStack
 class GuiCycleButton(
     material: Material = Material.STONE,
     item: ItemStack? = null,
-    protected val map: MutableMap<String, ItemStack>,
-    protected var selected: Int = 0,
-    protected var changed: ((GuiCycleButton, InventoryClickEvent?) -> Unit)? = null
 ) : GuiButton(
     material, item
 ) {
+    protected val map: MutableMap<String, ItemStack> = mutableMapOf()
+    protected var selected: Int = 0
+    protected var changed: ((ButtonClickedEvent) -> Unit)? = null
 
     init {
         click {
             right = { e ->
                 nextItem(e.whoClicked as Player)
-                changed?.invoke(this@GuiCycleButton, e)
+                changed?.invoke(ButtonClickedEvent(e.whoClicked as Player, e, this@GuiCycleButton))
             }
             left = { e ->
                 prevItem(e.whoClicked as Player)
-                changed?.invoke(this@GuiCycleButton, e)
+                changed?.invoke(ButtonClickedEvent(e.whoClicked as Player, e, this@GuiCycleButton))
             }
         }
         this.item = getSelectedItem()
+    }
+
+    fun items(items: MutableMap<String, ItemStack>.() -> Unit) : GuiCycleButton {
+        items(map)
+        return this
     }
 
     fun getSelectedId() : String? {
@@ -54,13 +59,14 @@ class GuiCycleButton(
         update(player)
     }
 
-    fun changed(cb: (GuiCycleButton, InventoryClickEvent?) -> Unit): GuiCycleButton {
+    fun changed(cb: ButtonClickedEvent.() -> Unit): GuiCycleButton {
         changed = cb
         return this
     }
 
     override fun copy(parent: IGuiScreen): GuiButton {
-        val copy = GuiCycleButton(map = map)
+        val copy = GuiCycleButton()
+        copy.map.putAll(map)
         copy.notClicked = notClicked
         copy.changed = changed
         copy.parent = parent

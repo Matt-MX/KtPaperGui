@@ -53,10 +53,9 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
         GuiToggleButton(
             ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled").lore("&8Click to toggle").make(),
             ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled").lore("&8Click to toggle").make(),
-            onChange = { button, event, state ->
-                event?.whoClicked?.sendMessage(Chat.format("&8&l⤷ &#7f52ffToggled thing to $state"))
-            }
-        ) slot 10 childOf this
+        ).onChange {
+            player.sendMessage(Chat.format("&8&l⤷ &#7f52ffToggled thing to ${(button as GuiToggleButton).enabled()}"))
+        } slot 10 childOf this
         /**
          * Random example of using callbacks to do different things
          */
