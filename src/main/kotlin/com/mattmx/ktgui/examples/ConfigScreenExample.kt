@@ -59,12 +59,12 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
          */
         NumberWidgetButton()
             .lore {
-                it.add("&8Right click to increase")
-                it.add("&8Left click to decrease")
+                add("&8Right click to increase")
+                add("&8Left click to decrease")
             } material Material.BLUE_STAINED_GLASS_PANE named "&9Amount widget" childOf this slot 16
         LoreCycleButton()
             .specialLore {
-                it.add { l ->
+                add { l ->
                     l.id = "1"
                     l.line = "&8 ⤷ Option one"
                     l.lineSelected = "&7 ⤷ &aOption one"

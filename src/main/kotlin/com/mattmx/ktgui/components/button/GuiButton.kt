@@ -12,7 +12,6 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 
-// todo give option to have different click events for different types of click
 open class GuiButton(
     material: Material = Material.STONE,
     var item: ItemStack? = null
@@ -29,10 +28,10 @@ open class GuiButton(
         if (item == null) item = ItemStack(material)
     }
 
-    infix fun lore(l: (MutableList<String>) -> Unit) : GuiButton {
+    inline fun lore(lore: MutableList<String>.() -> Unit) : GuiButton {
         item?.itemMeta?.let {
             val newLores = mutableListOf<String>()
-            l.invoke(newLores)
+            lore.invoke(newLores)
             it.lore = newLores
             item?.itemMeta = it
         }
@@ -107,12 +106,12 @@ open class GuiButton(
         return item
     }
 
-    fun click(ce: (ClickEvents) -> Unit) : GuiButton {
+    inline fun click(ce: ClickEvents.() -> Unit) : GuiButton {
         ce.invoke(click)
         return this
     }
 
-    fun enchant(ce: (MutableMap<Enchantment, Int>) -> Unit) : GuiButton {
+    inline fun enchant(ce: MutableMap<Enchantment, Int>.() -> Unit) : GuiButton {
         val enchantments = item?.itemMeta?.enchants?.toMutableMap() ?: mutableMapOf()
         ce.invoke(enchantments)
         val imeta = item?.itemMeta

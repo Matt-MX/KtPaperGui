@@ -13,19 +13,19 @@ class LoreCycleButton(
     item: ItemStack? = null,
     private var selected: Int = 0,
     private var changed: ((LoreCycleButton, InventoryClickEvent?) -> Unit)? = null,
-    private val lores: MutableList<LoreEntry> = mutableListOf()
+    val lores: MutableList<LoreEntry> = mutableListOf()
 ) : GuiButton(material, item) {
-    private var selectableLores = mutableListOf<Int>()
+    var selectableLores = mutableListOf<Int>()
 
     init {
         click {
-            it.right = { e ->
+            right = { e ->
                 nextItem(e.whoClicked as Player)
-                changed?.invoke(this, e)
+                changed?.invoke(this@LoreCycleButton, e)
             }
-            it.left = { e ->
+            left = { e ->
                 prevItem(e.whoClicked as Player)
-                changed?.invoke(this, e)
+                changed?.invoke(this@LoreCycleButton, e)
             }
         }
     }
@@ -54,8 +54,8 @@ class LoreCycleButton(
      * <null, String> (Denoting a normal Lore line)
      * <String, String> (ID pointing to lore value)
      */
-    infix fun specialLore(l: (MutableList<LoreEntry>) -> Unit): GuiButton {
-        l.invoke(lores)
+    inline fun specialLore(lore: MutableList<LoreEntry>.() -> Unit): GuiButton {
+        lore.invoke(lores)
         // get all selectable lores
         selectableLores.clear()
         val ids = arrayListOf<String>()

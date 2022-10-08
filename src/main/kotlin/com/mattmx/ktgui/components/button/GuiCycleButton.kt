@@ -18,13 +18,13 @@ class GuiCycleButton(
 
     init {
         click {
-            it.right = { e ->
+            right = { e ->
                 nextItem(e.whoClicked as Player)
-                changed?.invoke(this, e)
+                changed?.invoke(this@GuiCycleButton, e)
             }
-            it.left = { e ->
+            left = { e ->
                 prevItem(e.whoClicked as Player)
-                changed?.invoke(this, e)
+                changed?.invoke(this@GuiCycleButton, e)
             }
         }
         this.item = getSelectedItem()

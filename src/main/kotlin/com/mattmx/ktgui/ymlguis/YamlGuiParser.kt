@@ -52,12 +52,12 @@ object YamlGuiParser {
         val button = GuiButton()
         button materialOf section.getString("material") named section.getString("name")
         section.getStringList("lore").let {
-            if (it.size > 0) button.lore { loreList -> loreList.addAll(it) }
+            if (it.size > 0) button.lore { addAll(it) }
         }
         section.getStringList("enchantments").let { enchants ->
             if (enchants.size > 0) button
-                .enchant { buttonEnchants -> enchants
-                    .forEach { enchantString -> parseEnchant(enchantString, buttonEnchants) } }
+                .enchant {
+                    enchants.forEach { enchantString -> parseEnchant(enchantString, this) } }
         }
         section.getConfigurationSection("click")?.let { sec ->
             button.click = parseClickEvents(sec)
