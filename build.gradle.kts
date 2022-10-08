@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    `maven-publish`
 }
 
 repositories {
@@ -31,7 +30,7 @@ tasks.named<Test>("test") {
 sourceSets["main"].resources.srcDir("src/resources/")
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks {

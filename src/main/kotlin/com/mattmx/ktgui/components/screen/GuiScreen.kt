@@ -31,8 +31,8 @@ open class GuiScreen(
     // slot : items[index]
     var pointers = hashMapOf<Int, Int>()
 
-    protected var click: ClickEvents? = null
-    protected var close: ((InventoryCloseEvent) -> Unit)? = null
+    var click: ClickEvents? = null
+    var close: ((InventoryCloseEvent) -> Unit)? = null
     protected var chat: ((AsyncPlayerChatEvent) -> Unit)? = null
     protected var quit: ((PlayerQuitEvent) -> Unit)? = null
     protected var move: ((PlayerMoveEvent) -> Unit)? = null
