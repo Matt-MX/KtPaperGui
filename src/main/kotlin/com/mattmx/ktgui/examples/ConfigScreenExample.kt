@@ -87,7 +87,7 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
     }
 }
 
-private fun MutableList<LoreCycleButton.LoreEntry>.add(cb: (LoreCycleButton.LoreEntry) -> Unit) : MutableList<LoreCycleButton.LoreEntry> {
+fun MutableList<LoreCycleButton.LoreEntry>.add(cb: (LoreCycleButton.LoreEntry) -> Unit) : MutableList<LoreCycleButton.LoreEntry> {
     val l = LoreCycleButton.LoreEntry(null, "", "")
     cb.invoke(l)
     this.add(l)

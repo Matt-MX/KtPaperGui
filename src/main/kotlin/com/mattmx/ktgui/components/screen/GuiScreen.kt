@@ -20,6 +20,8 @@ import org.bukkit.inventory.Inventory
 import java.lang.IndexOutOfBoundsException
 import java.lang.Integer.max
 import java.lang.Integer.min
+import java.lang.Math.floor
+import java.lang.Math.round
 
 open class GuiScreen(
     var title: String = "null",
@@ -31,8 +33,8 @@ open class GuiScreen(
     // slot : items[index]
     var pointers = hashMapOf<Int, Int>()
 
-    protected var click: ClickEvents? = null
-    protected var close: ((InventoryCloseEvent) -> Unit)? = null
+    var click: ClickEvents? = null
+    var close: ((InventoryCloseEvent) -> Unit)? = null
     protected var chat: ((AsyncPlayerChatEvent) -> Unit)? = null
     protected var quit: ((PlayerQuitEvent) -> Unit)? = null
     protected var move: ((PlayerMoveEvent) -> Unit)? = null
@@ -190,6 +192,18 @@ open class GuiScreen(
             val item = items[it]
             item.thisClicked(e)
         }
+    }
+
+    fun last() : Int {
+        return totalSlots() - 1
+    }
+
+    fun middle() : Int {
+        return kotlin.math.floor(totalSlots() * 0.5).toInt()
+    }
+
+    fun first() : Int {
+        return 0
     }
 
     override fun close(e: InventoryCloseEvent) {
