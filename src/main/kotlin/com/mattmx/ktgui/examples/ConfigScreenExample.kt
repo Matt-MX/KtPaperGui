@@ -1,9 +1,6 @@
 package com.mattmx.ktgui.examples
 
-import com.mattmx.ktgui.components.button.GuiCycleButton
-import com.mattmx.ktgui.components.button.GuiToggleButton
-import com.mattmx.ktgui.components.button.LoreCycleButton
-import com.mattmx.ktgui.components.button.NumberWidgetButton
+import com.mattmx.ktgui.components.button.*
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.item.ItemBuilder
 import com.mattmx.ktgui.utils.Chat
@@ -64,36 +61,29 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
             } material Material.BLUE_STAINED_GLASS_PANE named "&9Amount widget" childOf this slot 16
         LoreCycleButton()
             .specialLore {
-                add { l ->
-                    l.id = "1"
-                    l.line = "&8 ⤷ Option one"
-                    l.lineSelected = "&7 ⤷ &aOption one"
-                }.add { l ->
-                    l.id = "2"
-                    l.line = "&8 ⤷ Option two"
-                    l.lineSelected = "&7 ⤷ &aOption two"
-                }.add { l ->
-                    l.line = "&8&oThis line is not selectable."
-                }.add { l ->
-                    l.id = "3"
-                    l.line = " &8⤷ Option three"
-                    l.lineSelected = "&7 ⤷ &aOption three"
-                }.add { l ->
-                    l.id = "3"
-                    l.line = "  &8 ⤷ Description of option blah blah"
-                    l.lineSelected = "  &7 ⤷ Description of option blah blah"
+                addLore {
+                    id = "1"
+                    line = "&8 ⤷ Option one"
+                    lineSelected = "&7 ⤷ &aOption one"
+                }
+                addLore {
+                    id = "2"
+                    line = "&8 ⤷ Option two"
+                    lineSelected = "&7 ⤷ &aOption two"
+                }
+                addLore {
+                    line = "&8&oThis line is not selectable."
+                }
+                addLore {
+                    id = "3"
+                    line = " &8⤷ Option three"
+                    lineSelected = "&7 ⤷ &aOption three"
+                }
+                addLore {
+                    id = "3"
+                    line = "  &8 ⤷ Description of option blah blah"
+                    lineSelected = "  &7 ⤷ Description of option blah blah"
                 }
             } material Material.PAPER named "&d&lLore Cycle option" childOf this slot 13
     }
-}
-
-fun MutableList<LoreCycleButton.LoreEntry>.add(cb: (LoreCycleButton.LoreEntry) -> Unit) : MutableList<LoreCycleButton.LoreEntry> {
-    val l = LoreCycleButton.LoreEntry(null, "", "")
-    cb.invoke(l)
-    this.add(l)
-    return this
-}
-
-fun MutableList<LoreCycleButton.LoreEntry>.add(line: String, id: String, lineSelected: String) {
-    this.add(LoreCycleButton.LoreEntry(id, line, lineSelected))
 }

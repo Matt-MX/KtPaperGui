@@ -127,3 +127,14 @@ class LoreCycleButton(
         return copy
     }
 }
+
+inline fun MutableList<LoreCycleButton.LoreEntry>.addLore(cb: LoreCycleButton.LoreEntry.() -> Unit) : MutableList<LoreCycleButton.LoreEntry> {
+    val l = LoreCycleButton.LoreEntry(null, "", "")
+    cb.invoke(l)
+    this.add(l)
+    return this
+}
+
+fun MutableList<LoreCycleButton.LoreEntry>.addLore(line: String, id: String, lineSelected: String) {
+    this.add(LoreCycleButton.LoreEntry(id, line, lineSelected))
+}
