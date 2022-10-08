@@ -19,9 +19,9 @@ open class GuiButton(
 ) : IGuiButton {
     protected var parent: IGuiScreen? = null
 
-    var click = ClickEvents()
+    protected var click = ClickEvents()
     protected var notClicked: ((InventoryClickEvent) -> Unit)? = null
-    var close: ((InventoryCloseEvent) -> Unit)? = null
+    protected var close: ((InventoryCloseEvent) -> Unit)? = null
 
     protected var slots: ArrayList<Int>? = null
 
