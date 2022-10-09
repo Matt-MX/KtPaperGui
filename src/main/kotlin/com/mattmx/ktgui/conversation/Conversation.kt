@@ -57,8 +57,8 @@ class ConversationBuilder(val factory: ConversationFactory) {
         return this
     }
 
-    fun finish(message: String? = null) : ConversationBuilder {
-        list.add(EndEmptyPrompt(message))
+    fun finish(message: String? = null, after: (() -> Unit)? = null) : ConversationBuilder {
+        list.add(EndEmptyPrompt(message, after))
         return this
     }
 

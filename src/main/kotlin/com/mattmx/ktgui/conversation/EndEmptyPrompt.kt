@@ -5,9 +5,11 @@ import org.bukkit.conversations.MessagePrompt
 import org.bukkit.conversations.Prompt
 
 class EndEmptyPrompt(
-    private val message: String? = null
+    private val message: String? = null,
+    private val after: (() -> Unit)? = null
 ) : MessagePrompt(), BuildablePrompt {
     override fun getPromptText(context: ConversationContext): String {
+        after?.invoke()
         return message ?: ""
     }
 

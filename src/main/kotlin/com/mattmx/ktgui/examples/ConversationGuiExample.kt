@@ -14,7 +14,7 @@ class ConversationGuiExample(private val plugin: JavaPlugin) : GuiScreen("No GUI
         GuiButton()
             .click {
                 left = { e ->
-                    e.whoClicked.closeInventory()
+                    forceClose(e.whoClicked as Player)
                     conversation(plugin) {
                         stringPrompt("What's your fave fruit") { c, i ->
                             if (i == "oranges") {
@@ -24,7 +24,9 @@ class ConversationGuiExample(private val plugin: JavaPlugin) : GuiScreen("No GUI
                         numberPrompt("How many fruit do you eat a day?") { c, i ->
                             c.forWhom.sendRawMessage("You inputted $i")
                         }
-                        finish("Nice talking to you!")
+                        finish("Nice talking to you!") {
+                            open(e.whoClicked as Player)
+                        }
                     }.abandon {
                         (it.context.forWhom as Player).sendMessage("&cExited Conversation")
                     }.build(e.whoClicked as Player)
