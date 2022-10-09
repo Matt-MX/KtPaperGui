@@ -1,6 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.conversation.ConversationAbandonListener
 import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.utils.GitUpdateChecker
 import org.bukkit.Bukkit

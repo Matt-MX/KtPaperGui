@@ -7,6 +7,8 @@ import org.bukkit.util.NumberConversions
 
 fun conversation(plugin: JavaPlugin, builder: ConversationBuilder.() -> Unit) : ConversationBuilder {
     val fac = ConversationFactory(plugin)
+        .withLocalEcho(false)
+        .withModality(true)
     val bui = ConversationBuilder(fac)
     builder.invoke(bui)
     return bui
@@ -68,7 +70,9 @@ class ConversationBuilder(val factory: ConversationFactory) {
             list.add(EndEmptyPrompt())
         }
         list.forEachIndexed { i, p ->
-            p.next(list[i + 1] as Prompt)
+            if (i + 1 < list.size) {
+                p.next(list[i + 1] as Prompt)
+            }
         }
         return factory.buildConversation(conversable)
     }

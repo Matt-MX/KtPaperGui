@@ -30,6 +30,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                             "java" -> GuiManager.guis["example_java"]?.createCopyAndOpen(sender)
                             "config" -> GuiManager.guis["example_config"]?.createCopyAndOpen(sender)
                             "pages" -> GuiManager.guis["example_pages"]?.createCopyAndOpen(sender)
+                            "conversation" -> GuiManager.guis["example_conversation"]?.open(sender)
                             "furnace" -> DynamicExample.furnaceInventoryExample(sender)
                             "builder" -> DynamicExample.serverChangerExample(sender)
                             "yaml" -> DynamicExample.poorYamlExample(sender)
@@ -70,7 +71,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                 .toList()
         } else if (args.size == 2) {
             if (args[0].lowercase() == "example") {
-                return Stream.of("normal", "builder", "java", "furnace", "yaml", "config", "pages")
+                return Stream.of("normal", "builder", "java", "furnace", "yaml", "config", "pages", "conversation")
                     .filter { it.startsWith(current) }
                     .toList()
             }
