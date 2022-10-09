@@ -32,9 +32,13 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
                          */
                         stringPrompt(Chat.color("&6&lWhat's your fave fruit")) { c, i ->
                             if (i == "oranges") {
-                                // If the input is "oranges" then reply with something else
-                                player.sendMessage(Chat.color("&eI love oranges"))
-                            } else player.sendMessage(Chat.color("&eEwwww"))
+                                /**
+                                 * If the input is "oranges" then reply with something else
+                                 * KtGui blocks other messages to the client to not "clog" chat.
+                                 * This means you should use "c.fromWhom.sendRawMessage" to send messages.
+                                 */
+                                c.forWhom.sendRawMessage(Chat.color("&eI love oranges"))
+                            } else c.forWhom.sendRawMessage(Chat.color("&eEwwww"))
                         }
                         /**
                          * We can also get numeric inputs, and specify a range of valid responses.
@@ -45,7 +49,7 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
                             Chat.color("&6&lHow many fruit do you eat a day?"),
                             Chat.color("&cYou should be eating 5, go fix that"),
                             (5..10).toList()) { c, i ->
-                            player.sendMessage(Chat.color("&eYou inputted $i"))
+                            c.forWhom.sendRawMessage(Chat.color("&eYou inputted $i"))
                         }
                         /**
                          * Finally let's add a custom finish statement.
@@ -80,6 +84,6 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
             }.lore {
                 add("&eLeft &7for fruit questions")
                 add("&eRight &7to change GUI name")
-            } named "&6&lChange GUI Name" childOf this slot 4 material Material.NAME_TAG
+            } named "&6&lConversation API example." childOf this slot 4 material Material.NAME_TAG
     }
 }
