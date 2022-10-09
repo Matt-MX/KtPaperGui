@@ -9,7 +9,7 @@ test:
       lore:
         - "&7This gui was read entirely from a"
         - "&7yaml file!"
-        - "&7I got bored, this is actually like, not a good idea lol"
+        - "&7I got bored, this shouldn't be used in production."
       enchantments:
         - "sharpness:5"
       click:
