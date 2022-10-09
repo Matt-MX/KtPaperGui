@@ -33,8 +33,11 @@ object GuiManager : Listener {
                             plugin.logger.info("Running an outdated version (v${KotlinBukkitGui.version}) Latest available (v$latest)")
                             plugin.logger.info("Download here: https://github.com/Matt-MX/KtBukkitGui/releases/latest")
                         }
-                    } else KotlinBukkitGui.log.info("Running latest version! (v${KotlinBukkitGui.version})")
-                }, { _ -> KotlinBukkitGui.log.info("Unable to check for latest version.") })
+                    } else plugin.logger.info("Running latest version! (v${KotlinBukkitGui.version})")
+                }, { e ->
+                    plugin.logger.info("Unable to check for latest version.")
+                    e.printStackTrace()
+                })
         }
     }
 
