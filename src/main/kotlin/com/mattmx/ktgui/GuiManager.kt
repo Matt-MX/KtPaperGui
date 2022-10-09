@@ -2,6 +2,7 @@ package com.mattmx.ktgui
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.extensions.getOpenGui
+import com.mattmx.ktgui.utils.GitUpdateChecker
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -20,6 +21,21 @@ object GuiManager : Listener {
 
     fun init(plugin: JavaPlugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin)
+        KotlinBukkitGui.version = "1.1.0"
+        Bukkit.getScheduler().runTaskAsynchronously(plugin) { ->
+            GitUpdateChecker("https://api.github.com/repos/Matt-MX/KtBukkitGui/releases/latest", KotlinBukkitGui.version,
+                { outdated, latest ->
+                    if (outdated) {
+                        if (KotlinBukkitGui.plugin == null) {
+                            plugin.logger.info("${plugin.description.name} is running an outdated version of KtGui (latest v$latest)")
+                            plugin.logger.info("New Version https://github.com/Matt-MX/KtBukkitGui/")
+                        } else {
+                            plugin.logger.info("Running an outdated version (v${KotlinBukkitGui.version}) Latest available (v$latest)")
+                            plugin.logger.info("Download here: https://github.com/Matt-MX/KtBukkitGui/releases/latest")
+                        }
+                    } else KotlinBukkitGui.log.info("Running latest version! (v${KotlinBukkitGui.version})")
+                }, { _ -> KotlinBukkitGui.log.info("Unable to check for latest version.") })
+        }
     }
 
     fun register(id: String, gui: IGuiScreen) {

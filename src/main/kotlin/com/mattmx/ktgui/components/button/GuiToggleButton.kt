@@ -1,6 +1,8 @@
 package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.item.ItemBuilder
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -18,6 +20,7 @@ open class GuiToggleButton(
 
     override fun thisClicked(e: InventoryClickEvent) {
         changeState(e.whoClicked as Player, e)
+        update(e.whoClicked as Player)
         super.thisClicked(e)
     }
 

@@ -1,5 +1,5 @@
 name: KtGuis
-version: '1.0.0'
+version: '1.1.0'
 main: com.mattmx.ktgui.KotlinBukkitGui
 api-version: 1.17
 prefix: KtGuis

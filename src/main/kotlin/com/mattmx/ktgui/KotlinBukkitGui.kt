@@ -15,15 +15,6 @@ class KotlinBukkitGui : JavaPlugin() {
         plugin = this
         version = description.version
         log = this.logger
-        Bukkit.getScheduler().runTaskAsynchronously(this) { ->
-            GitUpdateChecker("https://api.github.com/repos/Matt-MX/KtBukkitGui/releases/latest", version,
-                { outdated, latest ->
-                    if (outdated) {
-                        log.info("Running an outdated version (v$version) Latest available (v$latest)")
-                        log.info("Download here: https://github.com/Matt-MX/KtBukkitGui/releases/latest")
-                    } else log.info("Running latest version! (v$version)")
-                }, { _ -> log.info("Unable to check for latest version.") })
-        }
         GuiManager.init(this)
         GuiManager.register("example_normal", CustomGUI())
         GuiManager.register("example_java", JavaGuiExample())
