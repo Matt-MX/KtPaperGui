@@ -24,7 +24,7 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
                 .enabledOnDefault(true)
                 .onChange {
                     player.sendMessage(Chat.color("&cChanged button ${it}! (${(button as GuiToggleButton).enabled()})"))
-                }
+                } slot slot childOf this
             slot += 2
         }
         /**
@@ -38,7 +38,7 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
             .items {
                 this["dirt"] = ItemBuilder(Material.DIRT).name("&6Dirt").lore("&8Click to cycle").make()
                 this["grass_block"] = ItemBuilder(Material.GRASS_BLOCK).lore("&8Click to cycle").name("&6Grass Block").make()
-                this["diamond"] to ItemBuilder(Material.DIAMOND_BLOCK).lore("&8Click to cycle").name("&bDiamond Block").make()
+                this["diamond"] = ItemBuilder(Material.DIAMOND_BLOCK).lore("&8Click to cycle").name("&bDiamond Block").make()
             }.changed {
                 player.sendMessage(Chat.color("&7You changed to ${(button as GuiCycleButton).getSelectedId()}"))
             } childOf this slot 10

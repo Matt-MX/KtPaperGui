@@ -27,11 +27,11 @@ class GuiCycleButton(
                 changed?.invoke(ButtonClickedEvent(e.whoClicked as Player, e, this@GuiCycleButton))
             }
         }
-        this.item = getSelectedItem()
     }
 
     fun items(items: MutableMap<String, ItemStack>.() -> Unit) : GuiCycleButton {
-        items(map)
+        items.invoke(map)
+        this.item = getSelectedItem()
         return this
     }
 
@@ -72,6 +72,7 @@ class GuiCycleButton(
         copy.parent = parent
         copy.click = click
         copy.close = close
+        copy.item = item
         return copy
     }
 }

@@ -26,6 +26,7 @@ open class GuiToggleButton(
 
     fun enabledOnDefault(state: Boolean) : GuiToggleButton {
         current = state
+        this.item = if (current) enabledItem else disabledItem
         return this
     }
 
@@ -51,7 +52,7 @@ open class GuiToggleButton(
 
     override fun copy(parent: IGuiScreen): GuiToggleButton {
         val button = GuiToggleButton(enabledItem, disabledItem)
-        button.current = current
+        button.enabledOnDefault(current)
         button.changed = changed
         button.parent = parent
         return button

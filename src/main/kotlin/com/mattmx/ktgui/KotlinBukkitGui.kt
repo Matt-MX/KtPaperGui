@@ -18,6 +18,7 @@ class KotlinBukkitGui : JavaPlugin() {
         GuiManager.register("example_config", ConfigScreenExample())
         GuiManager.register("example_pages", MultiPageExample())
         GuiManager.register("example_conversation", ConversationGuiExample())
+        GuiManager.register("example_anvil", AnvilInputGuiExample())
         Bukkit.getPluginCommand("ktgui")?.setExecutor(KtGuiCommand())
     }
 
