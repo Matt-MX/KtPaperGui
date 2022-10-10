@@ -74,11 +74,6 @@ object GuiManager : Listener {
     }
 
     @EventHandler
-    fun chat(e: AsyncPlayerChatEvent) {
-        e.player.getOpenGui()?.chat(e)
-    }
-
-    @EventHandler
     fun move(e: PlayerMoveEvent) {
         e.player.getOpenGui()?.move(e)
     }

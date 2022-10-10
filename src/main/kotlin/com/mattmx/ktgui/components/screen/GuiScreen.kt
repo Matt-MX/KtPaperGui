@@ -35,7 +35,6 @@ open class GuiScreen(
 
     var click: ClickEvents? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null
-    protected var chat: ((AsyncPlayerChatEvent) -> Unit)? = null
     protected var quit: ((PlayerQuitEvent) -> Unit)? = null
     protected var move: ((PlayerMoveEvent) -> Unit)? = null
 
@@ -133,7 +132,6 @@ open class GuiScreen(
         screen.rows = rows
         screen.click = click
         screen.move = move
-        screen.chat = chat
         screen.close = close
         screen.quit = quit
         screen.open = open
@@ -153,11 +151,6 @@ open class GuiScreen(
 
     fun quit(qe: (PlayerQuitEvent) -> Unit): GuiScreen {
         quit = qe
-        return this
-    }
-
-    fun chat(ch: (AsyncPlayerChatEvent) -> Unit): GuiScreen {
-        chat = ch
         return this
     }
 
@@ -212,10 +205,6 @@ open class GuiScreen(
 
     override fun quit(e: PlayerQuitEvent) {
         quit?.invoke(e)
-    }
-
-    override fun chat(e: AsyncPlayerChatEvent) {
-        chat?.invoke(e)
     }
 
     override fun move(e: PlayerMoveEvent) {

@@ -84,7 +84,6 @@ open class GuiMultiPageScreen(
         screen.rows = rows
         screen.click = click
         screen.move = move
-        screen.chat = chat
         screen.close = close
         screen.quit = quit
         screen.open = open

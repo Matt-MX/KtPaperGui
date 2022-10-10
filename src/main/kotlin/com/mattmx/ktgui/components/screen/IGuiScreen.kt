@@ -51,12 +51,6 @@ interface IGuiScreen {
 
     /**
      * Will be called if a player with this gui
-     * sends a chat message
-     */
-    fun chat(e: AsyncPlayerChatEvent)
-
-    /**
-     * Will be called if a player with this gui
      * tries to move
      */
     fun move(e: PlayerMoveEvent)
