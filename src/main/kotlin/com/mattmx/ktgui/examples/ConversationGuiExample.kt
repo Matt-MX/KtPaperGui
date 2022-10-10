@@ -25,6 +25,7 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
                     // Make sure to close the GUI, so they can type in chat
                     forceClose(player)
                     // Create a new conversation
+                    player.sendTitle(Chat.color("&6&lConversation Started"), Chat.color("&eUse the chat!"))
                     conversation(KotlinBukkitGui.plugin!!) {
                         /**
                          * The way you specify what you want to do is in order.
