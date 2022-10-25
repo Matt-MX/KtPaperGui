@@ -4,6 +4,7 @@ import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.examples.AnimatedScoreboardExample
 import com.mattmx.ktgui.examples.DynamicExample
+import com.mattmx.ktgui.examples.JavaConversationExample
 import com.mattmx.ktgui.examples.ScoreboardExample
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Bukkit
@@ -30,6 +31,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                         when (args[1].lowercase()) {
                             "normal" -> GuiManager.guis["example_normal"]?.createCopyAndOpen(sender)
                             "java" -> GuiManager.guis["example_java"]?.createCopyAndOpen(sender)
+                            "java_conversation" -> JavaConversationExample.builder.build(sender).begin()
                             "config" -> GuiManager.guis["example_config"]?.createCopyAndOpen(sender)
                             "pages" -> GuiManager.guis["example_pages"]?.createCopyAndOpen(sender)
                             "conversation" -> GuiManager.guis["example_conversation"]?.open(sender)
@@ -81,6 +83,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                     "normal",
                     "builder",
                     "java",
+                    "java_conversation",
                     "furnace",
                     "yaml",
                     "config",
