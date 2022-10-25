@@ -11,12 +11,16 @@ import org.bukkit.inventory.AnvilInventory
 class AnvilInputGuiExample : GuiScreen("Rename GUI", type = InventoryType.ANVIL) {
     init {
         GuiButton()
+            .lore {
+                add(Chat.color("Using the anvil rename feature"))
+            } material Material.PAPER named "&aRename this item" slot 0 childOf this
+        GuiButton()
             .click {
                 generic = { e ->
                     val player = e.whoClicked as Player
-                    val inv = player.openInventory as AnvilInventory
+                    val stack = player.openInventory.getSlotType(2)
                     forceClose(player)
-                    player.sendMessage(Chat.color(inv.renameText ?: "nothing"))
+                    player.sendMessage(Chat.color(stack.name))
                 }
             }.lore {
                 add("&7Click to finish!")

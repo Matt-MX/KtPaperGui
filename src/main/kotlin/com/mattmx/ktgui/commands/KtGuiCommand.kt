@@ -35,7 +35,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                             "config" -> GuiManager.guis["example_config"]?.createCopyAndOpen(sender)
                             "pages" -> GuiManager.guis["example_pages"]?.createCopyAndOpen(sender)
                             "conversation" -> GuiManager.guis["example_conversation"]?.open(sender)
-//                            "anvil" -> GuiManager.guis["example_anvil"]?.open(sender)
+                            "anvil" -> GuiManager.guis["example_anvil"]?.open(sender)
                             "animated_scoreboard" -> AnimatedScoreboardExample.toggle(sender)
                             "scoreboard" -> ScoreboardExample.toggle(sender)
                             "furnace" -> DynamicExample.furnaceInventoryExample(sender)
