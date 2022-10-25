@@ -22,6 +22,8 @@ object AnimatedScoreboardExample {
         add(Chat.color("&a$text"))
         add("")
         add(Chat.color("&aThis line is not animated"))
+        add("")
+        add(Chat.color("&aRAM usage: 0mb"))
     }.update {
         /**
          * We can use getIterations() to know how long the animation has been running for.
@@ -30,6 +32,11 @@ object AnimatedScoreboardExample {
         val chars = min((getIterations() % 20).toInt(), text.length)
         // Set the first line to a new string.
         set(0, Chat.color("&c" + text.substring(chars)))
+        val runtime = Runtime.getRuntime();
+        val usedMemInMB = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
+        val maxHeapSizeInMB = runtime.maxMemory() / 1048576L;
+        // Update the memory usage of the server
+        set(4, Chat.color("&aRam usage: ${usedMemInMB}mb/${maxHeapSizeInMB}"))
         /**
          * Calling begin(plugin) will begin the loop of updating the scoreboard.
          * You may not want to do this until the scoreboard is actually used.
