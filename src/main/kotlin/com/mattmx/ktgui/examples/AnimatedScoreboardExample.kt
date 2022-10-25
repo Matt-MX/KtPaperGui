@@ -15,7 +15,7 @@ object AnimatedScoreboardExample {
      * automatically.
      */
     private val text = "Hello world"
-    private val builder = animatedScoreboard(Chat.color("&7Animated Scoreboard"), 10) {
+    private val builder = animatedScoreboard(Chat.color("&6&lAnimated"), 10) {
         /**
          * Default lines that we start off with, before animation occurs.
          */
