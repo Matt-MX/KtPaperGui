@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.scoreboards
 
 import org.bukkit.Bukkit
-import org.bukkit.entity.Animals
 import org.bukkit.plugin.java.JavaPlugin
 
 open class AnimatedScoreboardBuilder(
@@ -11,7 +10,7 @@ open class AnimatedScoreboardBuilder(
     private var update: ((AnimatedScoreboardBuilder) -> Unit)? = null
     private var cancel = false
     private var started: Long = 0L
-    private var ticks: Long = 0L
+    private var iterations: Long = 0L
 
     fun begin(plugin: JavaPlugin) : AnimatedScoreboardBuilder {
         started = System.currentTimeMillis()
@@ -20,13 +19,13 @@ open class AnimatedScoreboardBuilder(
             else {
                 it.cancel()
             }
-            ticks++
+            iterations++
         } ,0, updateEvery)
         return this
     }
 
-    fun getTicksPassed() : Long {
-        return ticks
+    fun getIterations() : Long {
+        return iterations
     }
 
     fun getTimeRunning() : Long {
