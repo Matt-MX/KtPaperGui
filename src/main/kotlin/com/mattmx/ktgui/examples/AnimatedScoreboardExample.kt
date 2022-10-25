@@ -29,7 +29,7 @@ object AnimatedScoreboardExample {
          * We can use getIterations() to know how long the animation has been running for.
          * This way we can animate our scoreboards easily (works as a deltaTime)
          */
-        val chars = min((getIterations() % 20).toInt(), text.length)
+        val chars = min((getIterations() % text.length).toInt(), text.length)
         // Set the first line to a new string.
         set(0, Chat.color("&c" + text.substring(chars)))
         val runtime = Runtime.getRuntime();
