@@ -2,7 +2,9 @@ package com.mattmx.ktgui.commands
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
+import com.mattmx.ktgui.examples.AnimatedScoreboardExample
 import com.mattmx.ktgui.examples.DynamicExample
+import com.mattmx.ktgui.examples.ScoreboardExample
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -32,6 +34,8 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                             "pages" -> GuiManager.guis["example_pages"]?.createCopyAndOpen(sender)
                             "conversation" -> GuiManager.guis["example_conversation"]?.open(sender)
 //                            "anvil" -> GuiManager.guis["example_anvil"]?.open(sender)
+                            "animated_scoreboard" -> AnimatedScoreboardExample.toggle(sender)
+                            "scoreboard" -> ScoreboardExample.toggle(sender)
                             "furnace" -> DynamicExample.furnaceInventoryExample(sender)
                             "builder" -> DynamicExample.serverChangerExample(sender)
                             "yaml" -> DynamicExample.poorYamlExample(sender)
@@ -41,6 +45,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                         sender.sendMessage(Chat.format("${prefix}Invalid example gui name."))
                     }
                 }
+
                 "debug" -> {
                     val builder = arrayListOf<String>()
                     builder.add("${prefix}Debug information: &#E24462Registered GUIs")
@@ -72,7 +77,19 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                 .toList()
         } else if (args.size == 2) {
             if (args[0].lowercase() == "example") {
-                return Stream.of("normal", "builder", "java", "furnace", "yaml", "config", "pages", "conversation", "anvil")
+                return Stream.of(
+                    "normal",
+                    "builder",
+                    "java",
+                    "furnace",
+                    "yaml",
+                    "config",
+                    "pages",
+                    "conversation",
+                    "anvil",
+                    "scoreboard",
+                    "animated_scoreboard"
+                )
                     .filter { it.startsWith(current) }
                     .toList()
             }
