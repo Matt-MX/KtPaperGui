@@ -2,10 +2,7 @@ package com.mattmx.ktgui.commands
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
-import com.mattmx.ktgui.examples.AnimatedScoreboardExample
-import com.mattmx.ktgui.examples.DynamicExample
-import com.mattmx.ktgui.examples.JavaConversationExample
-import com.mattmx.ktgui.examples.ScoreboardExample
+import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -41,6 +38,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                             "furnace" -> DynamicExample.furnaceInventoryExample(sender)
                             "builder" -> DynamicExample.serverChangerExample(sender)
                             "yaml" -> DynamicExample.poorYamlExample(sender)
+                            "dsl" -> GuiDslExample.open(sender)
                             else -> sender.sendMessage(Chat.format("${prefix}Invalid example gui name."))
                         }
                     } else {
@@ -91,7 +89,8 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                     "conversation",
                     "anvil",
                     "scoreboard",
-                    "animated_scoreboard"
+                    "animated_scoreboard",
+                    "dsl"
                 )
                     .filter { it.startsWith(current) }
                     .toList()
