@@ -3,16 +3,6 @@ package com.mattmx.ktgui.conversation
 import org.bukkit.conversations.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.util.NumberConversions
-
-fun conversation(plugin: JavaPlugin, builder: ConversationBuilder.() -> Unit) : ConversationBuilder {
-    val fac = ConversationFactory(plugin)
-        .withLocalEcho(false)
-        .withModality(true)
-    val bui = ConversationBuilder(fac)
-    builder.invoke(bui)
-    return bui
-}
 
 class ConversationBuilder(val factory: ConversationFactory) {
     var abandon: ((ConversationAbandonedEvent) -> Unit)? = null

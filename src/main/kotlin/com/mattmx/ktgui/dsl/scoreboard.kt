@@ -1,6 +1,7 @@
-package com.mattmx.ktgui.scoreboards
+package com.mattmx.ktgui.dsl
 
-import org.bukkit.scoreboard.Scoreboard
+import com.mattmx.ktgui.scoreboards.AnimatedScoreboardBuilder
+import com.mattmx.ktgui.scoreboards.ScoreboardBuilder
 
 inline fun scoreboard(title: String = "null", build: ScoreboardBuilder.() -> Unit) : ScoreboardBuilder {
     val builder = ScoreboardBuilder(title)
