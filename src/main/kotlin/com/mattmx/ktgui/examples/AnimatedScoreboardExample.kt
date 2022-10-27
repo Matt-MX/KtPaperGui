@@ -1,8 +1,8 @@
 package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.KotlinBukkitGui
+import com.mattmx.ktgui.dsl.animatedScoreboard
 import com.mattmx.ktgui.extensions.removeScoreboard
-import com.mattmx.ktgui.scoreboards.animatedScoreboard
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.entity.Player
 import java.lang.Integer.min

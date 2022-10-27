@@ -3,14 +3,10 @@ package com.mattmx.ktgui.examples
 import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
-import com.mattmx.ktgui.conversation.conversation
+import com.mattmx.ktgui.dsl.conversation
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Material
-import org.bukkit.conversations.PlayerNamePrompt
-import org.bukkit.conversations.StringPrompt
 import org.bukkit.entity.Player
-import org.bukkit.plugin.java.JavaPlugin
-import kotlin.jvm.internal.Intrinsics.Kotlin
 
 /**
  * An example of how we can use the Bukkit Conversation API to create

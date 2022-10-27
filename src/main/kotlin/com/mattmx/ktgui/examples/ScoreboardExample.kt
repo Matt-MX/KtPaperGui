@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.examples
 
+import com.mattmx.ktgui.dsl.scoreboard
 import com.mattmx.ktgui.extensions.removeScoreboard
-import com.mattmx.ktgui.scoreboards.scoreboard
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.entity.Player
 

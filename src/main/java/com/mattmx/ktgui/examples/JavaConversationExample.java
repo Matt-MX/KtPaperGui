@@ -3,9 +3,8 @@ package com.mattmx.ktgui.examples;
 import com.mattmx.ktgui.KotlinBukkitGui;
 import com.mattmx.ktgui.conversation.ConversationBuilder;
 import com.mattmx.ktgui.utils.Chat;
-import org.bukkit.entity.Player;
 
-import static com.mattmx.ktgui.conversation.ConversationKt.conversation;
+import static com.mattmx.ktgui.dsl.ConversationKt.conversation;
 
 public class JavaConversationExample {
 
