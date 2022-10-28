@@ -7,7 +7,7 @@ open class AnimatedScoreboardBuilder(
     title: String,
     val updateEvery: Long = 2,
 ) : ScoreboardBuilder(title) {
-    private var update: ((AnimatedScoreboardBuilder) -> Unit)? = null
+    var update: ((AnimatedScoreboardBuilder) -> Unit)? = null
     private var cancel = false
     private var started: Long = 0L
     private var iterations: Long = 0L
