@@ -110,7 +110,7 @@ open class ScoreboardBuilder(
     fun add(line: String): ScoreboardBuilder {
         if (modifies.size > MAX_LINES) throw IndexOutOfBoundsException("You can't add more than 16 lines.")
         val modified = getLineCoded(line)
-        objective.getScore(modified).score = -modifies.size + 1
+        objective.getScore(modified).score = -modifies.size
         modifies.add(modified)
         return this
     }
@@ -121,7 +121,7 @@ open class ScoreboardBuilder(
         val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)
         team.suffix = line
         team.addEntry(name)
-        objective.getScore(name).score = -modifies.size + 1
+        objective.getScore(name).score = -modifies.size
         modifies.add(name)
         return this
     }
