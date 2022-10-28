@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.scoreboards
 
+import com.mattmx.ktgui.extensions.stripColor
 import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -12,19 +13,17 @@ import java.util.*
 
 
 open class ScoreboardBuilder(
-    var title: String,
-    var displaySlot: DisplaySlot = DisplaySlot.SIDEBAR
+    private var title: String,
+    private val displaySlot: DisplaySlot = DisplaySlot.SIDEBAR
 ) {
     // Holds the lines of text, we are able to remove them because of this
     private val modifies = arrayListOf<String>()
 
     private val scoreboard: Scoreboard = Bukkit.getScoreboardManager()!!.newScoreboard
-    private val objective: Objective =
-        scoreboard.registerNewObjective(if (title.length > MAX_LINES) title.substring(0, MAX_LINES) else title, "dummy")
+    private val objective: Objective = scoreboard.registerNewObjective(title, "dummy")
 
     init {
         // If the title is too big then make sure to shorten it
-        if (title.length > MAX_LINES) title = title.substring(0, MAX_LINES)
         objective.displayName = title
         objective.displaySlot = displaySlot
     }
@@ -36,8 +35,7 @@ open class ScoreboardBuilder(
      * @param title of the scoreboard
      */
     infix fun title(title: String): ScoreboardBuilder {
-        if (title.length > MAX_LINES) this.title = title.substring(0, MAX_LINES)
-        else this.title = title
+        this.title = title
         objective.displayName = this.title
         return this
     }
