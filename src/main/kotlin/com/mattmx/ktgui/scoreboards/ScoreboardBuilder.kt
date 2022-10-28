@@ -98,10 +98,6 @@ open class ScoreboardBuilder(
         return this
     }
 
-    // todo create a team with suffix as the name you want
-    // add an entry as the ID with an empty string that we can identify and give a score to
-    // https://www.spigotmc.org/threads/1-16-1-19-scoreboard-objective-score-with-rgb-hex-color.468079/
-
     /**
      * Adds a line if we have space to.
      *
