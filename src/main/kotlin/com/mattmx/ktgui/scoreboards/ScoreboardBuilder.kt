@@ -78,13 +78,11 @@ open class ScoreboardBuilder(
                 whitespace()
             }
         }
-        val name = Chat.color("&r").repeat(modifies.size)
+        val name = modifies[index]
         val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)
         team.suffix = line
-        team.addEntry(name)
-        scoreboard.resetScores(modifies[index])
-        modifies[index] = name
-        objective.getScore(name).score = -index
+        if (!team.hasEntry(name)) team.addEntry(name)
+//        objective.getScore(name).score = -index
         return this
     }
 
