@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.scoreboards
 
+import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.scoreboard.DisplaySlot
@@ -7,6 +8,7 @@ import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Scoreboard
 import java.lang.IndexOutOfBoundsException
 import java.lang.Integer.min
+import java.util.*
 
 
 open class ScoreboardBuilder(
@@ -17,7 +19,8 @@ open class ScoreboardBuilder(
     private val modifies = arrayListOf<String>()
 
     private val scoreboard: Scoreboard = Bukkit.getScoreboardManager()!!.newScoreboard
-    private val objective: Objective = scoreboard.registerNewObjective(if (title.length > MAX_LINES) title.substring(0, MAX_LINES) else title, "dummy")
+    private val objective: Objective =
+        scoreboard.registerNewObjective(if (title.length > MAX_LINES) title.substring(0, MAX_LINES) else title, "dummy")
 
     init {
         // If the title is too big then make sure to shorten it
@@ -42,7 +45,7 @@ open class ScoreboardBuilder(
     /**
      * Clears the whole scoreboard.
      */
-    fun clear() : ScoreboardBuilder {
+    fun clear(): ScoreboardBuilder {
         modifies.clear()
         scoreboard.resetScores(title)
         return this
@@ -68,15 +71,38 @@ open class ScoreboardBuilder(
         return this
     }
 
+    fun setRGB(index: Int, line: String): ScoreboardBuilder {
+        if (index >= MAX_LINES) throw IndexOutOfBoundsException("Index too high. Maximum index is 15 (0-15).")
+        if (index >= modifies.size) {
+            repeat(index - modifies.size + 1) {
+                whitespace()
+            }
+        }
+        val name = Chat.color("&r").repeat(modifies.size)
+        val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)
+        team.suffix = line
+        team.addEntry(name)
+        modifies.add(name)
+        objective.getScore(name).score = -modifies.size - 1
+        scoreboard.resetScores(modifies[index])
+        modifies[index] = name
+        objective.getScore(name).score = -index
+        return this
+    }
+
     /**
      * Remove a line from the scoreboard
      *
      * @param index of the line to remove
      */
-    fun remove(index: Int) : ScoreboardBuilder {
+    fun remove(index: Int): ScoreboardBuilder {
         scoreboard.resetScores(modifies[index])
         return this
     }
+
+    // todo create a team with suffix as the name you want
+    // add an entry as the ID with an empty string that we can identify and give a score to
+    // https://www.spigotmc.org/threads/1-16-1-19-scoreboard-objective-score-with-rgb-hex-color.468079/
 
     /**
      * Adds a line if we have space to.
@@ -88,6 +114,17 @@ open class ScoreboardBuilder(
         val modified = getLineCoded(line)
         modifies.add(modified)
         objective.getScore(modified).score = -modifies.size - 1
+        return this
+    }
+
+    fun addRGB(line: String) : ScoreboardBuilder {
+        if (modifies.size > MAX_LINES) throw IndexOutOfBoundsException("You can't add more than 16 lines.")
+        val name = Chat.color("&r").repeat(modifies.size)
+        val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)
+        team.suffix = line
+        team.addEntry(name)
+        modifies.add(name)
+        objective.getScore(name).score = -modifies.size - 1
         return this
     }
 
