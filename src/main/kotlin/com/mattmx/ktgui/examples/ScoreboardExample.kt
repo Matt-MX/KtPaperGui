@@ -23,23 +23,8 @@ object ScoreboardExample {
             player.removeScoreboard()
             player.sendMessage(Chat.color("&7No longer showing the scoreboard"))
         } else {
-//            player.scoreboard = builder.scoreboard()
-//            player.sendMessage(Chat.color("&7Now showing the scoreboard"))
-            val board = animatedScoreboard("&5pvphub".format()) {
-                title = "<main>pvphub".format()
-                add(" &8&m                            &r ".format())
-                whitespace()
-                addRGB("  <light>Kills: ${player.getStatistic(Statistic.PLAYER_KILLS)}".format())
-                addRGB("  <light>Deaths: ${player.getStatistic(Statistic.DEATHS)}".format())
-                whitespace()
-                add(" &8&m                            &r ".format())
-                addRGB(" <light>IP: <main>pvphub.me".format())
-                add(" &8&m                            &r ".format())
-            }.update {
-                setRGB(2, "  <light>Kills: ${player.getStatistic(Statistic.PLAYER_KILLS)}".format())
-                setRGB(3, "  <light>Deaths: ${player.getStatistic(Statistic.DEATHS)}".format())
-            }
-            player.scoreboard = board.scoreboard()
+            player.scoreboard = builder.scoreboard()
+            player.sendMessage(Chat.color("&7Now showing the scoreboard"))
         }
     }
 }

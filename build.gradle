@@ -6,7 +6,11 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("maven-publish")
 }
+
+project.version = "-SNAPSHOT"
+
 repositories {
     mavenCentral()
     maven {
@@ -23,6 +27,27 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
 }
 
+publishing {
+    repositories {
+        maven {
+            name = "pvphub-releases"
+            url = uri("https://maven.pvphub.me/releases")
+            credentials {
+                username = System.getenv("PVPHUB_MAVEN_USERNAME")
+                password = System.getenv("PVPHUB_MAVEN_SECRET")
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = "com.mattmx"
+            artifactId = "ktgui"
+            version = getVersion()
+//            artifact(tasks.shadowJar)
+            from components.java
+        }
+    }
+}
 
 sourceSets["main"].resources.srcDir("src/resources/")
 
