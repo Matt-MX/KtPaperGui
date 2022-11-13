@@ -9,13 +9,13 @@ class EndEmptyPrompt(
     private val after: (() -> Unit)? = null
 ) : MessagePrompt(), BuildablePrompt {
 
-    override fun getPromptText(context: ConversationContext): String {
-        return message ?: ""
+    override fun getNextPrompt(context: ConversationContext): Prompt {
+        after?.invoke()
+        return DummyEndOfConversationPrompt()
     }
 
-    override fun getNextPrompt(context: ConversationContext): Prompt? {
-        after?.invoke()
-        return Prompt.END_OF_CONVERSATION
+    override fun getPromptText(context: ConversationContext): String {
+        return message ?: ""
     }
 
     override fun next(prompt: Prompt) {

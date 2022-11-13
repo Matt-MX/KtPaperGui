@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.UUID
+import kotlin.jvm.internal.Intrinsics.Kotlin
 
 object GuiManager : Listener {
     val guis = hashMapOf<String, IGuiScreen>()
@@ -22,7 +23,9 @@ object GuiManager : Listener {
 
     fun init(plugin: JavaPlugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin)
-        KotlinBukkitGui.version = "1.1.0"
+        KotlinBukkitGui.version = ""
+        KotlinBukkitGui.papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null
+        KotlinBukkitGui.protocollib = Bukkit.getPluginManager().getPlugin("ProtocolLib") != null
         Bukkit.getScheduler().runTaskAsynchronously(plugin) { ->
             GitUpdateChecker("https://api.github.com/repos/Matt-MX/KtBukkitGui/releases/latest", KotlinBukkitGui.version,
                 { outdated, latest ->

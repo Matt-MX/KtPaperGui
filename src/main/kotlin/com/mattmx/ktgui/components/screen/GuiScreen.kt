@@ -23,10 +23,10 @@ open class GuiScreen(
     var rows: Int = 1,
     var type: InventoryType? = null,
 ) : IGuiScreen, Formattable {
-    var items = arrayListOf<IGuiButton>()
+    protected var items = arrayListOf<IGuiButton>()
 
     // slot : items[index]
-    var pointers = hashMapOf<Int, Int>()
+    protected var pointers = hashMapOf<Int, Int>()
 
     var click: ClickEvents? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null
@@ -106,6 +106,7 @@ open class GuiScreen(
                 val item = items[index]
                 inv.setItem(slot, item.formatIntoItemStack(player))
             } catch (e: IndexOutOfBoundsException) {
+                // fixme
                 println("GUI with title $title had an issue when building. Slot $slot points to an invalid item!")
                 e.printStackTrace()
             }

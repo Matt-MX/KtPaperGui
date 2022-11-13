@@ -19,12 +19,20 @@ repositories {
     maven {
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
+    maven {
+        url = uri("https://maven.pvphub.me/releases")
+    }
+    maven {
+        url = uri("https://repo.dmulloy2.net/repository/public/")
+    }
 }
 
 dependencies {
     implementation(group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib',version: '1.7.10')
     compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
+    implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
 
 publishing {
