@@ -34,7 +34,7 @@ object AnimatedScoreboardExample {
          */
         val chars = min((getIterations() % text.length).toInt(), text.length)
         // Set the first line to a new string.
-        set(0, "&c" + text.substring(chars))
+        set(0, "&c${text.substring(chars)}".color())
         // Remember with RGB strings, the rgb values are there too, taking up the length.
         // Strip the color before referring to their length etc.
         setRGB(1, rgbText.substring(0, rgbText.length - min((getIterations() % rgbText.stripColor().length).toInt(), rgbText.stripColor().length - 1)))
