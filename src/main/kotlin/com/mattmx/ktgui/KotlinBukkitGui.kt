@@ -87,7 +87,7 @@ class KotlinBukkitGui : JavaPlugin() {
                 }
                 subCommands += simpleCommand {
                     name = "anvil"
-                    executes { source, _, _ -> AnvilInputGuiExample.gui().open(source as Player) }
+                    executes { source, _, _ -> AnvilInputGuiExample.gui(source as Player).open(source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "animated_scoreboard"

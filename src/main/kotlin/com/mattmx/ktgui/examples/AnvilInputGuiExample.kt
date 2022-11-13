@@ -18,7 +18,13 @@ import java.lang.Exception
 
 object AnvilInputGuiExample {
 
-    val gui: () -> GuiScreen = {
+    /**
+     * Each gui needs to be per-player
+     *
+     * @param player we're making the gui for
+     */
+    val gui: (player: Player) -> GuiScreen = { player ->
+        // ProtocolLib MUST be installed for this.
         if (!KotlinBukkitGui.protocollib) {
             throw ClassNotFoundException("ProtocolLib is not installed! This example requires it.")
         }
@@ -46,14 +52,20 @@ object AnvilInputGuiExample {
                 }
             } childOf this slot 2 named "&aDone" material Material.PAPER
 
+            /**
+             * We want to make sure that the listener is dynamically made.
+             * We're currently using PvPHub's ProtocolLibDsl to make it look nicer.
+             */
             var listener: PacketAdapter? = null
             open {
-                listener =
-                    packetReceiving(KotlinBukkitGui.plugin!!, type = arrayOf(PacketType.Play.Client.ITEM_NAME)) {
+                listener = packetReceiving(KotlinBukkitGui.plugin!!, type = arrayOf(PacketType.Play.Client.ITEM_NAME)) {
+                    // Only change the name if the packet's player is the player we want
+                    if (this.player == player)
                         currentName = packet.strings.read(0)
-                    }
+                }
             }
 
+            // Make sure to unregister the listener after we're done.
             close {
                 listener?.unregister()
             }
