@@ -106,7 +106,7 @@ open class GuiScreen(
                 val item = items[index]
                 inv.setItem(slot, item.formatIntoItemStack(player))
             } catch (e: IndexOutOfBoundsException) {
-                KotlinBukkitGui.log.warning("GUI with title $title had an issue when building. Slot $slot points to an invalid item!")
+                println("GUI with title $title had an issue when building. Slot $slot points to an invalid item!")
                 e.printStackTrace()
             }
         }
