@@ -3,7 +3,7 @@ package com.mattmx.ktgui.commands
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.examples.*
-import com.mattmx.ktgui.utils.Chat
+import com.mattmx.ktgui.extensions.color
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -21,7 +21,7 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
             when (args[0].lowercase()) {
                 "example" -> {
                     if (sender !is Player) {
-                        sender.sendMessage(Chat.format("${preprefix}Player only command."))
+                        sender.sendMessage("${preprefix}Player only command.".color())
                         return false
                     }
                     if (args.size > 1) {
@@ -39,10 +39,10 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                             "builder" -> DynamicExample.serverChangerExample(sender)
                             "yaml" -> DynamicExample.poorYamlExample(sender)
                             "dsl" -> GuiDslExample.open(sender)
-                            else -> sender.sendMessage(Chat.format("${prefix}Invalid example gui name."))
+                            else -> sender.sendMessage("${prefix}Invalid example gui name.".color())
                         }
                     } else {
-                        sender.sendMessage(Chat.format("${prefix}Invalid example gui name."))
+                        sender.sendMessage("${prefix}Invalid example gui name.".color())
                     }
                 }
 
@@ -55,11 +55,11 @@ class KtGuiCommand : CommandExecutor, TabCompleter {
                     GuiManager.players.forEach { (uuid, gui) ->
                         builder.add("${preprefix}User: &#E24462${Bukkit.getPlayer(uuid)?.name} Class: &#E24462${gui}")
                     }
-                    builder.forEach { sender.sendMessage(Chat.format(it)) }
+                    builder.forEach { sender.sendMessage(it.color()) }
                 }
             }
         } else {
-            sender.sendMessage(Chat.format("${preprefix}By MattMX, running KtGui v${KotlinBukkitGui.version}!"))
+            sender.sendMessage("${preprefix}By MattMX, running KtGui v${KotlinBukkitGui.version}!".color())
         }
         return false
     }

@@ -5,13 +5,14 @@ import com.mattmx.ktgui.components.button.GuiButton;
 import com.mattmx.ktgui.components.button.GuiToggleButton;
 import com.mattmx.ktgui.components.screen.GuiScreen;
 import com.mattmx.ktgui.item.ItemBuilder;
-import com.mattmx.ktgui.utils.Chat;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.w3c.dom.ranges.Range;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.mattmx.ktgui.utils.ColorKt.color;
 
 public class JavaGuiExample extends GuiScreen {
     public JavaGuiExample() {
@@ -33,8 +34,10 @@ public class JavaGuiExample extends GuiScreen {
                 new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled").make(),
                 new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled").make()
         ).onChange(e -> {
-            e.getPlayer().sendMessage(Chat.INSTANCE.format(
-                    "&#7f52ffJust a quick example to show that all functionality is 1:1 from KtGui -> Java. (" + ((GuiToggleButton) e.getButton()).enabled() + ")", e.getPlayer()));
+            e.getPlayer().sendMessage(color(
+                    "&#7f52ffJust a quick example to show that all functionality is 1:1 from KtGui -> Java. ("
+                            + ((GuiToggleButton) e.getButton()).enabled() + ")",
+                    e.getPlayer()));
             return null;
         }).slot(22).childOf(this);
     }

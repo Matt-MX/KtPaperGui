@@ -5,23 +5,18 @@ import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.components.ClickEvents
 import com.mattmx.ktgui.components.Formattable
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.extensions.setOpenGui
-import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
-import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.Inventory
-import java.lang.IndexOutOfBoundsException
 import java.lang.Integer.max
 import java.lang.Integer.min
-import java.lang.Math.floor
-import java.lang.Math.round
 
 open class GuiScreen(
     var title: String = "null",
@@ -95,7 +90,7 @@ open class GuiScreen(
     }
 
     fun openAndFormat(player: Player) {
-        title = Chat.format(title, player)
+        title = title.color(player)
         open(player)
     }
 
@@ -212,6 +207,6 @@ open class GuiScreen(
     }
 
     override fun format(p: Player) {
-        title = Chat.format(title, p)
+        title = title.color(p)
     }
 }

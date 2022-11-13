@@ -1,13 +1,19 @@
 package com.mattmx.ktgui.utils
 
+import com.mattmx.ktgui.KotlinBukkitGui
+import me.clip.placeholderapi.PlaceholderAPI
 import net.md_5.bungee.api.ChatColor
+import org.bukkit.entity.Player
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-fun color(s: String, vararg placeholders: Pair<String, String>): String {
+fun color(s: String, p: Player? = null, vararg placeholders: Pair<String, String>): String {
     var string = s
     placeholders.forEach {
         string = string.replace(it.first, it.second)
+    }
+    if (KotlinBukkitGui.papi && p != null) {
+        string = PlaceholderAPI.setPlaceholders(p, string)
     }
     return color(string)
 }

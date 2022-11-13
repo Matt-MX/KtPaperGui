@@ -3,7 +3,7 @@ package com.mattmx.ktgui.examples
 import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
-import com.mattmx.ktgui.utils.Chat
+import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.ymlguis.YamlGuiParser
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -26,7 +26,7 @@ object DynamicExample {
          * (You can use the constructor but here we're showing infix usage.
          */
         gui title "Server changer" rows 3
-        val genericClick = { e: InventoryClickEvent -> e.whoClicked.sendMessage(Chat.format("&8&l⤷ &#7f52ffThis button can do stuff")) }
+        val genericClick = { e: InventoryClickEvent -> e.whoClicked.sendMessage("&8&l⤷ &#7f52ffThis button can do stuff".color()) }
         /**
          * Example of how to fill a GUI with items
          */

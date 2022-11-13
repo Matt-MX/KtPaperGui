@@ -2,8 +2,8 @@ package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.components.button.*
 import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.item.ItemBuilder
-import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Material
 
 class ConfigScreenExample : GuiScreen("Example Config", 3) {
@@ -23,7 +23,7 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
                 disabled.copy().lore("&8This is item $it").make())
                 .enabledOnDefault(true)
                 .onChange {
-                    player.sendMessage(Chat.color("&cChanged button ${it}! (${(button as GuiToggleButton).enabled()})"))
+                    player.sendMessage("&cChanged button ${it}! (${(button as GuiToggleButton).enabled()})".color())
                 } slot slot childOf this
             slot += 2
         }
@@ -40,7 +40,7 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
                 this["grass_block"] = ItemBuilder(Material.GRASS_BLOCK).lore("&8Click to cycle").name("&6Grass Block").make()
                 this["diamond"] = ItemBuilder(Material.DIAMOND_BLOCK).lore("&8Click to cycle").name("&bDiamond Block").make()
             }.changed {
-                player.sendMessage(Chat.color("&7You changed to ${(button as GuiCycleButton).getSelectedId()}"))
+                player.sendMessage("&7You changed to ${(button as GuiCycleButton).getSelectedId()}".color())
             } childOf this slot 10
         /**
          * You may want to allow the user to read all options instead

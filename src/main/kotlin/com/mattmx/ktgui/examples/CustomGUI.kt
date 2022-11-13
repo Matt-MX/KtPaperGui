@@ -1,18 +1,14 @@
 package com.mattmx.ktgui.examples
 
-import com.mattmx.ktgui.GuiManager
-import com.mattmx.ktgui.commands.KtGuiCommand
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.GuiToggleButton
 import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.item.ItemBuilder
-import com.mattmx.ktgui.utils.Chat
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryCloseEvent
 import kotlin.random.Random
 
 class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffExample GUI", 4) {
@@ -54,7 +50,7 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
             ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled").lore("&8Click to toggle").make(),
             ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled").lore("&8Click to toggle").make(),
         ).onChange {
-            player.sendMessage(Chat.format("&8&l⤷ &#7f52ffToggled thing to ${(button as GuiToggleButton).enabled()}"))
+            player.sendMessage("&8&l⤷ &#7f52ffToggled thing to ${(button as GuiToggleButton).enabled()}".color())
         } slot 10 childOf this
         /**
          * Random example of using callbacks to do different things
@@ -83,7 +79,7 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
                 generic = { e ->
                     val world = e.whoClicked.world
                     world.time += 12000
-                    e.whoClicked.sendMessage(Chat.format("&8&l⤷ &#7f52ffTime +12000 game ticks!", e.whoClicked as Player))
+                    e.whoClicked.sendMessage("&8&l⤷ &#7f52ffTime +12000 game ticks!".color())
                 }
             }.lore {
                 add("&8Click to change the time of day by 12000 game ticks")

@@ -1,12 +1,11 @@
 package com.mattmx.ktgui.scoreboards
 
-import com.mattmx.ktgui.utils.Chat
+import com.mattmx.ktgui.extensions.color
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.scoreboard.DisplaySlot
 import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Scoreboard
-import java.lang.IndexOutOfBoundsException
 import java.lang.Integer.min
 
 
@@ -106,7 +105,7 @@ open class ScoreboardBuilder(
 
     fun addRGB(line: String) : ScoreboardBuilder {
         if (scoreboardLines.size > MAX_LINES) throw IndexOutOfBoundsException("You can't add more than 16 lines.")
-        val name = Chat.color("&r").repeat(scoreboardLines.size)
+        val name = "&r".color().repeat(scoreboardLines.size)
         val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)
         team.suffix = line
         team.addEntry(name)
