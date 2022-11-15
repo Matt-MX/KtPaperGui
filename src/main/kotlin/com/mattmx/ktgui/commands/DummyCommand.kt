@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture
 
 class DummyCommand(
     val cmd: SimpleCommandBuilder
-) : Command(cmd.name, cmd.description ?: "", "null", cmd.aliases) {
+) : Command(cmd.name, cmd.description ?: "", "null", cmd.aliases.toList()) {
 
     override fun execute(sender: CommandSender, commandLabel: String, args: Array<out String>): Boolean {
         cmd.getCommand(args.toMutableList())?.also {

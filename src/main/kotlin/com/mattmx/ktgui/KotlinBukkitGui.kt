@@ -31,6 +31,7 @@ class KotlinBukkitGui : JavaPlugin() {
             description = "The KtBukkitGui example command."
             permission = "ktgui.command"
             suggestSubCommands = true
+            playerOnly = true
 
             unknownSubcommand { source, args, alias ->
                 source.sendMessage("&cUnknown sub command.".color())

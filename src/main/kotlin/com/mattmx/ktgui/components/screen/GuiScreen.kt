@@ -112,8 +112,8 @@ open class GuiScreen(
                 e.printStackTrace()
             }
         }
-        player.setOpenGui(this)
         player.openInventory(inv)
+        player.setOpenGui(this)
         open?.invoke(player)
         // open gui for player
 //        pointers.forEach { (slot, index) ->
