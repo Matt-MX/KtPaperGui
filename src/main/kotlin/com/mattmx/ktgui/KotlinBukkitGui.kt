@@ -1,10 +1,12 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.simpleCommand
+import com.mattmx.ktgui.dsl.onEvent
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.extensions.color
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 
