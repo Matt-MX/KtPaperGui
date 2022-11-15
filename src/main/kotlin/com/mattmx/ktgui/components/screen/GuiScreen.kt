@@ -4,6 +4,7 @@ import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.components.ClickEvents
 import com.mattmx.ktgui.components.Formattable
+import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.extensions.setOpenGui
@@ -209,5 +210,9 @@ open class GuiScreen(
 
     override fun format(p: Player) {
         title = title.color(p)
+    }
+
+    companion object {
+        operator fun invoke() = GuiButton()
     }
 }

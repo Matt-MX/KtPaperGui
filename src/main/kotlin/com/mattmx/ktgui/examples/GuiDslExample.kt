@@ -1,5 +1,7 @@
 package com.mattmx.ktgui.examples
 
+import com.mattmx.ktgui.components.button.GuiButton
+import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.gui
 import org.bukkit.Material
@@ -7,10 +9,10 @@ import org.bukkit.entity.Player
 
 object GuiDslExample {
 
-    val gui = gui {
+    val gui = gui<GuiScreen> {
         title = "DSL Gui example"
         rows = 1
-        button(this) {
+        button<GuiButton> {
             material(Material.PAPER)
             named("&cThis GUI was built using Kotlin's DSL.")
             lore {
@@ -19,7 +21,7 @@ object GuiDslExample {
             }
             slot(4)
         }
-        button(this) {
+        button<GuiButton> {
             material(Material.BARRIER)
             named("&c&lClose the GUI")
             lore {

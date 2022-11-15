@@ -34,13 +34,13 @@ object AnvilInputGuiExample {
             type = InventoryType.ANVIL
             var currentName = ""
 
-            button {
+            button<GuiButton> {
                 lore {
                     this += "Using the anvil rename feature".color()
                 }
             } material Material.PAPER named "&aRename this item" slot 0 childOf this
 
-            button {
+            button<GuiButton> {
                 click {
                     generic = { e ->
                         forceClose(e.whoClicked as Player)

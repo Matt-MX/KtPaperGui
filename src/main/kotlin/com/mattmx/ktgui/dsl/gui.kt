@@ -1,9 +1,18 @@
 package com.mattmx.ktgui.dsl
 
+import com.mattmx.ktgui.components.button.GuiButton
+import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
+import java.util.function.Supplier
 
-inline fun gui(gui: GuiScreen.() -> Unit) : GuiScreen {
-    val g = GuiScreen()
+inline fun <reified T : GuiScreen> gui(constructor: Supplier<T> = Supplier{ GuiScreen() as T }, gui: T.() -> Unit) : T {
+    val g = constructor.get()
     gui.invoke(g)
     return g
+}
+
+inline fun <reified T : GuiButton> button(constructor: Supplier<T> = Supplier { GuiButton() as T }, button: T.() -> Unit) : T {
+    val b = constructor.get()
+    button.invoke(b)
+    return b
 }

@@ -60,7 +60,6 @@ class LoreCycleButton(
         selectableLores.clear()
         val ids = arrayListOf<String>()
         lores.forEachIndexed { index, loreOption ->
-            println(loreOption.line)
             // remove any duplicates
             if (loreOption.id != null && !ids.contains(loreOption.id)) {
                 ids.add(loreOption.id!!)

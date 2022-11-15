@@ -1,7 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.simpleCommand
-import com.mattmx.ktgui.dsl.onEvent
+import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.extensions.color
 import org.bukkit.Bukkit
@@ -21,6 +21,10 @@ class KotlinBukkitGui : JavaPlugin() {
         GuiManager.register("example_config", ConfigScreenExample())
         GuiManager.register("example_pages", MultiPageExample())
         GuiManager.register("example_conversation", ConversationGuiExample())
+
+        event<PlayerJoinEvent>(this) {
+            player.sendMessage("&7Welcome back, &f${player.name}&7!".color())
+        }
 
         simpleCommand {
             name = "ktgui"
