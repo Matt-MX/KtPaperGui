@@ -22,7 +22,7 @@ class KotlinBukkitGui : JavaPlugin() {
         GuiManager.register("example_pages", MultiPageExample())
         GuiManager.register("example_conversation", ConversationGuiExample())
 
-        event<PlayerJoinEvent>(this) {
+        event<PlayerJoinEvent> {
             player.sendMessage("&7Welcome back, &f${player.name}&7!".color())
         }
 
@@ -33,19 +33,19 @@ class KotlinBukkitGui : JavaPlugin() {
             suggestSubCommands = true
             playerOnly = true
 
-            unknownSubcommand { source, args, alias ->
-                source.sendMessage("&cUnknown sub command.".color())
+            unknownSubcommand {
+                it.source.sendMessage("&cUnknown sub command.".color())
             }
 
-            executes { source, args, alias ->
-                source.sendMessage("&#7F52FFBy MattMX, running KtGui v${KotlinBukkitGui.version}!".color())
+            executes {
+                it.source.sendMessage("&#7F52FFBy MattMX, running KtGui v${KotlinBukkitGui.version}!".color())
             }
 
             subCommands += simpleCommand {
                 name = "debug"
                 permission = "ktgui.command.debug"
 
-                executes { source, args, alias ->
+                executes {
                     val builder = arrayListOf<String>()
                     builder.add("&#7F52FFDebug information: &#E24462Registered GUIs")
                     GuiManager.guis.forEach { (id, gui) ->
@@ -54,7 +54,7 @@ class KotlinBukkitGui : JavaPlugin() {
                     GuiManager.players.forEach { (uuid, gui) ->
                         builder.add(" &#7F52FFUser: &#E24462${Bukkit.getPlayer(uuid)?.name} Class: &#E24462${gui}")
                     }
-                    builder.forEach { source.sendMessage(it.color()) }
+                    it.source.sendMessage(*builder.map { l -> l.color() }.toTypedArray())
                 }
             }
 
@@ -64,61 +64,61 @@ class KotlinBukkitGui : JavaPlugin() {
                 suggestSubCommands = true
                 playerOnly = true
                 
-                unknownSubcommand { source, _, _ ->
-                    source.sendMessage("&cInvalid example gui name.".color())
+                unknownSubcommand {
+                    it.source.sendMessage("&cInvalid example gui name.".color())
                 }
 
                 subCommands += simpleCommand {
                     name = "normal"
-                    executes { source, _, _ -> GuiManager.guis["example_normal"]?.createCopyAndOpen(source as Player) }
+                    executes { GuiManager.guis["example_normal"]?.createCopyAndOpen(it.source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "java"
-                    executes { source, _, _ -> GuiManager.guis["example_java"]?.createCopyAndOpen(source as Player) }
+                    executes { GuiManager.guis["example_java"]?.createCopyAndOpen(it.source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "java_conversation"
-                    executes { source, _, _ -> JavaConversationExample.builder.build(source as Player).begin() }
+                    executes { JavaConversationExample.builder.build(it.source as Player).begin() }
                 }
                 subCommands += simpleCommand {
                     name = "config"
-                    executes { source, _, _ -> GuiManager.guis["example_config"]?.createCopyAndOpen(source as Player) }
+                    executes { GuiManager.guis["example_config"]?.createCopyAndOpen(it.source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "pages"
-                    executes { source, _, _ -> GuiManager.guis["example_pages"]?.createCopyAndOpen(source as Player) }
+                    executes { GuiManager.guis["example_pages"]?.createCopyAndOpen(it.source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "conversation"
-                    executes { source, _, _ -> GuiManager.guis["example_conversation"]?.open(source as Player) }
+                    executes { GuiManager.guis["example_conversation"]?.open(it.source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "anvil"
-                    executes { source, _, _ -> AnvilInputGuiExample.gui(source as Player).open(source as Player) }
+                    executes { AnvilInputGuiExample.gui(it.source as Player).open(it.source) }
                 }
                 subCommands += simpleCommand {
                     name = "animated_scoreboard"
-                    executes { source, _, _ -> AnimatedScoreboardExample.toggle(source as Player) }
+                    executes { AnimatedScoreboardExample.toggle(it.source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "scoreboard"
-                    executes { source, _, _ -> ScoreboardExample.toggle(source as Player) }
+                    executes { ScoreboardExample.toggle(it.source as Player) }
                 }
                 subCommands += simpleCommand { 
                     name = "furnace"
-                    executes { source, _, _ -> DynamicExample.furnaceInventoryExample(source as Player) }
+                    executes { DynamicExample.furnaceInventoryExample(it.source as Player) }
                 }
                 subCommands += simpleCommand { 
                     name = "builder"
-                    executes { source, _, _ -> DynamicExample.serverChangerExample(source as Player) }
+                    executes { DynamicExample.serverChangerExample(it.source as Player) }
                 }
                 subCommands += simpleCommand { 
                     name = "yaml"
-                    executes { source, _, _ -> DynamicExample.poorYamlExample(source as Player) }
+                    executes { DynamicExample.poorYamlExample(it.source as Player) }
                 }
                 subCommands += simpleCommand { 
                     name = "dsl"
-                    executes { source, _, _ -> GuiDslExample.open(source as Player) }
+                    executes { GuiDslExample.open(it.source as Player) }
                 }
             }
         }.register()

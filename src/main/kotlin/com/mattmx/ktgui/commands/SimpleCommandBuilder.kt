@@ -1,8 +1,10 @@
 package com.mattmx.ktgui.commands
 
 import org.bukkit.Bukkit
+import org.bukkit.command.Command
 import org.bukkit.command.CommandMap
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 open class SimpleCommandBuilder(
@@ -15,10 +17,10 @@ open class SimpleCommandBuilder(
     val subCommands = arrayListOf<SimpleCommandBuilder>()
     var suggestSubCommands = false
     var playerOnly = false
-    private var suggests: ((String) -> List<String>?)? = null
-    private var execute: ((CommandSender, List<String>, String) -> Unit)? = null
-    private var unknown: ((CommandSender, List<String>, String) -> Unit)? = null
-    var noPermissions: ((CommandSender, List<String>, String) -> Unit)? = null
+    private var suggests: (CommandInvocation.() -> List<String>?)? = null
+    private var execute: (CommandInvocation.() -> Unit)? = null
+    private var unknown: (CommandInvocation.() -> Unit)? = null
+    var noPermissions: (CommandInvocation.() -> Unit)? = null
         private set
 
     infix fun permission(permission: String) : SimpleCommandBuilder {
@@ -31,7 +33,7 @@ open class SimpleCommandBuilder(
         return this
     }
 
-    fun noPermissions(cb: ((CommandSender, List<String>, String) -> Unit)? = null) : SimpleCommandBuilder {
+    fun noPermissions(cb: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
         noPermissions = cb
         return this
     }
@@ -46,43 +48,42 @@ open class SimpleCommandBuilder(
         return permission == null || executor.hasPermission(permission!!)
     }
 
-    infix fun executes(execute: (source: CommandSender, args: List<String>, alias: String) -> Unit) : SimpleCommandBuilder {
+    fun executes(execute: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
         this.execute = execute
         return this
     }
 
-    infix fun unknownSubcommand(unknown: (source: CommandSender, args: List<String>, alias: String) -> Unit) : SimpleCommandBuilder {
+    fun unknownSubcommand(unknown: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
         this.unknown = unknown
         return this
     }
 
-    fun unknown(executor: CommandSender, args: List<String>, alias: String) {
-        unknown?.let { it(executor, args, alias) }
+    fun unknown(executor: CommandSender, args: List<String>, lastArg: String, alias: String) {
+        unknown?.let { it(CommandInvocation(executor, args, lastArg, alias)) }
     }
 
-    fun executeFor(executor: CommandSender, args: List<String>, alias: String) {
-        execute?.let { it(executor, args, alias) }
+    fun executeFor(executor: CommandSender, args: List<String>, lastArg: String, alias: String) {
+        execute?.let { it(CommandInvocation(executor, args, lastArg, alias)) }
     }
 
-    infix fun suggests(suggests: (String) -> List<String>?) : SimpleCommandBuilder {
-        this.suggests = suggests
-        return this
+    fun suggests(suggest: (CommandInvocation) -> List<String>?) {
+        this.suggests = suggest
     }
 
     fun allAliases() : List<String> {
         return aliases.toMutableList() + name
     }
 
-    fun getSuggetions(arg: String, source: CommandSender) : List<String> {
+    fun getSuggetions(invocation: CommandInvocation) : List<String> {
         suggests?.also {
-            return it(arg) ?: listOf()
+            return it(invocation) ?: listOf()
         } ?: run {
             if (suggestSubCommands) {
                 return subCommands
-                    .filter { it.hasPermission(source) }
+                    .filter { it.hasPermission(invocation.source) }
                     .map { it.allAliases() }
                     .flatten()
-                    .filter { it.startsWith(arg) }
+                    .filter { it.startsWith(invocation.lastArg) }
             }
         }
         return listOf()
@@ -123,6 +124,25 @@ open class SimpleCommandBuilder(
         return this
     }
 
+}
+
+class CommandInvocation(
+    val source: CommandSender,
+    val args: List<String>,
+    val lastArg: String,
+    val alias: String
+) {
+    fun player() : Player {
+        return source as Player
+    }
+
+    operator fun get(index: Int) : String? {
+        if (index >= args.size) return null
+        return args[index]
+    }
+
+    fun isNotEmpty() : Boolean = args.isNotEmpty()
+    fun isEmpty() : Boolean = args.isEmpty()
 }
 
 inline fun simpleCommand(cmd: (SimpleCommandBuilder.() -> Unit)) : SimpleCommandBuilder {

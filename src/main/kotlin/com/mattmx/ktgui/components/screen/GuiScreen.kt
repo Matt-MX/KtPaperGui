@@ -24,10 +24,10 @@ open class GuiScreen(
     var rows: Int = 1,
     var type: InventoryType? = null,
 ) : IGuiScreen, Formattable {
-    protected var items = arrayListOf<IGuiButton>()
+    var items = arrayListOf<IGuiButton>()
 
     // slot : items[index]
-    protected var pointers = hashMapOf<Int, Int>()
+    var pointers = hashMapOf<Int, Int>()
 
     var click: ClickEvents? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null

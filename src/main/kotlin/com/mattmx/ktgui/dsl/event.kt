@@ -9,6 +9,15 @@ import kotlin.reflect.KClass
 
 class KListener<T : Event> : Listener
 
+@JvmName("event1")
+inline fun <reified T : Event> JavaPlugin.event(
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false,
+    noinline block: T.() -> Unit
+) {
+    val listener = KListener<T>()
+    listener.event(this, priority, ignoreCancelled, block)
+}
 inline fun <reified T : Event> event(
     plugin: JavaPlugin,
     priority: EventPriority = EventPriority.NORMAL,
