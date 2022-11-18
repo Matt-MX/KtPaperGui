@@ -130,7 +130,7 @@ open class GuiButton(
 
     override fun formatIntoItemStack(player: Player?) : ItemStack? {
         // format itemstack and return
-        val i = item?.clone()
+        val i = getItemStack()?.clone()
         i?.format(player)
         return i
     }
