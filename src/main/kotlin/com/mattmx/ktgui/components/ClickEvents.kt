@@ -36,4 +36,22 @@ class ClickEvents {
             else -> generic?.invoke(e)
         }
     }
+
+    fun copy() : ClickEvents {
+        val copy = ClickEvents()
+        copy.left = left
+        copy.right = right
+        copy.shiftRight = shiftRight
+        copy.shiftLeft = shiftLeft
+        copy.windowBorderLeft = windowBorderLeft
+        copy.windowBorderRight = windowBorderRight
+        copy.middle = middle
+        copy.numberKey = numberKey
+        copy.doubleClick = doubleClick
+        copy.drop = drop
+        copy.ctrlDrop = ctrlDrop
+        copy.creative = creative
+        copy.generic = generic
+        return copy
+    }
 }

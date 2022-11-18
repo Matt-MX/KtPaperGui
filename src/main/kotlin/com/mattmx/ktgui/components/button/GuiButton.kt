@@ -148,8 +148,8 @@ open class GuiButton(
     override fun copy(parent: IGuiScreen) : GuiButton {
         val copy = GuiButton()
         copy.parent = parent
-        copy.item = item
-        copy.click = click
+        copy.item = item?.clone()
+        copy.click = click.copy()
         copy.notClicked = notClicked
         copy.close = close
         return copy
