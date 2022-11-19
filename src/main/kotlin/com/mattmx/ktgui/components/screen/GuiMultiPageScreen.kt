@@ -88,7 +88,6 @@ open class GuiMultiPageScreen(
         screen.close = close
         screen.quit = quit
         screen.open = open
-        println(screen.itemList)
         return screen
     }
 }
