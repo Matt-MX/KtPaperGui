@@ -10,13 +10,14 @@ import org.bukkit.entity.Player
 class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
     init {
         Material.values().forEach { material ->
-            add(GuiButton()
-                    .click {
+            this += GuiButton()
+                .click {
                     generic = { e -> e.whoClicked.sendMessage("&bYou clicked item &3&l${material.name}".color()) }
-                } named "&b&l${material.name}" material material)
+                } named "&b&l${material.name}" material material
         }
         GuiButton() material Material.GRAY_STAINED_GLASS_PANE named " " slots (0..8).toList() + (45..53).toList() childOf this
-        val currentPage = GuiButton() named "&9&lPage ${getCurrentPage()}" slot 49 childOf this material Material.COMPASS
+        val currentPage =
+            GuiButton() named "&9&lPage ${getCurrentPage()}" slot 49 childOf this material Material.COMPASS
         GuiButton()
             .click {
                 left = { e ->

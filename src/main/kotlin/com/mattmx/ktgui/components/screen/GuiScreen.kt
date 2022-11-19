@@ -96,7 +96,7 @@ open class GuiScreen(
         // format the items
         val inv: Inventory = if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(player, totalSlots(), title)
         items.forEach { (slot, item) ->
-            if (slot > inv.size)
+            if (slot < inv.size)
                 inv.setItem(slot, item.formatIntoItemStack(player))
         }
         player.openInventory(inv)

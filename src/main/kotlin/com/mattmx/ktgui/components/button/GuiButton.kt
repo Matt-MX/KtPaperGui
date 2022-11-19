@@ -59,7 +59,6 @@ open class GuiButton(
     override infix fun slot(slot: Int) : GuiButton {
         parent?.also {
             it.setSlot(this, slot)
-            parent?.addChild(this)
         } ?: run {
             if (slots == null) slots = arrayListOf()
             slots!!.add(slot)

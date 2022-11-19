@@ -12,18 +12,20 @@ class DummyCommand(
 ) : Command(cmd.name, cmd.description ?: "", "null", cmd.aliases.toList()) {
 
     override fun execute(sender: CommandSender, commandLabel: String, args: Array<out String>): Boolean {
+        val current = if (args.isEmpty()) ""
+        else args[if (args.size - 1 > 0) args.size - 1 else 0]
         cmd.getCommand(args.toMutableList())?.also {
             if (sender !is Player && it.playerOnly) {
                 sender.sendMessage("&cPlayer only command.".color())
                 return false
             }
-            if (it.hasPermission(sender)) it.executeFor(sender, args.toList(), commandLabel)
+            if (it.hasPermission(sender)) it.executeFor(sender, args.toList(), current, commandLabel)
             else {
-                cmd.noPermissions?.let { it1 -> it1(sender, args.toList(), commandLabel) }
+                cmd.noPermissions?.invoke(CommandInvocation(sender, args.toList(), current, commandLabel))
                 sender.sendMessage(this.permissionMessage)
             }
         } ?: run {
-            cmd.unknown(sender, args.toList(), commandLabel)
+            cmd.unknown(sender, args.toList(), current, commandLabel)
         }
         return false
     }
@@ -34,7 +36,7 @@ class DummyCommand(
         var argss = args.toMutableList()
         argss = if (argss.size - 1 < 0) mutableListOf("") else argss.subList(0, argss.size - 1)
         cmd.getCommand(argss)?.let {
-            return it.getSuggetions(current, sender).toMutableList()
+            return it.getSuggetions(CommandInvocation(sender, args.toList(), current, alias)).toMutableList()
         }
         return mutableListOf()
     }

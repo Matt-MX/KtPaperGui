@@ -36,6 +36,7 @@ object GuiDslExample {
 
     fun open(player: Player) {
         gui.openAndFormat(player)
+        println(gui.items)
     }
 
 }

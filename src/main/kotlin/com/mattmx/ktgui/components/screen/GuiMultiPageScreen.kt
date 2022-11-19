@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.components.screen
 
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.extensions.format
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
@@ -16,7 +17,7 @@ open class GuiMultiPageScreen(
     private val startPage: Int = 0
 ) : GuiScreen(title, rows) {
     protected var page = startPage
-    protected var itemList = arrayListOf<Int>()
+    protected var itemList = arrayListOf<IGuiButton>()
 
     init {
         open { p ->
@@ -26,7 +27,7 @@ open class GuiMultiPageScreen(
             ce.generic = { e ->
                 if (e.rawSlot in minSlot until maxSlot) {
                     val index = e.rawSlot + (page * pageSize()) - minSlot
-                    itemList.getOrNull(index)?.let { items[it]?.thisClicked(e) }
+                    itemList.getOrNull(index)?.thisClicked(e)
                 } else {
                     items[e.rawSlot]?.thisClicked(e)
                 }
@@ -45,7 +46,7 @@ open class GuiMultiPageScreen(
         for (slot in (page * pageSize()) until (page + 1) * pageSize()) {
             val normalized = slot - (page * pageSize()) + minSlot
             itemList.getOrNull(slot)?.also {
-                player.openInventory.setItem(normalized, items[it]?.formatIntoItemStack(player))
+                player.openInventory.setItem(normalized, it.formatIntoItemStack(player))
             } ?: run { player.openInventory.setItem(normalized, null) }
         }
     }
@@ -70,15 +71,16 @@ open class GuiMultiPageScreen(
         return setPage(player, page - 1)
     }
 
+    operator fun plusAssign(button: IGuiButton) = add(button)
+
     fun add(button: IGuiButton) {
-        button childOf this
-        itemList.add(items.size - 1)
+        itemList += button
     }
 
     override fun copy(): IGuiScreen {
         val screen = GuiMultiPageScreen(title, rows, maxPages, minSlot, maxSlot, startPage)
         screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, IGuiButton>
-        screen.itemList = itemList.toMutableList() as ArrayList<Int>
+        screen.itemList = itemList.map { it.copy(screen) }.toMutableList() as ArrayList<IGuiButton>
         screen.type = type
         screen.rows = rows
         screen.click = click
@@ -86,6 +88,7 @@ open class GuiMultiPageScreen(
         screen.close = close
         screen.quit = quit
         screen.open = open
+        println(screen.itemList)
         return screen
     }
 }
