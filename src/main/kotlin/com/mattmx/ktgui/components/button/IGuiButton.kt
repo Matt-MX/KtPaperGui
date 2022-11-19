@@ -27,5 +27,7 @@ interface IGuiButton {
 
     infix fun slot(slot: Int) : IGuiButton
 
+    fun slots() : List<Int>?
+
     infix fun childOf(parent: IGuiScreen) : IGuiButton
 }

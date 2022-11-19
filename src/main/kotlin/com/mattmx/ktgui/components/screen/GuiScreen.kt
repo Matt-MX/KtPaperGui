@@ -24,10 +24,7 @@ open class GuiScreen(
     var rows: Int = 1,
     var type: InventoryType? = null,
 ) : IGuiScreen, Formattable {
-    var items = arrayListOf<IGuiButton>()
-
-    // slot : items[index]
-    var pointers = hashMapOf<Int, Int>()
+    var items = hashMapOf<Int, IGuiButton>()
 
     var click: ClickEvents? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null
@@ -47,26 +44,22 @@ open class GuiScreen(
     }
 
     override fun getSlots(button: IGuiButton): List<Int> {
-        val index = items.indexOf(button)
-        return pointers.filter { it.value == index }.map { it.key }
+        return items.entries
+            .filter { it.value == button }
+            .map { it.key }
     }
 
     override fun size(): Int {
-        return pointers.size
+        return items.size
     }
 
     override fun setSlot(button: IGuiButton, slot: Int): GuiScreen {
-        val pointerIndex: Int = if (!items.contains(button)) {
-            items.add(button)
-            items.size - 1
-        } else items.indexOf(button)
-        pointers[slot] = pointerIndex
-//        println("${button.javaClass.name} $pointerIndex <- $slot ${items.size - 1}")
+        items[slot] = button
         return this
     }
 
     fun slotsUsed() : List<Int> {
-        return pointers.keys.toMutableList()
+        return items.map { it.key }
     }
 
     infix fun type(type: InventoryType): GuiScreen {
@@ -102,29 +95,18 @@ open class GuiScreen(
     override fun open(player: Player) {
         // format the items
         val inv: Inventory = if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(player, totalSlots(), title)
-        pointers.forEach { (slot, index) ->
-            try {
-                val item = items[index]
+        items.forEach { (slot, item) ->
+            if (slot > inv.size)
                 inv.setItem(slot, item.formatIntoItemStack(player))
-            } catch (e: IndexOutOfBoundsException) {
-                // fixme
-                println("GUI with title $title had an issue when building. Slot $slot points to an invalid item!")
-                e.printStackTrace()
-            }
         }
         player.openInventory(inv)
         player.setOpenGui(this)
         open?.invoke(player)
-        // open gui for player
-//        pointers.forEach { (slot, index) ->
-//            println("slot: $slot index: $index -> ${items[index].getItemStack()?.type}")
-//        }
     }
 
     override fun copy(): IGuiScreen {
         val screen = GuiScreen(title)
-        screen.items = items.map { it.copy(screen) }.toMutableList() as ArrayList<IGuiButton>
-        screen.pointers = pointers.toMutableMap() as HashMap<Int, Int>
+        screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, IGuiButton>
         screen.type = type
         screen.rows = rows
         screen.click = click
@@ -168,7 +150,9 @@ open class GuiScreen(
     }
 
     override fun addChild(child: IGuiButton) {
-        items.add(child)
+        child.slots()?.forEach {
+            items[it] = child
+        }
     }
 
     override fun click(e: InventoryClickEvent) {
@@ -177,11 +161,7 @@ open class GuiScreen(
             it.accept(e)
             return
         }
-        val index = pointers[e.rawSlot]
-        index?.let {
-            val item = items[it]
-            item.thisClicked(e)
-        }
+        items[e.rawSlot]?.thisClicked(e)
     }
 
     fun last() : Int {

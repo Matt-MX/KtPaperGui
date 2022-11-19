@@ -59,6 +59,7 @@ open class GuiButton(
     override infix fun slot(slot: Int) : GuiButton {
         parent?.also {
             it.setSlot(this, slot)
+            parent?.addChild(this)
         } ?: run {
             if (slots == null) slots = arrayListOf()
             slots!!.add(slot)
@@ -69,7 +70,6 @@ open class GuiButton(
     override infix fun childOf(screen: IGuiScreen): GuiButton {
         this.parent = screen
         parent?.addChild(this)
-        if (slots != null) slots!!.forEach { slot(it) }
         return this
     }
 
@@ -133,6 +133,10 @@ open class GuiButton(
         val i = getItemStack()?.clone()
         i?.format(player)
         return i
+    }
+
+    override fun slots(): List<Int>? {
+        return slots?.toMutableList()
     }
 
     fun update(player: Player) : GuiButton {

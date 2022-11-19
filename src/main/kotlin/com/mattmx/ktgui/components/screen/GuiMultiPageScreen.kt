@@ -26,9 +26,9 @@ open class GuiMultiPageScreen(
             ce.generic = { e ->
                 if (e.rawSlot in minSlot until maxSlot) {
                     val index = e.rawSlot + (page * pageSize()) - minSlot
-                    itemList.getOrNull(index)?.let { items.getOrNull(it)?.thisClicked(e) }
+                    itemList.getOrNull(index)?.let { items[it]?.thisClicked(e) }
                 } else {
-                    pointers[e.rawSlot]?.let { items.getOrNull(it)?.thisClicked(e) }
+                    items[e.rawSlot]?.thisClicked(e)
                 }
             }
         }
@@ -45,7 +45,7 @@ open class GuiMultiPageScreen(
         for (slot in (page * pageSize()) until (page + 1) * pageSize()) {
             val normalized = slot - (page * pageSize()) + minSlot
             itemList.getOrNull(slot)?.also {
-                player.openInventory.setItem(normalized, items.getOrNull(it)?.formatIntoItemStack(player))
+                player.openInventory.setItem(normalized, items[it]?.formatIntoItemStack(player))
             } ?: run { player.openInventory.setItem(normalized, null) }
         }
     }
@@ -77,9 +77,8 @@ open class GuiMultiPageScreen(
 
     override fun copy(): IGuiScreen {
         val screen = GuiMultiPageScreen(title, rows, maxPages, minSlot, maxSlot, startPage)
-        screen.items = items.map { it.copy(screen) }.toMutableList() as ArrayList<IGuiButton>
+        screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, IGuiButton>
         screen.itemList = itemList.toMutableList() as ArrayList<Int>
-        screen.pointers = pointers.toMutableMap() as HashMap<Int, Int>
         screen.type = type
         screen.rows = rows
         screen.click = click
@@ -87,7 +86,6 @@ open class GuiMultiPageScreen(
         screen.close = close
         screen.quit = quit
         screen.open = open
-        println("copied. test vals: ${screen.page}")
         return screen
     }
 }

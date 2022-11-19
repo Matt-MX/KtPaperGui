@@ -10,8 +10,7 @@ import org.bukkit.entity.Player
 class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
     init {
         Material.values().forEach { material ->
-            add(
-                GuiButton()
+            add(GuiButton()
                     .click {
                     generic = { e -> e.whoClicked.sendMessage("&bYou clicked item &3&l${material.name}".color()) }
                 } named "&b&l${material.name}" material material)
