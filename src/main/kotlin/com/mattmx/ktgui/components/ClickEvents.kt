@@ -1,26 +1,26 @@
 package com.mattmx.ktgui.components
 
+import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.InventoryClickEvent
 
 class ClickEvents {
-    var left : ((InventoryClickEvent) -> Unit)? = null
-    var shiftLeft : ((InventoryClickEvent) -> Unit)? = null
-    var right : ((InventoryClickEvent) -> Unit)? = null
-    var shiftRight : ((InventoryClickEvent) -> Unit)? = null
-    var windowBorderLeft : ((InventoryClickEvent) -> Unit)? = null
-    var windowBorderRight : ((InventoryClickEvent) -> Unit)? = null
-    var middle : ((InventoryClickEvent) -> Unit)? = null
-    var numberKey : ((InventoryClickEvent) -> Unit)? = null
-    var doubleClick : ((InventoryClickEvent) -> Unit)? = null
-    var drop : ((InventoryClickEvent) -> Unit)? = null
-    var ctrlDrop : ((InventoryClickEvent) -> Unit)? = null
-    var creative : ((InventoryClickEvent) -> Unit)? = null
-    var swapOffhand : ((InventoryClickEvent) -> Unit)? = null
-    var generic : ((InventoryClickEvent) -> Unit)? = null
+    var left : (ButtonClickedEvent.() -> Unit)? = null
+    var shiftLeft : (ButtonClickedEvent.() -> Unit)? = null
+    var right : (ButtonClickedEvent.() -> Unit)? = null
+    var shiftRight : (ButtonClickedEvent.() -> Unit)? = null
+    var windowBorderLeft : (ButtonClickedEvent.() -> Unit)? = null
+    var windowBorderRight : (ButtonClickedEvent.() -> Unit)? = null
+    var middle : (ButtonClickedEvent.() -> Unit)? = null
+    var numberKey : (ButtonClickedEvent.() -> Unit)? = null
+    var doubleClick : (ButtonClickedEvent.() -> Unit)? = null
+    var drop : (ButtonClickedEvent.() -> Unit)? = null
+    var ctrlDrop : (ButtonClickedEvent.() -> Unit)? = null
+    var creative : (ButtonClickedEvent.() -> Unit)? = null
+    var swapOffhand : (ButtonClickedEvent.() -> Unit)? = null
+    var generic : (ButtonClickedEvent.() -> Unit)? = null
 
-    fun accept(e: InventoryClickEvent) {
-        when (e.click) {
+    fun accept(e: ButtonClickedEvent) {
+        when (e.event.click) {
             ClickType.LEFT -> left?.also { it.invoke(e) } ?: generic?.invoke(e)
             ClickType.SHIFT_LEFT -> shiftLeft?.also { it.invoke(e) } ?: generic?.invoke(e)
             ClickType.RIGHT -> right?.also { it.invoke(e) } ?: generic?.invoke(e)

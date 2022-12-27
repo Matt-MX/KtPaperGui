@@ -4,6 +4,7 @@ import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.components.ClickEvents
 import com.mattmx.ktgui.components.Formattable
+import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.extensions.color
@@ -156,12 +157,13 @@ open class GuiScreen(
     }
 
     override fun click(e: InventoryClickEvent) {
+        val button = items[e.rawSlot]
         // If dev wants to handle click calls globally
         click?.let {
-            it.accept(e)
+            it.accept(ButtonClickedEvent(e.whoClicked as Player, e, button))
             return
         }
-        items[e.rawSlot]?.thisClicked(e)
+        button?.thisClicked(ButtonClickedEvent(e.whoClicked as Player, e, button))
     }
 
     fun last() : Int {

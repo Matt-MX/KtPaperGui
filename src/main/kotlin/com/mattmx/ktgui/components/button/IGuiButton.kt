@@ -14,12 +14,7 @@ interface IGuiButton {
     /**
      * Called when this button is clicked
      */
-    fun thisClicked(e: InventoryClickEvent)
-
-    /**
-     * Called when something else in the gui is clicked
-     */
-    fun notClicked(e: InventoryClickEvent)
+    fun thisClicked(e: ButtonClickedEvent)
 
     fun formatIntoItemStack(player: Player? = null) : ItemStack?
 

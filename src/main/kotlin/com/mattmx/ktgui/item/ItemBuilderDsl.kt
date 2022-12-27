@@ -24,18 +24,23 @@ fun foo() {
         enchantments += Enchantment.OXYGEN lvl 10
     }.format { color() }
 
-    val item = KT ib Material.WOODEN_SWORD name "&cInline item builder" lore "&7Reminds me of Skript" ench (Enchantment.BINDING_CURSE lvl 1) format { color() }
+    val item =
+        KT ib Material.WOODEN_SWORD name "&cInline item builder" lore "&7Reminds me of Skript" ench (Enchantment.BINDING_CURSE lvl 1) format { color() }
 
-    val pot = KT ib Material.POTION name "&bWKD 40" lore "&7Teens love it" effect (PotionEffectType.SPEED time 60 lvl 4) format { color() }
+    val pot =
+        KT ib Material.POTION name "&bWKD 40" lore "&7Teens love it" effect (PotionEffectType.SPEED time 60 lvl 4) format { color() }
 
-    val sword = KT ib Material.DIAMOND_SWORD name "&4Punisher" lore "&8Bruh ting" lore "&8Wet man up" ench (Enchantment.DAMAGE_ALL lvl 255) format { color() }
-    
-    val reallyBigBuilder = KT ib Material.POTION named "&dGod potion" lore "" lore "&7Drink this to become high," lore "&7powerful, and full of" nl {
-    } lore "&7might. &o@MattMX" effect (PotionEffectType.SPEED time 255 lvl 4) effect (PotionEffectType.INCREASE_DAMAGE time 255 lvl 4) nl {
-    } effect (PotionEffectType.INVISIBILITY time 255) effect (PotionEffectType.HEALTH_BOOST time 255 lvl 2000) effect (PotionEffectType.HEAL lvl 2000) nl {
-    } format String::color
+    val sword =
+        KT ib Material.DIAMOND_SWORD name "&4Punisher" lore "&8Bruh ting" lore "&8Wet man up" ench (Enchantment.DAMAGE_ALL lvl 255) format { color() }
 
-    val realUsage = KT ib Material.ARROW name "&eNext Page" lore "" lore "&7Click to go to page %page%" format String::color
+    val reallyBigBuilder =
+        KT ib Material.POTION named "&dGod potion" lore "" lore "&7Drink this to become high," lore "&7powerful, and full of" nl {
+        } lore "&7might. &o@MattMX" effect (PotionEffectType.SPEED time 255 lvl 4) effect (PotionEffectType.INCREASE_DAMAGE time 255 lvl 4) nl {
+        } effect (PotionEffectType.INVISIBILITY time 255) effect (PotionEffectType.HEALTH_BOOST time 255 lvl 2000) effect (PotionEffectType.HEAL lvl 2000) nl {
+        } format String::color
+
+    val realUsage =
+        KT ib Material.ARROW name "&eNext Page" lore "" lore "&7Click to go to page %page%" format String::color
 }
 
 /**
@@ -52,9 +57,10 @@ fun foo() {
  */
 infix fun KT.ib(material: Material) = iBuilder(material)
 infix fun KT.itemBuilder(material: Material) = iBuilder(material)
-infix fun KT.iBuilder(material: Material) : DslIBuilder {
+infix fun KT.iBuilder(material: Material): DslIBuilder {
     return DslIBuilder().material(material)
 }
+
 // Dummy object
 object KT
 
@@ -71,15 +77,27 @@ inline fun itemBuilder(builder: DslIBuilder.() -> Unit): DslIBuilder {
     return builderInst
 }
 
+inline infix fun ItemStack.builder(builder: DslIBuilder.() -> Unit) =
+    itemBuilder {
+        material = type
+        name = itemMeta?.displayName
+        itemMeta?.lore?.toMutableList()?.let { lore = it }
+        itemMeta?.enchants?.forEach { (ench, lvl) ->
+            enchantments += ench lvl lvl
+        }
+        amount = getAmount()
+        durability = getDurability()
+    }
+
 /**
  * Methods for making your builders look nicer, and more easily readable.
  */
 infix fun Pair<PotionEffectType, Pair<Int, Int>>.lvl(lvl: Int) = level(lvl)
 infix fun Pair<PotionEffectType, Pair<Int, Int>>.level(level: Int) = this.copy(second = second.copy(second = level))
 infix fun PotionEffectType.lvl(lvl: Int) = level(lvl)
-infix fun PotionEffectType.level(level: Int) : Pair<PotionEffectType, Pair<Int, Int>> = Pair(this, Pair(1, level))
+infix fun PotionEffectType.level(level: Int): Pair<PotionEffectType, Pair<Int, Int>> = Pair(this, Pair(1, level))
 infix fun PotionEffectType.duration(time: Int) = time(time)
-infix fun PotionEffectType.time(time: Int) : Pair<PotionEffectType, Pair<Int, Int>> = Pair(this, Pair(time, 0))
+infix fun PotionEffectType.time(time: Int): Pair<PotionEffectType, Pair<Int, Int>> = Pair(this, Pair(time, 0))
 infix fun <F> Enchantment.lvl(lvl: F) = level(lvl)
 infix fun <F> Enchantment.level(level: F): Pair<Enchantment, F> = Pair(this, level)
 
@@ -100,21 +118,48 @@ class DslIBuilder {
      * Names of functions kept minimal to reduce unwanted length
      */
     infix fun mat(m: Material) = material(m)
-    infix fun material(m: Material) : DslIBuilder { material = m; return this }
+    infix fun material(m: Material): DslIBuilder {
+        material = m; return this
+    }
+
     infix fun named(n: String) = name(n)
-    infix fun name(n: String) : DslIBuilder { name = n; return this }
-    infix fun amount(a: Int) : DslIBuilder { amount = a; return this }
-    infix fun lore(l: String) : DslIBuilder { lore += l; return this }
+    infix fun name(n: String): DslIBuilder {
+        name = n; return this
+    }
+
+    infix fun amount(a: Int): DslIBuilder {
+        amount = a; return this
+    }
+
+    infix fun lore(l: String): DslIBuilder {
+        lore += l; return this
+    }
+
     infix fun enchant(e: Pair<Enchantment, Int>) = ench(e)
-    infix fun ench(e: Pair<Enchantment, Int>) : DslIBuilder { enchantments += e; return this }
+    infix fun ench(e: Pair<Enchantment, Int>): DslIBuilder {
+        enchantments += e; return this
+    }
+
     infix fun potion(e: Pair<PotionEffectType, Pair<Int, Int>>) = effect(e)
-    infix fun effect(e: Pair<PotionEffectType, Pair<Int, Int>>) : DslIBuilder { potionEffects += e; return this }
-    infix fun color(c: Color) : DslIBuilder { color = c; return this }
-    infix fun skull(o: OfflinePlayer) : DslIBuilder { skullOwner = o; return this }
+    infix fun effect(e: Pair<PotionEffectType, Pair<Int, Int>>): DslIBuilder {
+        potionEffects += e; return this
+    }
+
+    infix fun color(c: Color): DslIBuilder {
+        color = c; return this
+    }
+
+    infix fun skull(o: OfflinePlayer): DslIBuilder {
+        skullOwner = o; return this
+    }
+
     infix fun durability(d: Short) = dura(d)
-    infix fun dura(d: Short) : DslIBuilder { durability = d; return this }
+    infix fun dura(d: Short): DslIBuilder {
+        durability = d; return this
+    }
+
     // Gross function if you want to start a new line to make your builder readable (yuck inline builders)
-    infix fun nl(cb: () -> Unit) : DslIBuilder = this
+    infix fun nl(cb: () -> Unit): DslIBuilder = this
 
     // Get material from string name or null
     fun materialOf(name: String): Material? {
@@ -122,13 +167,13 @@ class DslIBuilder {
     }
 
     // Shortened materialOf method for inline
-    infix fun matOf(name: String) : DslIBuilder {
+    infix fun matOf(name: String): DslIBuilder {
         materialOf(name)?.let { material = it }
         return this
     }
 
     // Method for formatting all strings of the item (Can be inlined)
-    inline infix fun format(cb: String.() -> String) : DslIBuilder{
+    inline infix fun format(cb: String.() -> String): DslIBuilder {
         name?.let { name = cb(it) }
         lore = lore.map { cb(it) }.toMutableList()
         return this

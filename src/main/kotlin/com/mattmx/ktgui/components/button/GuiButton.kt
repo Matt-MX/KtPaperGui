@@ -19,8 +19,7 @@ open class GuiButton(
     protected var parent: IGuiScreen? = null
 
     var click = ClickEvents()
-    var notClicked: ((InventoryClickEvent) -> Unit)? = null
-    var close: ((InventoryCloseEvent) -> Unit)? = null
+    var close: ((ButtonClickedEvent) -> Unit)? = null
 
     protected var slots: ArrayList<Int>? = null
 
@@ -121,12 +120,8 @@ open class GuiButton(
         return this
     }
 
-    override fun thisClicked(e: InventoryClickEvent) {
+    override fun thisClicked(e: ButtonClickedEvent) {
         click.accept(e)
-    }
-
-    override fun notClicked(e: InventoryClickEvent) {
-        notClicked?.let { notClicked!!.invoke(e) }
     }
 
     override fun formatIntoItemStack(player: Player?) : ItemStack? {
@@ -155,7 +150,6 @@ open class GuiButton(
         copy.parent = parent
         copy.item = item?.clone()
         copy.click = click.copy()
-        copy.notClicked = notClicked
         copy.close = close
         return copy
     }

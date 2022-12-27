@@ -18,9 +18,9 @@ open class GuiToggleButton(
         this.item = if (current) enabledItem else disabledItem
     }
 
-    override fun thisClicked(e: InventoryClickEvent) {
-        changeState(e.whoClicked as Player, e)
-        update(e.whoClicked as Player)
+    override fun thisClicked(e: ButtonClickedEvent) {
+        changeState(e.player, e.event)
+        update(e.player)
         super.thisClicked(e)
     }
 

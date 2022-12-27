@@ -12,20 +12,20 @@ class LoreCycleButton(
     material: Material = Material.STONE,
     item: ItemStack? = null,
     private var selected: Int = 0,
-    private var changed: ((LoreCycleButton, InventoryClickEvent?) -> Unit)? = null,
+    private var changed: ((LoreCycleButton, ButtonClickedEvent?) -> Unit)? = null,
     val lores: MutableList<LoreEntry> = mutableListOf()
 ) : GuiButton(material, item) {
     var selectableLores = mutableListOf<Int>()
 
     init {
         click {
-            right = { e ->
-                nextItem(e.whoClicked as Player)
-                changed?.invoke(this@LoreCycleButton, e)
+            right = {
+                nextItem(player)
+                changed?.invoke(this@LoreCycleButton, this)
             }
-            left = { e ->
-                prevItem(e.whoClicked as Player)
-                changed?.invoke(this@LoreCycleButton, e)
+            left = {
+                prevItem(player)
+                changed?.invoke(this@LoreCycleButton, this)
             }
         }
     }
@@ -44,7 +44,7 @@ class LoreCycleButton(
         update(player)
     }
 
-    fun changed(cb: (LoreCycleButton, InventoryClickEvent?) -> Unit): LoreCycleButton {
+    fun changed(cb: (LoreCycleButton, ButtonClickedEvent?) -> Unit): LoreCycleButton {
         changed = cb
         return this
     }
@@ -118,7 +118,6 @@ class LoreCycleButton(
     override fun copy(parent: IGuiScreen): GuiButton {
         val copy = LoreCycleButton(lores = lores, item = item)
         copy.selectableLores = selectableLores.toMutableList()
-        copy.notClicked = notClicked
         copy.changed = changed
         copy.parent = parent
         copy.click = click

@@ -18,13 +18,13 @@ class GuiCycleButton(
 
     init {
         click {
-            right = { e ->
-                nextItem(e.whoClicked as Player)
-                changed?.invoke(ButtonClickedEvent(e.whoClicked as Player, e, this@GuiCycleButton))
+            right = {
+                nextItem(player)
+                changed?.invoke(ButtonClickedEvent(player, this.event, this@GuiCycleButton))
             }
-            left = { e ->
-                prevItem(e.whoClicked as Player)
-                changed?.invoke(ButtonClickedEvent(e.whoClicked as Player, e, this@GuiCycleButton))
+            left = {
+                prevItem(player)
+                changed?.invoke(ButtonClickedEvent(player, this.event, this@GuiCycleButton))
             }
         }
     }
@@ -67,7 +67,6 @@ class GuiCycleButton(
     override fun copy(parent: IGuiScreen): GuiButton {
         val copy = GuiCycleButton()
         copy.map.putAll(map)
-        copy.notClicked = notClicked
         copy.changed = changed
         copy.parent = parent
         copy.click = click

@@ -40,9 +40,9 @@ object AnvilInputGuiExample {
 
             button<GuiButton> {
                 click {
-                    generic = { e ->
-                        forceClose(e.whoClicked as Player)
-                        e.whoClicked.sendMessage(currentName.color())
+                    generic = {
+                        forceClose(player)
+                        player.sendMessage(currentName.color())
                     }
                 }
                 lore {

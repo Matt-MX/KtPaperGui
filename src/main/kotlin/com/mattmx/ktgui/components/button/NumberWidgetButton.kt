@@ -17,15 +17,15 @@ class NumberWidgetButton(
         amount(startValue)
     }
 
-    override fun thisClicked(e: InventoryClickEvent) {
-        when (e.click) {
+    override fun thisClicked(e: ButtonClickedEvent) {
+        when (e.event.click) {
             ClickType.RIGHT -> {
                 amount(min(64, max(1, item!!.amount + step)))
-                update(e.whoClicked as Player)
+                update(e.player)
             }
             ClickType.LEFT -> {
                 amount(min(64, max(1, item!!.amount - step)))
-                update(e.whoClicked as Player)
+                update(e.player)
             }
             else -> {}
         }

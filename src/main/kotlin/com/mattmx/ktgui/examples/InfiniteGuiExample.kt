@@ -14,7 +14,7 @@ class InfiniteGuiExample : GuiInfiniteScreen("Infinite Screen", 6) {
             named("&7Left")
             material(Material.RED_STAINED_GLASS_PANE)
             click {
-                left = { e ->
+                left = {
                     x--
                     title = "($x, $y)"
                     updateAll()
@@ -25,7 +25,7 @@ class InfiniteGuiExample : GuiInfiniteScreen("Infinite Screen", 6) {
             named("&7Right")
             material(Material.RED_STAINED_GLASS_PANE)
             click {
-                left = { e ->
+                left = {
                     x++
                     title = "($x, $y)"
                     updateAll()
@@ -36,7 +36,7 @@ class InfiniteGuiExample : GuiInfiniteScreen("Infinite Screen", 6) {
             named("&7Up")
             material(Material.RED_STAINED_GLASS_PANE)
             click {
-                left = { e ->
+                left = {
                     y--
                     title = "($x, $y)"
                     updateAll()
@@ -47,7 +47,7 @@ class InfiniteGuiExample : GuiInfiniteScreen("Infinite Screen", 6) {
             named("&7Down")
             material(Material.RED_STAINED_GLASS_PANE)
             click {
-                left = { e ->
+                left = {
                     y++
                     title = "($x, $y)"
                     updateAll()

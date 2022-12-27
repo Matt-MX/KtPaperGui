@@ -12,7 +12,7 @@ class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
         Material.values().forEach { material ->
             this += GuiButton()
                 .click {
-                    generic = { e -> e.whoClicked.sendMessage("&bYou clicked item &3&l${material.name}".color()) }
+                    generic = { player.sendMessage("&bYou clicked item &3&l${material.name}".color()) }
                 } named "&b&l${material.name}" material material
         }
         GuiButton() material Material.GRAY_STAINED_GLASS_PANE named " " slots (0..8).toList() + (45..53).toList() childOf this
@@ -20,18 +20,18 @@ class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
             GuiButton() named "&9&lPage ${getCurrentPage()}" slot 49 childOf this material Material.COMPASS
         GuiButton()
             .click {
-                left = { e ->
-                    gotoNextPage(e.whoClicked as Player)
+                left = {
+                    gotoNextPage(player)
                     currentPage named "&9&lPage ${getCurrentPage()}"
-                    currentPage.update(e.whoClicked as Player)
+                    currentPage.update(player)
                 }
             } named "&bNext Page" slot 53 childOf this materialOf "arrow"
         GuiButton()
             .click {
-                left = { e ->
-                    gotoPrevPage(e.whoClicked as Player)
+                left = {
+                    gotoPrevPage(player)
                     currentPage named "&9&lPage ${getCurrentPage()}"
-                    currentPage.update(e.whoClicked as Player)
+                    currentPage.update(player)
                 }
             } named "&bPrev Page" slot 45 childOf this materialOf "arrow"
     }

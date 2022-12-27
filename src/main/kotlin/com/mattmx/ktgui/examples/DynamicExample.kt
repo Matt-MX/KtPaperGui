@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.KotlinBukkitGui
+import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.extensions.color
@@ -26,7 +27,7 @@ object DynamicExample {
          * (You can use the constructor but here we're showing infix usage.
          */
         gui title "Server changer" rows 3
-        val genericClick = { e: InventoryClickEvent -> e.whoClicked.sendMessage("&8&l⤷ &#7f52ffThis button can do stuff".color()) }
+        val genericClick: (ButtonClickedEvent.() -> Unit) = { player.sendMessage("&8&l⤷ &#7f52ffThis button can do stuff".color()) }
         /**
          * Example of how to fill a GUI with items
          */
@@ -57,7 +58,7 @@ object DynamicExample {
             } named "&8&l⤷ &#E24462&lSurvival" material Material.GRASS_BLOCK slot 15 childOf gui
         GuiButton()
             .click {
-                generic = { e -> gui.forceClose(e.whoClicked as Player) }
+                generic = { gui.forceClose(player) }
             }.lore {
                 add("&8&l⤷&8Click to close the server selector")
             } named "&8&l⤷ &cClose" material Material.BARRIER slot 26 childOf gui
@@ -79,7 +80,7 @@ object DynamicExample {
         gui type InventoryType.FURNACE
         GuiButton()
             .click {
-                generic = { e -> (e.whoClicked as Player).playSound(e.whoClicked.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f) }
+                generic = { player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f) }
             }.lore { add("&8Click me for a sound") } named "&c:3" childOf gui slot 2
         gui.openAndFormat(player)
     }

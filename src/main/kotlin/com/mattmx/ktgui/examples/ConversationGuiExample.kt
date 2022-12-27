@@ -16,8 +16,7 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
     init {
         GuiButton()
             .click {
-                left = { e ->
-                    val player = e.whoClicked as Player
+                left = {
                     // Make sure to close the GUI, so they can type in chat
                     forceClose(player)
                     // Create a new conversation
@@ -62,8 +61,7 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
                     }.exitOn("exit") // If the player types "exit" the conversation is ended.
                         .build(player).begin() // Build and begin the conversation.
                 }
-                right = { e ->
-                    val player = e.whoClicked as Player
+                right = {
                     forceClose(player)
                     conversation(KotlinBukkitGui.plugin!!) {
                         /**

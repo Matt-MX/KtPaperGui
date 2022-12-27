@@ -26,7 +26,7 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
             .lore("&#E24462&nhttps://mattmx.com/")
         GuiButton()
             .click {
-                generic = { e -> (e.whoClicked as Player).playSound(e.whoClicked.location, Sound.UI_BUTTON_CLICK, 1f ,1f) }
+                generic = { player.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f ,1f) }
             } ofBuilder skull childOf this slot 27
         /**
          * Fill the bottom slots with gray stained glass panes.
@@ -37,7 +37,7 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
          */
         GuiButton()
             .click {
-                generic = { e -> forceClose(e.whoClicked as Player) }
+                generic = { forceClose(player) }
             }.lore {
                 add("&8Click to close the Gui Interface")
             } materialOf "barrier" named "&c&lClose" slot 35 childOf this
@@ -57,16 +57,15 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
          */
         GuiButton()
             .click {
-                generic = { e ->
-                    val player = e.whoClicked as Player
+                generic = {
                     repeat(3) {
                         val offsetX = Random.nextDouble(-2.0, 2.0) * 2
                         val offsetZ = Random.nextDouble(-2.0, 2.0) * 2
                         player.spawnParticle(Particle.FIREWORKS_SPARK, player.location.add(offsetX, 1.0, offsetZ), 20)
                     }
                 }
-                drop = { e ->
-                    e.whoClicked.sendMessage("&8&l⤷ &#7f52ffWhat a party pooper. :(")
+                drop = {
+                    player.sendMessage("&8&l⤷ &#7f52ffWhat a party pooper. :(")
                 }
             }.lore {
                 add("&8Party time!")
@@ -76,10 +75,10 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
          */
         GuiButton()
             .click {
-                generic = { e ->
-                    val world = e.whoClicked.world
+                generic = {
+                    val world = player.world
                     world.time += 12000
-                    e.whoClicked.sendMessage("&8&l⤷ &#7f52ffTime +12000 game ticks!".color())
+                    player.sendMessage("&8&l⤷ &#7f52ffTime +12000 game ticks!".color())
                 }
             }.lore {
                 add("&8Click to change the time of day by 12000 game ticks")

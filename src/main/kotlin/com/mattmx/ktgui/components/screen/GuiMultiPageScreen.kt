@@ -24,12 +24,12 @@ open class GuiMultiPageScreen(
             update(p)
         }
         click { ce ->
-            ce.generic = { e ->
-                if (e.rawSlot in minSlot until maxSlot) {
-                    val index = e.rawSlot + (page * pageSize()) - minSlot
-                    itemList.getOrNull(index)?.thisClicked(e)
+            ce.generic = {
+                if (slot in minSlot until maxSlot) {
+                    val index = slot + (page * pageSize()) - minSlot
+                    itemList.getOrNull(index)?.thisClicked(this)
                 } else {
-                    items[e.rawSlot]?.thisClicked(e)
+                    items[slot]?.thisClicked(this)
                 }
             }
         }

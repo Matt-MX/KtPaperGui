@@ -33,7 +33,7 @@ object GuiDslExample {
                 add("&7Click me to close the GUI.")
             }
             click {
-                generic = { forceClose(it.whoClicked as Player) }
+                generic = { forceClose(player) }
             }
             slot(8)
         }
