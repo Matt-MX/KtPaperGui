@@ -11,7 +11,6 @@ import org.bukkit.material.MaterialData
 import java.util.*
 import java.util.function.Consumer
 
-
 class ItemBuilder {
     private var item: ItemStack
     private var itemMeta: ItemMeta?

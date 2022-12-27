@@ -18,6 +18,11 @@ object GuiDslExample {
             lore {
                 add("&7For more information on building GUIs using DSL")
                 add("&7check the GitHub wiki on KtBukkitGui.")
+                add("&eClick me!")
+            }
+            click {
+                generic = {
+                }
             }
             slot(4)
         }
