@@ -1,8 +1,7 @@
 package com.mattmx.ktgui.examples
 
-import co.pvphub.procotollib.DummyPacketAdapter
-import co.pvphub.procotollib.dsl.packetReceiving
-import co.pvphub.procotollib.extensions.unregister
+import co.pvphub.protocollib.dsl.packetReceiving
+import co.pvphub.protocollib.extensions.unregister
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketAdapter
 import com.mattmx.ktgui.KotlinBukkitGui
@@ -14,7 +13,6 @@ import com.mattmx.ktgui.extensions.color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
-import java.lang.Exception
 
 object AnvilInputGuiExample {
 

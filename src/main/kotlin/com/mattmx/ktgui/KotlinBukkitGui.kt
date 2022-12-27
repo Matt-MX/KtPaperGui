@@ -21,6 +21,7 @@ class KotlinBukkitGui : JavaPlugin() {
         GuiManager.register("example_config", ConfigScreenExample())
         GuiManager.register("example_pages", MultiPageExample())
         GuiManager.register("example_conversation", ConversationGuiExample())
+        InfiniteGuiExample.instance = InfiniteGuiExample()
 
         event<PlayerJoinEvent> {
             player.sendMessage("&7Welcome back, &f${player.name}&7!".color())
@@ -119,6 +120,10 @@ class KotlinBukkitGui : JavaPlugin() {
                 subCommands += simpleCommand { 
                     name = "dsl"
                     executes { GuiDslExample.open(it.source as Player) }
+                }
+                subCommands += simpleCommand {
+                    name = "infinite"
+                    executes { InfiniteGuiExample.instance.open(it.player()) }
                 }
             }
         }.register()

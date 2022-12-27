@@ -3,6 +3,7 @@ package com.mattmx.ktgui.item
 import com.mattmx.ktgui.extensions.color
 import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
@@ -85,12 +86,12 @@ infix fun <F> Enchantment.level(level: F): Pair<Enchantment, F> = Pair(this, lev
 class DslIBuilder {
     var material: Material = Material.STONE
     var name: String? = null
-    val lore = arrayListOf<String>()
+    var lore = mutableListOf<String>()
     var amount = 1
     val enchantments = hashMapOf<Enchantment, Int>()
     val potionEffects = hashMapOf<PotionEffectType, Pair<Int, Int>>()
     var color: Color? = null
-    var skullOwner: String? = null
+    var skullOwner: OfflinePlayer? = null
     var durability: Short? = null
 
     /**
@@ -109,7 +110,7 @@ class DslIBuilder {
     infix fun potion(e: Pair<PotionEffectType, Pair<Int, Int>>) = effect(e)
     infix fun effect(e: Pair<PotionEffectType, Pair<Int, Int>>) : DslIBuilder { potionEffects += e; return this }
     infix fun color(c: Color) : DslIBuilder { color = c; return this }
-    infix fun skull(o: String) : DslIBuilder { skullOwner = o; return this }
+    infix fun skull(o: OfflinePlayer) : DslIBuilder { skullOwner = o; return this }
     infix fun durability(d: Short) = dura(d)
     infix fun dura(d: Short) : DslIBuilder { durability = d; return this }
     // Gross function if you want to start a new line to make your builder readable (yuck inline builders)
@@ -129,7 +130,7 @@ class DslIBuilder {
     // Method for formatting all strings of the item (Can be inlined)
     inline infix fun format(cb: String.() -> String) : DslIBuilder{
         name?.let { name = cb(it) }
-        lore.map { cb(it) }
+        lore = lore.map { cb(it) }.toMutableList()
         return this
     }
 
@@ -156,31 +157,33 @@ class DslIBuilder {
      */
     fun build(): ItemStack {
         val stack = ItemStack(material)
-        name?.let { stack.itemMeta?.setDisplayName(it) }
-        stack.amount = amount
-        durability?.let { stack.durability = it }
-        stack.itemMeta?.lore = lore.toMutableList()
-        stack.addUnsafeEnchantments(enchantments.toMutableMap())
+        var meta = stack.itemMeta!!
+        name?.let { meta.setDisplayName(name) }
+        meta.lore = lore.toMutableList()
         if (material == Material.LEATHER_BOOTS || material == Material.LEATHER_CHESTPLATE || material == Material.LEATHER_LEGGINGS || material == Material.LEATHER_HELMET) {
-            val meta = stack.itemMeta as LeatherArmorMeta?
-            meta!!.setColor(color)
-            stack.itemMeta = meta
+            val leatherMeta = meta as LeatherArmorMeta
+            leatherMeta.setColor(color)
+            meta = leatherMeta
         }
         if (material == Material.PLAYER_HEAD && durability == 3.toByte().toShort()) {
-            val skullMeta = stack.itemMeta as SkullMeta?
-            skullMeta!!.owner = name
-            stack.itemMeta = skullMeta
+            val skullMeta = meta as SkullMeta
+            skullMeta.owningPlayer = skullOwner
+            meta = skullMeta
         }
         if (material == Material.POTION || material == Material.SPLASH_POTION || material == Material.LINGERING_POTION || material == Material.TIPPED_ARROW) {
-            val potMeta = stack.itemMeta as PotionMeta?
+            val potMeta = meta as PotionMeta
             potionEffects.forEach { (type, u) ->
                 val duration = u.first
                 val level = u.second
                 val potionEffect = PotionEffect(type, duration, level)
-                potionEffect?.let { potMeta?.addCustomEffect(potionEffect, true) }
+                potionEffect.let { potMeta.addCustomEffect(potionEffect, true) }
             }
-            stack.itemMeta = potMeta
+            meta = potMeta
         }
+        stack.itemMeta = meta
+        stack.addUnsafeEnchantments(enchantments.toMutableMap())
+        stack.amount = amount
+        durability?.let { stack.durability = it }
         return stack
     }
 }

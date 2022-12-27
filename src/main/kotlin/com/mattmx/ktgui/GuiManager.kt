@@ -45,6 +45,9 @@ object GuiManager : Listener {
         }
     }
 
+    fun getPlayers(gui: IGuiScreen) = players.filter { it.value == gui }.keys
+    inline fun <reified T> getPlayers(clazz: Class<T>) = players.filter { it.value::class.java == clazz }
+
     fun register(id: String, gui: IGuiScreen) {
         guis[id] = gui
     }

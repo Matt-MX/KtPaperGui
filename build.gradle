@@ -51,7 +51,6 @@ publishing {
             groupId = "com.mattmx"
             artifactId = "ktgui"
             version = getVersion()
-//            artifact(tasks.shadowJar)
             from components.java
         }
     }
