@@ -216,7 +216,7 @@ class DslIBuilder {
             leatherMeta.setColor(color)
             meta = leatherMeta
         }
-        if (material == Material.PLAYER_HEAD && durability == 3.toByte().toShort()) {
+        if (material == Material.PLAYER_HEAD && skullOwner != null) {
             val skullMeta = meta as SkullMeta
             skullMeta.owningPlayer = skullOwner
             meta = skullMeta
