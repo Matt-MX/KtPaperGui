@@ -61,7 +61,7 @@ infix fun KT.iBuilder(material: Material): DslIBuilder {
     return DslIBuilder().material(material)
 }
 
-// Dummy object
+// Dummy object for starting creation of inline item building
 object KT
 
 /**
@@ -111,6 +111,7 @@ class DslIBuilder {
     var color: Color? = null
     var skullOwner: OfflinePlayer? = null
     var durability: Short? = null
+    var customModelData: Int? = null
 
     /**
      * Infix functions allows us to make inline item builders
@@ -158,6 +159,10 @@ class DslIBuilder {
         durability = d; return this
     }
 
+    infix fun modelData(d: Int) : DslIBuilder {
+        customModelData = d; return this
+    }
+
     // Gross function if you want to start a new line to make your builder readable (yuck inline builders)
     infix fun nl(cb: () -> Unit): DslIBuilder = this
 
@@ -192,6 +197,7 @@ class DslIBuilder {
         ib.color = color
         ib.skullOwner = skullOwner
         ib.durability = durability
+        ib.customModelData = customModelData
         return ib
     }
 
@@ -225,6 +231,7 @@ class DslIBuilder {
             }
             meta = potMeta
         }
+        meta.setCustomModelData(customModelData)
         stack.itemMeta = meta
         stack.addUnsafeEnchantments(enchantments.toMutableMap())
         stack.amount = amount
