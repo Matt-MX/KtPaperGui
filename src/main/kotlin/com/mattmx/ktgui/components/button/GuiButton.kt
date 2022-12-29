@@ -10,6 +10,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 
 open class GuiButton(
@@ -19,6 +20,7 @@ open class GuiButton(
     protected var parent: IGuiScreen? = null
 
     var click = ClickEvents()
+    var drag: ((InventoryDragEvent) -> Unit)? = null
     var close: ((ButtonClickedEvent) -> Unit)? = null
 
     protected var slots: ArrayList<Int>? = null
@@ -111,6 +113,11 @@ open class GuiButton(
         return this
     }
 
+    fun drag(cb: InventoryDragEvent.() -> Unit) : GuiButton {
+        this.drag = cb
+        return this
+    }
+
     inline fun enchant(ce: MutableMap<Enchantment, Int>.() -> Unit) : GuiButton {
         val enchantments = item?.itemMeta?.enchants?.toMutableMap() ?: mutableMapOf()
         ce.invoke(enchantments)
@@ -122,6 +129,10 @@ open class GuiButton(
 
     override fun thisClicked(e: ButtonClickedEvent) {
         click.accept(e)
+    }
+
+    override fun thisDragged(e: InventoryDragEvent) {
+        drag?.invoke(e)
     }
 
     override fun formatIntoItemStack(player: Player?) : ItemStack? {

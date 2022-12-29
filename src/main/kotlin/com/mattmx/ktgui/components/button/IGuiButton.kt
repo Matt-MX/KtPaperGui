@@ -3,6 +3,7 @@ package com.mattmx.ktgui.components.button
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 
 interface IGuiButton {
@@ -15,6 +16,8 @@ interface IGuiButton {
      * Called when this button is clicked
      */
     fun thisClicked(e: ButtonClickedEvent)
+
+    fun thisDragged(e: InventoryDragEvent)
 
     fun formatIntoItemStack(player: Player? = null) : ItemStack?
 

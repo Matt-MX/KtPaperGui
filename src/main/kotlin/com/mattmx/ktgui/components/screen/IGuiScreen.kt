@@ -4,6 +4,7 @@ import com.mattmx.ktgui.components.button.IGuiButton
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerMoveEvent
@@ -36,6 +37,8 @@ interface IGuiScreen {
      * clicks while this gui is open
      */
     fun click(e: InventoryClickEvent)
+
+    fun drag(e: InventoryDragEvent)
 
     /**
      * Will be called if a player with this gui

@@ -13,6 +13,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -164,6 +165,13 @@ open class GuiScreen(
             return
         }
         button?.thisClicked(ButtonClickedEvent(e.whoClicked as Player, e, button))
+    }
+
+    override fun drag(e: InventoryDragEvent) {
+        e.rawSlots.forEach {
+            val button = items[it]
+            button?.thisDragged(e)
+        }
     }
 
     fun last() : Int {
