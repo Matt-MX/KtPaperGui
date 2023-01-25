@@ -8,8 +8,6 @@ import com.mattmx.ktgui.item.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 
@@ -47,7 +45,7 @@ open class GuiButton(
         return this
     }
 
-    infix fun slots(slots: List<Int>) : GuiButton {
+    override infix fun slots(slots: List<Int>) : GuiButton {
         slots.forEach { slot(it) }
         return this
     }

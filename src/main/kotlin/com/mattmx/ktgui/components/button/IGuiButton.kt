@@ -2,7 +2,6 @@ package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 
@@ -24,6 +23,8 @@ interface IGuiButton {
     fun copy(parent: IGuiScreen) : IGuiButton
 
     infix fun slot(slot: Int) : IGuiButton
+
+    infix fun slots(slots: List<Int>) : IGuiButton
 
     fun slots() : List<Int>?
 

@@ -125,6 +125,10 @@ class KotlinBukkitGui : JavaPlugin() {
                     name = "infinite"
                     executes { InfiniteGuiExample.instance.open(it.player()) }
                 }
+                subCommands += simpleCommand {
+                    name = "pattern"
+                    executes { GuiPatternExample.gui.open(it.player()) }
+                }
             }
         }.register()
     }
