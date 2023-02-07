@@ -40,7 +40,6 @@ object GuiManager : Listener {
 
     @EventHandler
     fun click(e: InventoryClickEvent) {
-        println((e.whoClicked as Player).getOpenGui()?.javaClass?.simpleName)
         (e.whoClicked as Player).getOpenGui()?.let {
             e.isCancelled = true
             it.click(e)
