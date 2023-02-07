@@ -1,10 +1,8 @@
 package com.mattmx.ktgui.components.screen
 
 import com.mattmx.ktgui.components.button.IGuiButton
-import com.mattmx.ktgui.extensions.setOpenGui
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 
 open class GuiInfiniteScreen(
@@ -24,6 +22,9 @@ open class GuiInfiniteScreen(
 
     override fun open(player: Player) {
         val inv: Inventory = if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(player, totalSlots(), title)
+
+        if (firePreBuildEvent(player)) return
+
         items2D.forEach { (coord, item) ->
             if (coord.first >= x && coord.first <= x + 9
                 && coord.second >= y && coord.second <= y + rows) {
@@ -37,8 +38,6 @@ open class GuiInfiniteScreen(
             if (slot < inv.size && slot >= 0)
                 inv.setItem(slot, item.formatIntoItemStack(player))
         }
-        player.setOpenGui(this)
-        player.openInventory(inv)
-        open?.invoke(player)
+        firePostBuildAndOpen(player, inv)
     }
 }

@@ -1,12 +1,13 @@
 package com.mattmx.ktgui.components.screen
 
 import com.mattmx.ktgui.GuiManager
-import com.mattmx.ktgui.KotlinBukkitGui
 import com.mattmx.ktgui.components.ClickEvents
 import com.mattmx.ktgui.components.Formattable
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.event.PreGuiBuildEvent
+import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.extensions.setOpenGui
 import org.bukkit.Bukkit
@@ -94,16 +95,39 @@ open class GuiScreen(
         GuiManager.players.remove(player.uniqueId)
         player.closeInventory()
     }
+
     override fun open(player: Player) {
         // format the items
         val inv: Inventory = if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(player, totalSlots(), title)
+
+        if (firePreBuildEvent(player)) return
+
         items.forEach { (slot, item) ->
             if (slot < inv.size)
                 inv.setItem(slot, item.formatIntoItemStack(player))
         }
-        player.setOpenGui(this)
-        player.openInventory(inv)
-        open?.invoke(player)
+
+        firePostBuildAndOpen(player, inv)
+    }
+
+    fun firePreBuildEvent(player: Player) : Boolean {
+        val event = PreGuiBuildEvent(this, player)
+        Bukkit.getPluginManager().callEvent(event)
+        return event.isCancelled
+    }
+
+    fun firePostBuildAndOpen(player: Player, inventory: Inventory) {
+        if (firePreGuiOpenEvent(player)) {
+            player.setOpenGui(this)
+            player.openInventory(inventory)
+            open?.invoke(player)
+        }
+    }
+
+    fun firePreGuiOpenEvent(player: Player) : Boolean {
+        val event = PreGuiOpenEvent(this, player)
+        Bukkit.getPluginManager().callEvent(event)
+        return event.isCancelled
     }
 
     override fun copy(): IGuiScreen {
