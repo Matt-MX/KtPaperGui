@@ -21,8 +21,10 @@ import kotlin.jvm.internal.Intrinsics.Kotlin
 object GuiManager : Listener {
     val guis = hashMapOf<String, IGuiScreen>()
     val players = hashMapOf<UUID, IGuiScreen>()
+    lateinit var owningPlugin: JavaPlugin
 
     fun init(plugin: JavaPlugin) {
+        this.owningPlugin = plugin
         Bukkit.getPluginManager().registerEvents(this, plugin)
         KotlinBukkitGui.version = ""
         KotlinBukkitGui.papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null

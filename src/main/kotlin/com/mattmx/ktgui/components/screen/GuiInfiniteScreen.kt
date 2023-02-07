@@ -38,6 +38,6 @@ open class GuiInfiniteScreen(
             if (slot < inv.size && slot >= 0)
                 inv.setItem(slot, item.formatIntoItemStack(player))
         }
-        firePostBuildAndOpen(player, inv)
+        openIfNotCancelled(player, inv)
     }
 }

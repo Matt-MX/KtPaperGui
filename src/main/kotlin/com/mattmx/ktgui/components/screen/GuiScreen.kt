@@ -6,6 +6,7 @@ import com.mattmx.ktgui.components.Formattable
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.event.AsyncPreGuiOpenEvent
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.color
@@ -21,6 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.Inventory
 import java.lang.Integer.max
 import java.lang.Integer.min
+import java.util.concurrent.Future
 
 open class GuiScreen(
     var title: String = "null",
@@ -107,25 +109,53 @@ open class GuiScreen(
                 inv.setItem(slot, item.formatIntoItemStack(player))
         }
 
-        firePostBuildAndOpen(player, inv)
+        openIfNotCancelled(player, inv)
     }
 
     fun firePreBuildEvent(player: Player) : Boolean {
+        return if (Bukkit.isPrimaryThread()) firePreBuildEventSync(player)
+        else firePreBuildEventAsync(player).get()
+    }
+
+    private fun firePreBuildEventSync(player: Player) : Boolean {
         val event = PreGuiBuildEvent(this, player)
         Bukkit.getPluginManager().callEvent(event)
         return event.isCancelled
     }
 
-    fun firePostBuildAndOpen(player: Player, inventory: Inventory) {
-        if (firePreGuiOpenEvent(player)) {
-            player.setOpenGui(this)
-            player.openInventory(inventory)
-            open?.invoke(player)
+    private fun firePreBuildEventAsync(player: Player) : Future<Boolean> {
+        return Bukkit.getScheduler().callSyncMethod(GuiManager.owningPlugin) {
+            firePreBuildEventSync(player)
+        }
+    }
+
+    fun openIfNotCancelled(player: Player, inventory: Inventory) {
+        if (Bukkit.isPrimaryThread()) {
+            if (!firePreGuiOpenEvent(player)) {
+                player.setOpenGui(this)
+                player.openInventory(inventory)
+                open?.invoke(player)
+            }
+        } else {
+            if (!firePreGuiOpenEventAsync(player)) {
+                player.setOpenGui(this)
+                // Must open inventory sync
+                Bukkit.getScheduler().runTask(GuiManager.owningPlugin) { _ ->
+                    player.openInventory(inventory)
+                }
+                open?.invoke(player)
+            }
         }
     }
 
     fun firePreGuiOpenEvent(player: Player) : Boolean {
         val event = PreGuiOpenEvent(this, player)
+        Bukkit.getPluginManager().callEvent(event)
+        return event.isCancelled
+    }
+
+    fun firePreGuiOpenEventAsync(player: Player) : Boolean {
+        val event = AsyncPreGuiOpenEvent(this, player)
         Bukkit.getPluginManager().callEvent(event)
         return event.isCancelled
     }
