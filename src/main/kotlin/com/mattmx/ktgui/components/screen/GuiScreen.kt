@@ -101,8 +101,8 @@ open class GuiScreen(
             if (slot < inv.size)
                 inv.setItem(slot, item.formatIntoItemStack(player))
         }
-        player.openInventory(inv)
         player.setOpenGui(this)
+        player.openInventory(inv)
         open?.invoke(player)
     }
 
