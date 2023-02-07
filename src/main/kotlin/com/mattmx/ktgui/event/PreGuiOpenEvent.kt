@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList
 class PreGuiOpenEvent(
     val gui: IGuiScreen,
     val player: Player
-) : Event(true), Cancellable {
+) : Event(), Cancellable {
     private var _cancelled: Boolean = false
     override fun getHandlers() = _handlers
 
