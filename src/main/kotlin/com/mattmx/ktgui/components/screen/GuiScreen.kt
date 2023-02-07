@@ -131,19 +131,21 @@ open class GuiScreen(
 
     fun openIfNotCancelled(player: Player, inventory: Inventory) {
         if (Bukkit.isPrimaryThread()) {
+            println("primary thread, check event")
             if (!firePreGuiOpenEvent(player)) {
-                player.setOpenGui(this)
+                println("event was not cancelled")
                 player.openInventory(inventory)
+                player.setOpenGui(this)
                 open?.invoke(player)
             }
         } else {
             if (!firePreGuiOpenEventAsync(player)) {
-                player.setOpenGui(this)
                 // Must open inventory sync
                 Bukkit.getScheduler().runTask(GuiManager.owningPlugin) { _ ->
                     player.openInventory(inventory)
+                    player.setOpenGui(this)
+                    open?.invoke(player)
                 }
-                open?.invoke(player)
             }
         }
     }

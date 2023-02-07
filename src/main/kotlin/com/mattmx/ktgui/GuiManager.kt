@@ -29,23 +29,6 @@ object GuiManager : Listener {
         KotlinBukkitGui.version = ""
         KotlinBukkitGui.papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null
         KotlinBukkitGui.protocollib = Bukkit.getPluginManager().getPlugin("ProtocolLib") != null
-        Bukkit.getScheduler().runTaskAsynchronously(plugin) { ->
-            GitUpdateChecker("https://api.github.com/repos/Matt-MX/KtBukkitGui/releases/latest", KotlinBukkitGui.version,
-                { outdated, latest ->
-                    if (outdated) {
-                        if (KotlinBukkitGui.plugin == null) {
-                            plugin.logger.info("${plugin.description.name} is running an outdated version of KtGui (latest v$latest)")
-                            plugin.logger.info("New Version https://github.com/Matt-MX/KtBukkitGui/")
-                        } else {
-                            plugin.logger.info("Running an outdated version (v${KotlinBukkitGui.version}) Latest available (v$latest)")
-                            plugin.logger.info("Download here: https://github.com/Matt-MX/KtBukkitGui/releases/latest")
-                        }
-                    } else plugin.logger.info("Running latest version! (v${KotlinBukkitGui.version})")
-                }, { e ->
-                    plugin.logger.info("Unable to check for latest version.")
-                    e.printStackTrace()
-                })
-        }
     }
 
     fun getPlayers(gui: IGuiScreen) = players.filter { it.value == gui }.keys
@@ -57,6 +40,7 @@ object GuiManager : Listener {
 
     @EventHandler
     fun click(e: InventoryClickEvent) {
+        println((e.whoClicked as Player).getOpenGui()?.javaClass?.simpleName)
         (e.whoClicked as Player).getOpenGui()?.let {
             e.isCancelled = true
             it.click(e)
