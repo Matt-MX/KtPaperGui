@@ -34,7 +34,10 @@ dependencies {
     implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
-
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 publishing {
     repositories {
         maven {
