@@ -39,7 +39,7 @@ class KotlinBukkitGui : JavaPlugin() {
             }
 
             executes {
-                it.source.sendMessage("&#7F52FFBy MattMX, running KtGui v${KotlinBukkitGui.version}!".color())
+                it.source.sendMessage("&#7F52FFBy MattMX :3, running KtGui v${KotlinBukkitGui.version}!".color())
             }
 
             subCommands += simpleCommand {

@@ -21,9 +21,11 @@ import kotlin.jvm.internal.Intrinsics.Kotlin
 object GuiManager : Listener {
     val guis = hashMapOf<String, IGuiScreen>()
     val players = hashMapOf<UUID, IGuiScreen>()
+    var initialized = false
     lateinit var owningPlugin: JavaPlugin
 
     fun init(plugin: JavaPlugin) {
+        initialized = true
         this.owningPlugin = plugin
         Bukkit.getPluginManager().registerEvents(this, plugin)
         KotlinBukkitGui.version = ""
