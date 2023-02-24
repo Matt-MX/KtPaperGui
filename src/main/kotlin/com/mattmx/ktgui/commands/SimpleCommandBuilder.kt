@@ -1,11 +1,15 @@
 package com.mattmx.ktgui.commands
 
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.dsl.event
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandMap
 import org.bukkit.command.CommandSender
+import org.bukkit.command.SimpleCommandMap
 import org.bukkit.entity.Player
-import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.event.server.PluginDisableEvent
+
 
 open class SimpleCommandBuilder(
     var name: String = "",
@@ -98,13 +102,43 @@ open class SimpleCommandBuilder(
         if (isInConfig) {
             Bukkit.getPluginCommand(name)?.setExecutor(DummyCommandExecutor(this))
         } else {
+            if(!GuiManager.initialized) {
+                throw RuntimeException("Unregistered commands are unsupported when GuiManager not initialised! Call GuiManager.init")
+            }
             val cmdMapField = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
             cmdMapField.isAccessible = true
             val cmdMap = cmdMapField.get(Bukkit.getServer()) as CommandMap
-            cmdMap.register(name, DummyCommand(this))
+            val dummyCmd = DummyCommand(this)
+            cmdMap.register(name, dummyCmd)
+            val knownCommandsField = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
+            knownCommandsField.setAccessible(true)
+            val knownCommands = knownCommandsField.get(cmdMap) as MutableMap<String?, Command?>
+            var knownAliases: Set<String?>? = null
+            try {
+                val aliasesField = SimpleCommandMap::class.java.getDeclaredField("aliases")
+                aliasesField.setAccessible(true)
+                knownAliases = aliasesField.get(cmdMap) as MutableSet<String?>
+            } catch (e: NoSuchFieldException) {}
+            val prefix = GuiManager.owningPlugin.name.lowercase()
+
+            event<PluginDisableEvent>(plugin = GuiManager.owningPlugin) {
+                if(plugin == GuiManager.owningPlugin) {
+                    synchronized(cmdMap) {
+                        knownCommands.remove(name)
+                        knownCommands.remove("$prefix:$name")
+                        knownAliases?.minus(aliases.toSet())
+                        for (alias in aliases) {
+                            knownCommands.remove(alias)
+                            knownCommands.remove("$prefix:$alias")
+                        }
+                        dummyCmd.unregister(cmdMap)
+                        dummyCmd.aliases = listOf()
+                    }
+                    GuiManager.owningPlugin.logger.info("Unregistered $name")
+                }
+            }
         }
     }
-
     fun couldBeCommand(arg: String) : Boolean {
         return name.startsWith(arg) || aliases.any { it.startsWith(arg) }
     }
