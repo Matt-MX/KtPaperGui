@@ -81,7 +81,7 @@ class LoreCycleButton(
     }
 
     fun getSelectedNum() : Int {
-        return selectableLores[selected]
+        return selectableLores.getOrNull(selected) ?: 0
     }
 
     fun lores() : MutableList<LoreEntry> {
