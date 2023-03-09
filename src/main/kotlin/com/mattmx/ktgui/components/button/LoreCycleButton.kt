@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 class LoreCycleButton(
     material: Material = Material.STONE,
     item: ItemStack? = null,
-    private var selected: Int = 0,
+    var selected: Int = 0,
     private var changed: ((LoreCycleButton, ButtonClickedEvent?) -> Unit)? = null,
     val lores: MutableList<LoreEntry> = mutableListOf()
 ) : GuiButton(material, item) {
@@ -81,7 +81,7 @@ class LoreCycleButton(
     }
 
     fun getSelectedNum() : Int {
-        return selectableLores[selected]
+        return selectableLores.getOrNull(selected) ?: 0
     }
 
     fun lores() : MutableList<LoreEntry> {
