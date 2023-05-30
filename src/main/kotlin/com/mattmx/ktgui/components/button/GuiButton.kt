@@ -20,6 +20,7 @@ open class GuiButton(
     var click = ClickEvents()
     var drag: ((InventoryDragEvent) -> Unit)? = null
     var close: ((ButtonClickedEvent) -> Unit)? = null
+    var texturePack: ((GuiButton) -> Unit)? = null
 
     protected var slots: ArrayList<Int>? = null
 
@@ -92,6 +93,18 @@ open class GuiButton(
         return this
     }
 
+    infix fun customModelData(model: Int) : GuiButton {
+        val meta = item?.itemMeta ?: return this
+        meta.setCustomModelData(model)
+        item?.itemMeta = meta
+        return this
+    }
+
+    infix fun texturePackActive(guiButton: GuiButton.() -> Unit) : GuiButton {
+        texturePack = guiButton
+        return this
+    }
+
     infix fun amount(amount: Int) : GuiButton {
         item?.let { it.amount = amount }
         return this
@@ -135,6 +148,13 @@ open class GuiButton(
 
     override fun formatIntoItemStack(player: Player?) : ItemStack? {
         // format itemstack and return
+        if (player?.hasResourcePack() == true && texturePack != null) {
+            val copy = this.copy(this.parent!!)
+            texturePack!!(copy)
+            val item = copy.item
+            item?.format(player)
+            return item
+        }
         val i = getItemStack()?.clone()
         i?.format(player)
         return i
@@ -160,6 +180,7 @@ open class GuiButton(
         copy.item = item?.clone()
         copy.click = click.copy()
         copy.close = close
+        copy.texturePack = texturePack
         return copy
     }
 }

@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.SimpleCommandMap
 import org.bukkit.entity.Player
 import org.bukkit.event.server.PluginDisableEvent
+import java.time.Duration
+import java.util.Date
 
 
 open class SimpleCommandBuilder(
@@ -21,6 +23,9 @@ open class SimpleCommandBuilder(
     val subCommands = arrayListOf<SimpleCommandBuilder>()
     var suggestSubCommands = false
     var playerOnly = false
+    var cooldown: Duration? = null
+    var cooldownMessage: String? = null
+    private var cooldownCallback: (CommandInvocation.() -> Unit)? = null
     private var suggests: (CommandInvocation.() -> List<String>?)? = null
     private var execute: (CommandInvocation.() -> Unit)? = null
     private var unknown: (CommandInvocation.() -> Unit)? = null
@@ -50,6 +55,15 @@ open class SimpleCommandBuilder(
     infix fun hasPermission(executor: CommandSender) : Boolean {
         // todo check for subcommand permissions
         return permission == null || executor.hasPermission(permission!!)
+    }
+
+    fun onCooldown(executes: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
+        this.cooldownCallback = executes
+        return this
+    }
+
+    fun cooldownCallback(invocation: CommandInvocation) {
+        this.cooldownCallback?.invoke(invocation)
     }
 
     fun executes(execute: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
@@ -164,7 +178,8 @@ class CommandInvocation(
     val source: CommandSender,
     val args: List<String>,
     val lastArg: String,
-    val alias: String
+    val alias: String,
+    val coolDownExpires: Date? = null
 ) {
     fun player() : Player {
         return source as Player

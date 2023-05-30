@@ -14,7 +14,7 @@ project.version = "-SNAPSHOT"
 repositories {
     mavenCentral()
     maven {
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
     maven {
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -29,9 +29,10 @@ repositories {
 
 dependencies {
     implementation(group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib',version: '1.7.10')
-    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
     implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")
+
+    compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
 java {
