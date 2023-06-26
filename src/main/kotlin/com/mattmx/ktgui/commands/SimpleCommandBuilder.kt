@@ -123,7 +123,7 @@ open class SimpleCommandBuilder(
             cmdMapField.isAccessible = true
             val cmdMap = cmdMapField.get(Bukkit.getServer()) as CommandMap
             val dummyCmd = DummyCommand(this)
-            cmdMap.register(name, dummyCmd)
+            cmdMap.register(GuiManager.owningPlugin.description.name.lowercase(), dummyCmd)
             val knownCommandsField = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
             knownCommandsField.setAccessible(true)
             val knownCommands = knownCommandsField.get(cmdMap) as MutableMap<String?, Command?>

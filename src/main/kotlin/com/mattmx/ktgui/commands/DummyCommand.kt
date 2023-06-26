@@ -22,7 +22,7 @@ class DummyCommand(
             if (it.hasPermission(sender)) it.executeFor(sender, args.toList(), current, commandLabel)
             else {
                 cmd.noPermissions?.invoke(CommandInvocation(sender, args.toList(), current, commandLabel))
-                sender.sendMessage(this.permissionMessage)
+                this.permissionMessage?.let { it1 -> sender.sendMessage(it1) }
             }
         } ?: run {
             cmd.unknown(sender, args.toList(), current, commandLabel)
