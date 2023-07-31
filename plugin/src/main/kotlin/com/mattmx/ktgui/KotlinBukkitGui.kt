@@ -39,7 +39,7 @@ class KotlinBukkitGui : JavaPlugin() {
             }
 
             executes {
-                it.source.sendMessage("&#7F52FFBy MattMX :3, running KtGui v${KotlinBukkitGui.version}!".color())
+                it.source.sendMessage("&#7F52FFBy MattMX :3, running KtGui v$version!".color())
             }
 
             subCommands += simpleCommand {
@@ -95,7 +95,7 @@ class KotlinBukkitGui : JavaPlugin() {
                 }
                 subCommands += simpleCommand {
                     name = "anvil"
-                    executes { AnvilInputGuiExample.gui(it.source as Player).open(it.source) }
+                    executes { AnvilInputGuiExample.gui(it.source as Player).open(it.source as Player) }
                 }
                 subCommands += simpleCommand {
                     name = "animated_scoreboard"
@@ -130,7 +130,7 @@ class KotlinBukkitGui : JavaPlugin() {
                     executes { GuiPatternExample.gui.open(it.player()) }
                 }
             }
-        }.register()
+        }.register(false)
     }
 
     companion object {

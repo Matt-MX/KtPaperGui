@@ -1,6 +1,5 @@
 package com.mattmx.ktgui.utils
 
-import com.mattmx.ktgui.KotlinBukkitGui
 import me.clip.placeholderapi.PlaceholderAPI
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
@@ -12,7 +11,7 @@ fun color(s: String, p: Player? = null, vararg placeholders: Pair<String, String
     placeholders.forEach {
         string = string.replace(it.first, it.second)
     }
-    if (KotlinBukkitGui.papi && p != null) {
+    if (Dependencies.papi && p != null) {
         string = PlaceholderAPI.setPlaceholders(p, string)
     }
     return color(string)

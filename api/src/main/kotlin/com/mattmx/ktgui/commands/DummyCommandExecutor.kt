@@ -12,7 +12,7 @@ import java.util.UUID
 class DummyCommandExecutor(
     val cmd: SimpleCommandBuilder
 ) : CommandExecutor, TabCompleter {
-    private val cooldowns = hashMapOf<String, Date>()
+//    private val cooldowns = hashMapOf<String, Date>()
 
     override fun onCommand(
         sender: CommandSender,
@@ -30,21 +30,20 @@ class DummyCommandExecutor(
             }
             if (it.hasPermission(sender)) {
                 // Check for cooldown restrictions
-                if (cooldowns.containsKey(sender.name) && cooldowns[sender.name]!!.after(Date())) {
-                    it.cooldownCallback(CommandInvocation(sender, args.toList(), current, commandLabel, cooldowns[sender.name]))
-                    return@also
-                }
+//                if (cooldowns.containsKey(sender.name) && cooldowns[sender.name]!!.after(Date())) {
+//                    it.cooldownCallback(CommandInvocation(sender, args.toList(), current, commandLabel, cooldowns[sender.name]))
+//                    return@also
+//                }
 
                 it.executeFor(sender, args.toList(), current, commandLabel)
 
-                if (it.cooldown != null) {
-                    val now = Date().time
-                    val cooldownExpire = now + it.cooldown!!.toMillis()
-
-                    cooldowns[sender.name] = Date(cooldownExpire)
-                }
-            }
-            else {
+//                if (it.cooldown != null) {
+//                    val now = Date().time
+//                    val cooldownExpire = now + it.cooldown!!.toMillis()
+//
+//                    cooldowns[sender.name] = Date(cooldownExpire)
+//                }
+            } else {
                 cmd.noPermissions?.let { it1 -> it1(CommandInvocation(sender, args.toList(), current, commandLabel)) }
                 sender.sendMessage("&cYou do not have permissions to execute this command.".color())
             }

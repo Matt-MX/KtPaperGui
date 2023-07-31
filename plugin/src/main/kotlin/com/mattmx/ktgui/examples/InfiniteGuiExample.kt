@@ -65,7 +65,7 @@ class InfiniteGuiExample : GuiInfiniteScreen("Infinite Screen", 6) {
     }
 
     fun updateAll() {
-        GuiManager.getPlayers(this)
+        com.mattmx.ktgui.GuiManager.getPlayers(this)
             .forEach { u ->
                 val player = Bukkit.getPlayer(u)
                 player?.let {

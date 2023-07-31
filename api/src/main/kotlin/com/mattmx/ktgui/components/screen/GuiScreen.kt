@@ -94,7 +94,7 @@ open class GuiScreen(
     }
 
     fun forceClose(player: Player) {
-        GuiManager.players.remove(player.uniqueId)
+        com.mattmx.ktgui.GuiManager.players.remove(player.uniqueId)
         player.closeInventory()
     }
 
@@ -124,7 +124,7 @@ open class GuiScreen(
     }
 
     private fun firePreBuildEventAsync(player: Player) : Future<Boolean> {
-        return Bukkit.getScheduler().callSyncMethod(GuiManager.owningPlugin) {
+        return Bukkit.getScheduler().callSyncMethod(com.mattmx.ktgui.GuiManager.owningPlugin) {
             firePreBuildEventSync(player)
         }
     }
@@ -139,7 +139,7 @@ open class GuiScreen(
         } else {
             if (!firePreGuiOpenEventAsync(player)) {
                 // Must open inventory sync
-                Bukkit.getScheduler().runTask(GuiManager.owningPlugin) { _ ->
+                Bukkit.getScheduler().runTask(com.mattmx.ktgui.GuiManager.owningPlugin) { _ ->
                     player.openInventory(inventory)
                     player.setOpenGui(this)
                     open?.invoke(player)

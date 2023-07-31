@@ -6,11 +6,11 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 fun Player.getOpenGui() : IGuiScreen? {
-    return GuiManager.players[this.uniqueId]
+    return com.mattmx.ktgui.GuiManager.players[this.uniqueId]
 }
 
 fun Player.setOpenGui(gui: IGuiScreen) {
-    GuiManager.players[this.uniqueId] = gui
+    com.mattmx.ktgui.GuiManager.players[this.uniqueId] = gui
 }
 
 fun Player.removeScoreboard() {

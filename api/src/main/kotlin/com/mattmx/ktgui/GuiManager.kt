@@ -1,9 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.conversation.ConversationAbandonListener
 import com.mattmx.ktgui.extensions.getOpenGui
-import com.mattmx.ktgui.utils.GitUpdateChecker
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -11,12 +9,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.UUID
-import kotlin.jvm.internal.Intrinsics.Kotlin
+import java.util.*
 
 object GuiManager : Listener {
     val guis = hashMapOf<String, IGuiScreen>()
@@ -25,12 +21,10 @@ object GuiManager : Listener {
     lateinit var owningPlugin: JavaPlugin
 
     fun init(plugin: JavaPlugin) {
+        if (initialized) return
         initialized = true
-        this.owningPlugin = plugin
+        owningPlugin = plugin
         Bukkit.getPluginManager().registerEvents(this, plugin)
-        KotlinBukkitGui.version = ""
-        KotlinBukkitGui.papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null
-        KotlinBukkitGui.protocollib = Bukkit.getPluginManager().getPlugin("ProtocolLib") != null
     }
 
     fun getPlayers(gui: IGuiScreen) = players.filter { it.value == gui }.keys
@@ -78,5 +72,13 @@ object GuiManager : Listener {
     @EventHandler
     fun move(e: PlayerMoveEvent) {
         e.player.getOpenGui()?.move(e)
+    }
+
+    fun forceClose(player: Player) {
+        val gui = player.getOpenGui()
+        gui?.let {
+            gui.destroy()
+            players.remove(player.uniqueId)
+        }
     }
 }

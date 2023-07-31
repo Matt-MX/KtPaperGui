@@ -1,0 +1,12 @@
+main: com.mattmx.ktgui.KotlinBukkitGui
+name: ktgui
+author: MattMX
+load: STARTUP
+version: 2.0
+api-version: 1.19
+
+permissions:
+  ktgui.command.example:
+    description: View gui examples
+  ktgui.command.debug:
+    description: View gui debug
