@@ -4,6 +4,7 @@ import com.mattmx.ktgui.commands.simpleCommand
 import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.extensions.color
+import com.mattmx.ktgui.utils.Dependencies
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
@@ -13,6 +14,9 @@ import java.util.logging.Logger
 class KotlinBukkitGui : JavaPlugin() {
     override fun onEnable() {
         plugin = this
+
+        protocollib = Bukkit.getPluginManager().getPlugin("ProtocolLib") != null
+
         version = description.version
         log = this.logger
         GuiManager.init(this)
@@ -114,10 +118,6 @@ class KotlinBukkitGui : JavaPlugin() {
                     executes { DynamicExample.serverChangerExample(it.source as Player) }
                 }
                 subCommands += simpleCommand { 
-                    name = "yaml"
-                    executes { DynamicExample.poorYamlExample(it.source as Player) }
-                }
-                subCommands += simpleCommand { 
                     name = "dsl"
                     executes { GuiDslExample.open(it.source as Player) }
                 }
@@ -129,13 +129,16 @@ class KotlinBukkitGui : JavaPlugin() {
                     name = "pattern"
                     executes { GuiPatternExample.gui.open(it.player()) }
                 }
+                subCommands += simpleCommand {
+                    name = "dynamic"
+                    executes { DynamicGui().openAndFormat(it.player()) }
+                }
             }
         }.register(false)
     }
 
     companion object {
         var protocollib: Boolean = false
-        var papi: Boolean = false
         var plugin: JavaPlugin? = null
         lateinit var version: String
         lateinit var log: Logger

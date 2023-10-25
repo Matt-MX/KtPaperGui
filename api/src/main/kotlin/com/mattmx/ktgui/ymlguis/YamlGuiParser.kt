@@ -1,8 +1,7 @@
 package com.mattmx.ktgui.ymlguis
 
-import com.mattmx.ktgui.components.ClickEvents
+import com.mattmx.ktgui.components.ClickEvents_leg
 import com.mattmx.ktgui.components.button.GuiButton
-import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection
@@ -78,8 +77,8 @@ object YamlGuiParser {
         }
     }
 
-    private fun parseClickEvents(section: ConfigurationSection) : ClickEvents {
-        val ce = ClickEvents()
+    private fun parseClickEvents(section: ConfigurationSection) : ClickEvents_leg {
+        val ce = ClickEvents_leg()
         ce.left = getCommandExecution(section.getStringList("left"))
         ce.shiftLeft = getCommandExecution(section.getStringList("left-shift"))
         ce.right = getCommandExecution(section.getStringList("right"))

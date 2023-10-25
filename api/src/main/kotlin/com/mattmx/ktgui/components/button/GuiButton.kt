@@ -1,10 +1,11 @@
 package com.mattmx.ktgui.components.button
 
-import com.mattmx.ktgui.components.ClickEvents
+import com.mattmx.ktgui.components.ClickEvents_leg
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.extensions.format
 import com.mattmx.ktgui.extensions.setEnchantments
 import com.mattmx.ktgui.item.ItemBuilder
+import com.mattmx.ktgui.utils.color
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -17,10 +18,11 @@ open class GuiButton(
 ) : IGuiButton {
     protected var parent: IGuiScreen? = null
 
-    var click = ClickEvents()
+    var click = ClickEvents_leg()
     var drag: ((InventoryDragEvent) -> Unit)? = null
     var close: ((ButtonClickedEvent) -> Unit)? = null
     var texturePack: ((GuiButton) -> Unit)? = null
+    var format: (String, Player?) -> String = { s, p -> color(s, p) }
 
     protected var slots: ArrayList<Int>? = null
 
@@ -74,6 +76,10 @@ open class GuiButton(
         return this
     }
 
+    override fun destroy() {
+
+    }
+
     infix fun materialOf(string: String?) : GuiButton {
         return materialOf(string, Material.STONE)
     }
@@ -119,7 +125,7 @@ open class GuiButton(
         return item
     }
 
-    inline fun click(ce: ClickEvents.() -> Unit) : GuiButton {
+    inline fun click(ce: ClickEvents_leg.() -> Unit) : GuiButton {
         ce.invoke(click)
         return this
     }
@@ -152,11 +158,11 @@ open class GuiButton(
             val copy = this.copy(this.parent!!)
             texturePack!!(copy)
             val item = copy.item
-            item?.format(player)
+            item?.format(player, format)
             return item
         }
         val i = getItemStack()?.clone()
-        i?.format(player)
+        i?.format(player, format)
         return i
     }
 
@@ -165,7 +171,7 @@ open class GuiButton(
     }
 
     fun update(player: Player) : GuiButton {
-         val istack = formatIntoItemStack(player)
+        val istack = formatIntoItemStack(player)
         // get all slots that this item exists in
         // update every slot to this new itemstack
         parent?.getSlots(this)?.forEach { slot ->

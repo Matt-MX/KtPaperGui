@@ -3,7 +3,7 @@ package com.mattmx.ktgui.components
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import org.bukkit.event.inventory.ClickType
 
-class ClickEvents {
+class ClickEvents_leg {
     var left : (ButtonClickedEvent.() -> Unit)? = null
     var shiftLeft : (ButtonClickedEvent.() -> Unit)? = null
     var right : (ButtonClickedEvent.() -> Unit)? = null
@@ -37,8 +37,8 @@ class ClickEvents {
         }
     }
 
-    fun copy() : ClickEvents {
-        val copy = ClickEvents()
+    fun copy() : ClickEvents_leg {
+        val copy = ClickEvents_leg()
         copy.left = left
         copy.right = right
         copy.shiftRight = shiftRight

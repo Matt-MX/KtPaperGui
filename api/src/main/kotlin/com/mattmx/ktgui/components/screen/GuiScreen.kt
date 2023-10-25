@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.components.screen
 
-import com.mattmx.ktgui.GuiManager
-import com.mattmx.ktgui.components.ClickEvents
+import com.mattmx.ktgui.components.ClickEvents_leg
 import com.mattmx.ktgui.components.Formattable
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
@@ -31,7 +30,7 @@ open class GuiScreen(
 ) : IGuiScreen, Formattable {
     var items = hashMapOf<Int, IGuiButton>()
 
-    var click: ClickEvents? = null
+    var click: ClickEvents_leg? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null
     protected var quit: ((PlayerQuitEvent) -> Unit)? = null
     protected var move: ((PlayerMoveEvent) -> Unit)? = null
@@ -199,8 +198,8 @@ open class GuiScreen(
         return this
     }
 
-    infix fun click(ce: (ClickEvents) -> Unit): GuiScreen {
-        this.click = ClickEvents()
+    infix fun click(ce: (ClickEvents_leg) -> Unit): GuiScreen {
+        this.click = ClickEvents_leg()
         ce.invoke(this.click!!)
         return this
     }

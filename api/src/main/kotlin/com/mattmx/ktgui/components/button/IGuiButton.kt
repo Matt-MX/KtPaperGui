@@ -29,4 +29,6 @@ interface IGuiButton {
     fun slots() : List<Int>?
 
     infix fun childOf(parent: IGuiScreen) : IGuiButton
+
+    fun destroy()
 }

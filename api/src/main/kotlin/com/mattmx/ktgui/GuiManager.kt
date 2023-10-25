@@ -14,10 +14,13 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
+/**
+ * Handles all GUI click events, as well
+ * as events we might need to know while in a GUI.
+ */
 object GuiManager : Listener {
-    val guis = hashMapOf<String, IGuiScreen>()
-    val players = hashMapOf<UUID, IGuiScreen>()
-    var initialized = false
+    private val players = hashMapOf<UUID, IGuiScreen>()
+    private var initialized = false
     lateinit var owningPlugin: JavaPlugin
 
     fun init(plugin: JavaPlugin) {
@@ -28,14 +31,11 @@ object GuiManager : Listener {
     }
 
     fun getPlayers(gui: IGuiScreen) = players.filter { it.value == gui }.keys
-    inline fun <reified T> getPlayers(clazz: Class<T>) = players.filter { it.value::class.java == clazz }
-
-    fun register(id: String, gui: IGuiScreen) {
-        guis[id] = gui
-    }
+    fun getPlayersInGui() = players.toMutableMap()
+    inline fun <reified T> getPlayers(clazz: Class<T>) = getPlayersInGui().filter { it.value::class.java == clazz }
 
     @EventHandler
-    fun click(e: InventoryClickEvent) {
+    fun onInventoryClick(e: InventoryClickEvent) {
         (e.whoClicked as Player).getOpenGui()?.let {
             e.isCancelled = true
             it.click(e)
@@ -43,7 +43,7 @@ object GuiManager : Listener {
     }
 
     @EventHandler
-    fun drag(e: InventoryDragEvent) {
+    fun onInventoryDrag(e: InventoryDragEvent) {
         (e.whoClicked as Player).getOpenGui()?.let {
             e.isCancelled = true
             it.drag(e)
@@ -51,7 +51,7 @@ object GuiManager : Listener {
     }
 
     @EventHandler
-    fun close(e: InventoryCloseEvent) {
+    fun onInventoryClose(e: InventoryCloseEvent) {
         val gui = (e.player as Player).getOpenGui()
         gui?.let {
             gui.close(e)
@@ -60,7 +60,7 @@ object GuiManager : Listener {
     }
 
     @EventHandler
-    fun quit(e: PlayerQuitEvent) {
+    fun onPlayerQuit(e: PlayerQuitEvent) {
         val gui = e.player.getOpenGui()
         gui?.let {
             gui.quit(e)
@@ -70,10 +70,17 @@ object GuiManager : Listener {
     }
 
     @EventHandler
-    fun move(e: PlayerMoveEvent) {
+    fun onPlayerMove(e: PlayerMoveEvent) {
         e.player.getOpenGui()?.move(e)
     }
 
+    /**
+     * Call this to close a Player's GUI.
+     * It is more safe than using [Player#closeInventory()]
+     * since that doesn't call the [InventoryCloseEvent] event.
+     *
+     * @param player
+     */
     fun forceClose(player: Player) {
         val gui = player.getOpenGui()
         gui?.let {

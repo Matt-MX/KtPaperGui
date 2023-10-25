@@ -106,7 +106,7 @@ class LoreCycleButton(
             it.lore = loreToApply
             i.itemMeta = it
         }
-        i?.format(player)
+        i?.format(player, format)
         return i
     }
 
