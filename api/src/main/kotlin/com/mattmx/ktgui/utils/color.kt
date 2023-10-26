@@ -3,9 +3,13 @@ package com.mattmx.ktgui.utils
 import com.google.gson.JsonElement
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.event.HoverEvent.ShowEntity
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
 var serializer = LegacyComponentSerializer.builder()
     .character('&')
@@ -30,4 +34,7 @@ fun String.placeholders(player: OfflinePlayer? = null): String {
     }
     return this
 }
-fun Component.plus(component: Component) = this.append(component)
+operator fun Component.plus(component: Component) = this.append(component)
+infix fun Component.clickEvent(event: ClickEvent) = clickEvent(event)
+infix fun <T> Component.hoverEvent(event: HoverEvent<T>) = hoverEvent(event)
+operator fun String.not() = component()
