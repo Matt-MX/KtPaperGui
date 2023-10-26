@@ -6,10 +6,11 @@ import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.gui
-import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.item.itemBuilderStack
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
+import org.bukkit.event.inventory.ClickType
 import java.util.*
 
 object GuiPatternExample {
@@ -28,8 +29,7 @@ object GuiPatternExample {
             named("")
         }
         pattern['a'] = button<GuiButton> {
-            item = itemBuilderStack {
-                material = Material.PLAYER_HEAD
+            item = itemBuilderStack(Material.PLAYER_HEAD) {
                 name = "&5MattMX"
                 skullOwner = Bukkit.getOfflinePlayer(UUID.fromString("5fb2e3a2-173b-45e9-a37b-186d40164114"))
                 format { color() }
@@ -46,6 +46,12 @@ object GuiPatternExample {
         pattern['d'] = button<GuiButton> {
             named("&7Meow")
             material(Material.TROPICAL_FISH)
+
+            click {
+                ClickType.LEFT {
+                    player.playSound(player, Sound.ENTITY_CAT_PURREOW, 1f, 1f)
+                }
+            }
         }
 
         applyPattern(pattern)

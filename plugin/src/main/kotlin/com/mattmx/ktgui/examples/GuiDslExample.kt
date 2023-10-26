@@ -4,6 +4,7 @@ import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.gui
+import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
@@ -12,6 +13,7 @@ object GuiDslExample {
     val gui = gui<GuiScreen> {
         title = "DSL Gui example"
         rows = 1
+
         button<GuiButton> {
             material(Material.PAPER)
             named("&cThis GUI was built using Kotlin's DSL.")
@@ -21,7 +23,8 @@ object GuiDslExample {
                 add("&eClick me!")
             }
             click {
-                generic = {
+                any {
+                    player.sendMessage(!"&c:3 meow")
                 }
             }
             slot(4)
@@ -33,7 +36,7 @@ object GuiDslExample {
                 add("&7Click me to close the GUI.")
             }
             click {
-                generic = { forceClose(player) }
+                any { forceClose(player) }
             }
             slot(8)
         }

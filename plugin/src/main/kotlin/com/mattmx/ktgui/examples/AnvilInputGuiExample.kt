@@ -40,7 +40,7 @@ object AnvilInputGuiExample {
 
             button<GuiButton> {
                 click {
-                    generic = {
+                    any {
                         forceClose(player)
                         player.sendMessage(currentName.color())
                     }

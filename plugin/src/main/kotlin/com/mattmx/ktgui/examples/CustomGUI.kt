@@ -9,6 +9,7 @@ import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import kotlin.random.Random
 
 class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffExample GUI", 4) {
@@ -26,8 +27,8 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
             .lore("&#E24462&nhttps://mattmx.com/")
         GuiButton()
             .click {
-                generic = { player.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f ,1f) }
-            } ofBuilder skull childOf this slot 27
+                any { player.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f ,1f) }
+            } fromItemBuilder  skull childOf this slot 27
         /**
          * Fill the bottom slots with gray stained glass panes.
          */
@@ -37,10 +38,10 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
          */
         GuiButton()
             .click {
-                generic = { forceClose(player) }
+                any { forceClose(player) }
             }.lore {
                 add("&8Click to close the Gui Interface")
-            } materialOf "barrier" named "&c&lClose" slot 35 childOf this
+            }.materialOf("barrier", Material.DIRT) named "&c&lClose" slot 35 childOf this
         /**
          * The GuiToggleButton is an example of what you can accomplish with this library.
          * We can provide an item state for when the button is enabled, and one for when it's disabled.
@@ -57,14 +58,14 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
          */
         GuiButton()
             .click {
-                generic = {
+                any {
                     repeat(3) {
                         val offsetX = Random.nextDouble(-2.0, 2.0) * 2
                         val offsetZ = Random.nextDouble(-2.0, 2.0) * 2
                         player.spawnParticle(Particle.FIREWORKS_SPARK, player.location.add(offsetX, 1.0, offsetZ), 20)
                     }
                 }
-                drop = {
+                ClickType.DROP {
                     player.sendMessage("&8&l⤷ &#7f52ffWhat a party pooper. :(")
                 }
             }.lore {
@@ -75,7 +76,7 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
          */
         GuiButton()
             .click {
-                generic = {
+                any {
                     val world = player.world
                     world.time += 12000
                     player.sendMessage("&8&l⤷ &#7f52ffTime +12000 game ticks!".color())

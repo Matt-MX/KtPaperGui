@@ -7,6 +7,7 @@ import com.mattmx.ktgui.dsl.conversation
 import com.mattmx.ktgui.extensions.color
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 
 /**
  * An example of how we can use the Bukkit Conversation API to create
@@ -16,7 +17,7 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
     init {
         GuiButton()
             .click {
-                left = {
+                ClickType.LEFT {
                     // Make sure to close the GUI, so they can type in chat
                     forceClose(player)
                     // Create a new conversation
@@ -61,7 +62,7 @@ class ConversationGuiExample() : GuiScreen("Conversation API", 1) {
                     }.exitOn("exit") // If the player types "exit" the conversation is ended.
                         .build(player).begin() // Build and begin the conversation.
                 }
-                right = {
+                ClickType.RIGHT {
                     forceClose(player)
                     conversation(KotlinBukkitGui.plugin!!) {
                         /**

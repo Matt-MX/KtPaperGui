@@ -5,6 +5,7 @@ import com.mattmx.ktgui.components.screen.GuiMultiPageScreen
 import com.mattmx.ktgui.extensions.color
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 
 // fixme: even if copied page seems to save?
 class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
@@ -12,7 +13,7 @@ class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
         Material.values().forEach { material ->
             this += GuiButton()
                 .click {
-                    generic = { player.sendMessage("&bYou clicked item &3&l${material.name}".color()) }
+                    any { player.sendMessage("&bYou clicked item &3&l${material.name}".color()) }
                 } named "&b&l${material.name}" material material
         }
         GuiButton() material Material.GRAY_STAINED_GLASS_PANE named " " slots (0..8).toList() + (45..53).toList() childOf this
@@ -20,7 +21,7 @@ class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
             GuiButton() named "&9&lPage ${getCurrentPage()}" slot 49 childOf this material Material.COMPASS
         GuiButton()
             .click {
-                left = {
+                ClickType.LEFT {
                     gotoNextPage(player)
                     currentPage named "&9&lPage ${getCurrentPage()}"
                     currentPage.update(player)
@@ -28,7 +29,7 @@ class MultiPageExample : GuiMultiPageScreen("Multi-page Example", 6) {
             } named "&bNext Page" slot 53 childOf this materialOf "arrow"
         GuiButton()
             .click {
-                left = {
+                ClickType.LEFT {
                     gotoPrevPage(player)
                     currentPage named "&9&lPage ${getCurrentPage()}"
                     currentPage.update(player)

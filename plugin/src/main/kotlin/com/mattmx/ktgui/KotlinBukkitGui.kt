@@ -21,11 +21,6 @@ class KotlinBukkitGui : JavaPlugin() {
         log = this.logger
         GuiManager.init(this)
 
-        GuiManager.register("example_normal", CustomGUI())
-        GuiManager.register("example_java", JavaGuiExample())
-        GuiManager.register("example_config", ConfigScreenExample())
-        GuiManager.register("example_pages", MultiPageExample())
-        GuiManager.register("example_conversation", ConversationGuiExample())
         InfiniteGuiExample.instance = InfiniteGuiExample()
 
         event<PlayerJoinEvent> {
