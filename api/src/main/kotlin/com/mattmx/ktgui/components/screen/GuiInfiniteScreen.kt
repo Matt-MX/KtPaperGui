@@ -14,11 +14,16 @@ open class GuiInfiniteScreen(
     var y = 0
 
     fun getCoords(button: IGuiButton) = items2D.filter { it.value == button }
+
     fun setSlot(x: Int, y: Int, button: IGuiButton) {
         items2D[x to y] = button
     }
+
     fun coordsUsed() = items2D.keys
+
     operator fun set(coords: Pair<Int, Int>, button: IGuiButton) = setSlot(coords.first, coords.second, button)
+
+    operator fun set(x: Int, y: Int, button: IGuiButton) = setSlot(x, y, button)
 
     override fun open(player: Player) {
         val inv: Inventory = if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(player, totalSlots(), title)

@@ -3,6 +3,7 @@ package com.mattmx.ktgui.components
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import org.bukkit.event.inventory.ClickType
 
+@Deprecated("in favour of ClickCallback")
 class LegacyClickCallback {
     var left : (ButtonClickedEvent.() -> Unit)? = null
     var shiftLeft : (ButtonClickedEvent.() -> Unit)? = null
