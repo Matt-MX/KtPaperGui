@@ -6,6 +6,7 @@ import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import java.util.function.Supplier
 
+// todo change this, it's unclean af
 inline fun <reified T : GuiScreen> gui(constructor: Supplier<T> = Supplier{ GuiScreen() as T }, gui: T.() -> Unit) : T {
     val g = constructor.get()
     gui.invoke(g)

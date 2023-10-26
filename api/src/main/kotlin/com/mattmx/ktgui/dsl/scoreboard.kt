@@ -3,6 +3,7 @@ package com.mattmx.ktgui.dsl
 import com.mattmx.ktgui.scoreboards.AnimatedScoreboardBuilder
 import com.mattmx.ktgui.scoreboards.ScoreboardBuilder
 
+// todo change to components
 inline fun scoreboard(title: String = "null", build: ScoreboardBuilder.() -> Unit) : ScoreboardBuilder {
     val builder = ScoreboardBuilder(title)
     build.invoke(builder)
