@@ -1,6 +1,5 @@
 package com.mattmx.ktgui.item
 
-import com.mattmx.ktgui.extensions.color
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
@@ -12,57 +11,18 @@ import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-fun foo() {
-
-    itemBuilder {
-        material = Material.WOODEN_SWORD
-        name = "&cItem Builder".color()
-        lore += ""
-        lore += "&7This is lore!".color()
-        lore += ""
-        enchantments += Enchantment.MENDING lvl 1
-        enchantments += Enchantment.OXYGEN lvl 10
-    }.format { color() }
-
-    val item =
-        KT ib Material.WOODEN_SWORD name "&cInline item builder" lore "&7Reminds me of Skript" ench (Enchantment.BINDING_CURSE lvl 1) format { color() }
-
-    val pot =
-        KT ib Material.POTION name "&bWKD 40" lore "&7Teens love it" effect (PotionEffectType.SPEED time 60 lvl 4) format { color() }
-
-    val sword =
-        KT ib Material.DIAMOND_SWORD name "&4Punisher" lore "&8Bruh ting" lore "&8Wet man up" ench (Enchantment.DAMAGE_ALL lvl 255) format { color() }
-
-    val reallyBigBuilder =
-        KT ib Material.POTION named "&dGod potion" lore "" lore "&7Drink this to become high," lore "&7powerful, and full of" nl {
-        } lore "&7might. &o@MattMX" effect (PotionEffectType.SPEED time 255 lvl 4) effect (PotionEffectType.INCREASE_DAMAGE time 255 lvl 4) nl {
-        } effect (PotionEffectType.INVISIBILITY time 255) effect (PotionEffectType.HEALTH_BOOST time 255 lvl 2000) effect (PotionEffectType.HEAL lvl 2000) nl {
-        } format String::color
-
-    val realUsage =
-        KT ib Material.ARROW name "&eNext Page" lore "" lore "&7Click to go to page %page%" format String::color
-}
-
-/**
- * DSL based Item Builder - will likely deprecate old [ItemBuilder].
- *
- * Capable of also making items completely inline (should you really need to).
- */
-
 /**
  * Inline item builder starter functions.
  *
  * @param material of the item (Must be first!)
  * [KT] is an empty object used for starting the inline item builder.
  */
+object KT
 infix fun KT.ib(material: Material) = iBuilder(material)
 infix fun KT.itemBuilder(material: Material) = iBuilder(material)
 infix fun KT.iBuilder(material: Material): DslIBuilder {
-    return DslIBuilder().material(material)
+    return DslIBuilder(material)
 }
-
-// Dummy object for starting creation of inline item building
-object KT
 
 /**
  * Normal item builder methods.
@@ -70,21 +30,27 @@ object KT
  * @param builder block for building the item
  * @return the item as a stack or a builder.
  */
-inline fun itemBuilderStack(builder: DslIBuilder.() -> Unit): ItemStack = itemBuilder(builder).build()
-inline fun itemBuilder(builder: DslIBuilder.() -> Unit): DslIBuilder {
-    val builderInst = DslIBuilder()
+inline fun itemBuilderStack(material: Material, builder: DslIBuilder.() -> Unit): ItemStack = itemBuilder(material, builder).build()
+inline fun itemBuilder(material: Material, builder: DslIBuilder.() -> Unit): DslIBuilder {
+    val builderInst = DslIBuilder(material)
     builder(builderInst)
     return builderInst
 }
 
 inline infix fun ItemStack.builder(builder: DslIBuilder.() -> Unit) =
-    itemBuilder {
-        material = type
+    itemBuilder(type) {
         name = itemMeta?.displayName
         itemMeta?.lore?.toMutableList()?.let { lore = it }
         itemMeta?.enchants?.forEach { (ench, lvl) ->
             enchantments += ench lvl lvl
         }
+        if (itemMeta is PotionMeta) {
+            val potionMeta = itemMeta as PotionMeta
+            potionMeta.customEffects.toList().forEach { effect ->
+                potionEffects[effect.type] = effect.amplifier to effect.duration
+            }
+        }
+        customModelData = itemMeta?.customModelData
         amount = getAmount()
         durability = getDurability()
     }
@@ -100,9 +66,9 @@ infix fun PotionEffectType.duration(time: Int) = time(time)
 infix fun PotionEffectType.time(time: Int): Pair<PotionEffectType, Pair<Int, Int>> = Pair(this, Pair(time, 0))
 infix fun <F> Enchantment.lvl(lvl: F) = level(lvl)
 infix fun <F> Enchantment.level(level: F): Pair<Enchantment, F> = Pair(this, level)
+operator fun DslIBuilder.invoke() = build()
 
-class DslIBuilder {
-    var material: Material = Material.STONE
+class DslIBuilder(var material: Material) {
     var name: String? = null
     var lore = mutableListOf<String>()
     var amount = 1
@@ -187,8 +153,7 @@ class DslIBuilder {
     // To simply copy the item
     fun clone() = copy()
     fun copy(): DslIBuilder {
-        val ib = DslIBuilder()
-        ib.material = material
+        val ib = DslIBuilder(material)
         ib.name = name
         ib.amount = amount
         ib.lore += lore

@@ -4,6 +4,9 @@ author: MattMX
 load: STARTUP
 version: 2.0
 api-version: 1.19
+softdepend:
+  - ProtocolLib
+  - PlaceholderAPI
 
 permissions:
   ktgui.command.example:

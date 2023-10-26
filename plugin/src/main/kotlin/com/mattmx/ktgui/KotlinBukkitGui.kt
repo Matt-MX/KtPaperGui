@@ -20,6 +20,7 @@ class KotlinBukkitGui : JavaPlugin() {
         version = description.version
         log = this.logger
         GuiManager.init(this)
+
         GuiManager.register("example_normal", CustomGUI())
         GuiManager.register("example_java", JavaGuiExample())
         GuiManager.register("example_config", ConfigScreenExample())
