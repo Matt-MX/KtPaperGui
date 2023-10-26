@@ -1,10 +1,10 @@
 package com.mattmx.ktgui.components.button
 
-import com.mattmx.ktgui.components.ClickEvents_leg
+import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.extensions.format
 import com.mattmx.ktgui.extensions.setEnchantments
-import com.mattmx.ktgui.item.ItemBuilder
+import com.mattmx.ktgui.item.DslIBuilder
 import com.mattmx.ktgui.utils.color
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -16,15 +16,21 @@ open class GuiButton(
     material: Material = Material.STONE,
     var item: ItemStack? = null
 ) : IGuiButton {
-    protected var parent: IGuiScreen? = null
+    lateinit var parent: IGuiScreen
+        protected set
 
-    var click = ClickEvents_leg()
-    var drag: ((InventoryDragEvent) -> Unit)? = null
-    var close: ((ButtonClickedEvent) -> Unit)? = null
-    var texturePack: ((GuiButton) -> Unit)? = null
-    var format: (String, Player?) -> String = { s, p -> color(s, p) }
+    var clickCallback = ClickCallback()
+        protected set
+    var dragCallback: ((InventoryDragEvent) -> Unit)? = null
+        protected set
+    var closeCallback: ((ButtonClickedEvent) -> Unit)? = null
+        protected set
+    var ifTexturePackActive: ((GuiButton) -> Unit)? = null
+        protected set
+    private var format: (String, Player?) -> String = { s, p -> color(s, p) }
 
-    protected var slots: ArrayList<Int>? = null
+    // todo should remove this once we have no need for it (parent has been declared)
+    private var slots: ArrayList<Int>? = null
 
     init {
         if (item == null) item = ItemStack(material)
@@ -59,20 +65,22 @@ open class GuiButton(
     }
 
     override infix fun slot(slot: Int) : GuiButton {
-        parent?.also {
+        if (hasParent()) {
             if (slots == null) slots = arrayListOf()
             slots!!.add(slot)
-            it.setSlot(this, slot)
-        } ?: run {
+            parent.setSlot(this, slot)
+        } else {
             if (slots == null) slots = arrayListOf()
             slots!!.add(slot)
         }
         return this
     }
 
-    override infix fun childOf(screen: IGuiScreen): GuiButton {
-        this.parent = screen
-        parent?.addChild(this)
+    fun hasParent() = this::parent.isInitialized
+
+    override infix fun childOf(parent: IGuiScreen): GuiButton {
+        this.parent = parent
+        this.parent.addChild(this)
         return this
     }
 
@@ -80,12 +88,9 @@ open class GuiButton(
 
     }
 
-    infix fun materialOf(string: String?) : GuiButton {
-        return materialOf(string, Material.STONE)
-    }
-
-    fun materialOf(string: String?, fallback: Material = Material.STONE) : GuiButton {
-        val mat = Material.values().firstOrNull { it.name.lowercase() == string?.lowercase()?.replace(" ", "_") }
+    fun materialOf(materialName: String?, fallback: Material) : GuiButton {
+        val materialNameFormatted = materialName?.uppercase()?.replace(" ", "_")
+        val mat = Material.values().firstOrNull { it.name == materialNameFormatted }
         mat?.also { material(it) } ?: material(fallback)
         return this
     }
@@ -106,18 +111,18 @@ open class GuiButton(
         return this
     }
 
-    infix fun texturePackActive(guiButton: GuiButton.() -> Unit) : GuiButton {
-        texturePack = guiButton
-        return this
-    }
-
     infix fun amount(amount: Int) : GuiButton {
         item?.let { it.amount = amount }
         return this
     }
 
-    infix fun ofBuilder(builder: ItemBuilder) : GuiButton {
-        item = builder.make()
+    infix fun ifTexturePackActive(block: GuiButton.() -> Unit) : GuiButton {
+        ifTexturePackActive = block
+        return this
+    }
+
+    infix fun fromItemBuilder(builder: DslIBuilder) : GuiButton {
+        item = builder.build()
         return this
     }
 
@@ -125,13 +130,13 @@ open class GuiButton(
         return item
     }
 
-    inline fun click(ce: ClickEvents_leg.() -> Unit) : GuiButton {
-        ce.invoke(click)
+    inline fun click(block: ClickCallback.() -> Unit) : GuiButton {
+        block.invoke(clickCallback)
         return this
     }
 
     fun drag(cb: InventoryDragEvent.() -> Unit) : GuiButton {
-        this.drag = cb
+        dragCallback = cb
         return this
     }
 
@@ -144,19 +149,19 @@ open class GuiButton(
         return this
     }
 
-    override fun thisClicked(e: ButtonClickedEvent) {
-        click.accept(e)
+    override fun onButtonClick(event: ButtonClickedEvent) {
+        clickCallback.run(event)
     }
 
-    override fun thisDragged(e: InventoryDragEvent) {
-        drag?.invoke(e)
+    override fun onButtonDrag(e: InventoryDragEvent) {
+        dragCallback?.invoke(e)
     }
 
     override fun formatIntoItemStack(player: Player?) : ItemStack? {
         // format itemstack and return
-        if (player?.hasResourcePack() == true && texturePack != null) {
-            val copy = this.copy(this.parent!!)
-            texturePack!!(copy)
+        if (player?.hasResourcePack() == true && ifTexturePackActive != null) {
+            val copy = this.copy(this.parent)
+            ifTexturePackActive!!(copy)
             val item = copy.item
             item?.format(player, format)
             return item
@@ -171,11 +176,11 @@ open class GuiButton(
     }
 
     fun update(player: Player) : GuiButton {
-        val istack = formatIntoItemStack(player)
+        val itemStack = formatIntoItemStack(player)
         // get all slots that this item exists in
         // update every slot to this new itemstack
-        parent?.getSlots(this)?.forEach { slot ->
-            player.openInventory.setItem(slot, istack)
+        parent.getSlots(this).forEach { slot ->
+            player.openInventory.setItem(slot, itemStack)
         }
         return this
     }
@@ -184,9 +189,9 @@ open class GuiButton(
         val copy = GuiButton()
         copy.parent = parent
         copy.item = item?.clone()
-        copy.click = click.copy()
-        copy.close = close
-        copy.texturePack = texturePack
+        copy.clickCallback = clickCallback.clone()
+        copy.closeCallback = closeCallback
+        copy.ifTexturePackActive = ifTexturePackActive
         return copy
     }
 }

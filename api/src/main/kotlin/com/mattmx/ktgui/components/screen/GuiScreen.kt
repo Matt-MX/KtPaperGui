@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.components.screen
 
-import com.mattmx.ktgui.components.ClickEvents_leg
+import com.mattmx.ktgui.components.LegacyClickCallback
 import com.mattmx.ktgui.components.Formattable
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
@@ -30,7 +30,7 @@ open class GuiScreen(
 ) : IGuiScreen, Formattable {
     var items = hashMapOf<Int, IGuiButton>()
 
-    var click: ClickEvents_leg? = null
+    var click: LegacyClickCallback? = null
     var close: ((InventoryCloseEvent) -> Unit)? = null
     protected var quit: ((PlayerQuitEvent) -> Unit)? = null
     protected var move: ((PlayerMoveEvent) -> Unit)? = null
@@ -198,8 +198,8 @@ open class GuiScreen(
         return this
     }
 
-    infix fun click(ce: (ClickEvents_leg) -> Unit): GuiScreen {
-        this.click = ClickEvents_leg()
+    infix fun click(ce: (LegacyClickCallback) -> Unit): GuiScreen {
+        this.click = LegacyClickCallback()
         ce.invoke(this.click!!)
         return this
     }
@@ -217,13 +217,13 @@ open class GuiScreen(
             it.accept(ButtonClickedEvent(e.whoClicked as Player, e, button))
             return
         }
-        button?.thisClicked(ButtonClickedEvent(e.whoClicked as Player, e, button))
+        button?.onButtonClick(ButtonClickedEvent(e.whoClicked as Player, e, button))
     }
 
     override fun drag(e: InventoryDragEvent) {
         e.rawSlots.forEach {
             val button = items[it]
-            button?.thisDragged(e)
+            button?.onButtonDrag(e)
         }
     }
 

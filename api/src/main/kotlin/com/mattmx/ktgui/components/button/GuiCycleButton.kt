@@ -3,7 +3,6 @@ package com.mattmx.ktgui.components.button
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 
 class GuiCycleButton(
@@ -69,7 +68,7 @@ class GuiCycleButton(
         copy.map.putAll(map)
         copy.changed = changed
         copy.parent = parent
-        copy.click = click
+        copy.clickCallback = clickCallback
         copy.close = close
         copy.item = item
         return copy

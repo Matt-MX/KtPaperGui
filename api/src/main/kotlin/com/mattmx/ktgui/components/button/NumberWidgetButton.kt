@@ -17,7 +17,7 @@ class NumberWidgetButton(
         amount(startValue)
     }
 
-    override fun thisClicked(e: ButtonClickedEvent) {
+    override fun onButtonClick(e: ButtonClickedEvent) {
         when (e.event.click) {
             ClickType.RIGHT -> {
                 amount(min(64, max(1, item!!.amount + step)))

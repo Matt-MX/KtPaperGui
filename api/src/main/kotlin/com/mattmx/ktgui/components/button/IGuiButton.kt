@@ -14,9 +14,9 @@ interface IGuiButton {
     /**
      * Called when this button is clicked
      */
-    fun thisClicked(e: ButtonClickedEvent)
+    fun onButtonClick(e: ButtonClickedEvent)
 
-    fun thisDragged(e: InventoryDragEvent)
+    fun onButtonDrag(e: InventoryDragEvent)
 
     fun formatIntoItemStack(player: Player? = null) : ItemStack?
 

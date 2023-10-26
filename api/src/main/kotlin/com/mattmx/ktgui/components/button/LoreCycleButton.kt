@@ -4,7 +4,6 @@ import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.extensions.format
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 
 // fixme: sometimes doesn't change on first click (after this gui has been opened already)
@@ -120,7 +119,7 @@ class LoreCycleButton(
         copy.selectableLores = selectableLores.toMutableList()
         copy.changed = changed
         copy.parent = parent
-        copy.click = click
+        copy.clickCallback = clickCallback
         copy.close = close
         return copy
     }

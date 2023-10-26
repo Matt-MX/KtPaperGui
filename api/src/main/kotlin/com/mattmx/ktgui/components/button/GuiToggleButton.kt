@@ -1,8 +1,6 @@
 package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.item.ItemBuilder
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -18,10 +16,10 @@ open class GuiToggleButton(
         this.item = if (current) enabledItem else disabledItem
     }
 
-    override fun thisClicked(e: ButtonClickedEvent) {
+    override fun onButtonClick(e: ButtonClickedEvent) {
         changeState(e.player, e.event)
         update(e.player)
-        super.thisClicked(e)
+        super.onButtonClick(e)
     }
 
     fun enabledOnDefault(state: Boolean) : GuiToggleButton {

@@ -1,12 +1,7 @@
 package com.mattmx.ktgui.components.screen
 
 import com.mattmx.ktgui.components.button.IGuiButton
-import com.mattmx.ktgui.extensions.format
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryType
-import org.bukkit.inventory.InventoryView
-import org.bukkit.inventory.ItemStack
 
 open class GuiMultiPageScreen(
     title: String = "null",
@@ -27,9 +22,9 @@ open class GuiMultiPageScreen(
             ce.generic = {
                 if (slot in minSlot until maxSlot) {
                     val index = slot + (page * pageSize()) - minSlot
-                    itemList.getOrNull(index)?.thisClicked(this)
+                    itemList.getOrNull(index)?.onButtonClick(this)
                 } else {
-                    items[slot]?.thisClicked(this)
+                    items[slot]?.onButtonClick(this)
                 }
             }
         }
