@@ -15,3 +15,13 @@ inline fun animatedScoreboard(title: String = "null", updateEvery: Long = 20, bu
     build.invoke(builder)
     return builder
 }
+
+fun main() {
+    val scoreboard = scoreboard("title") {
+        + "test"
+        val helloWorldLine = +"hello world"
+    }
+
+    // Will automatically change the component for all subscribed players
+    helloWorldLine = "meow"
+}
