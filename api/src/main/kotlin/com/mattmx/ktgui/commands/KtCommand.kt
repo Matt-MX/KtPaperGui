@@ -26,18 +26,21 @@ class KtCommandBuilder<T : CommandSender>(val name: String) {
 
     }
 
-    fun getSuggestions(args: String, sender: T) : List<String> {
+    fun getSuggestions(args: List<String>, sender: T) : List<String> {
         // todo get suggestions for current argument
-        TODO()
+        val lastArgument = args.lastOrNull() ?: ""
+        val suggestions = listOf<String>()
+        return suggestions.filter { suggestion -> suggestion.startsWith(lastArgument, true) }.toList()
     }
 
     /**
      * Used to find the current argument
      *
      * @param args the current arguments of the command invocation
+     * @param sender command sender
      * @return the current argument or null if it is invalid
      */
-    private fun getArgument(args: String) : Argument<*, *>? {
+    private fun getArgument(args: List<String>, sender: T) : Argument<*, *>? {
         TODO()
     }
 
@@ -45,9 +48,10 @@ class KtCommandBuilder<T : CommandSender>(val name: String) {
      * Used to find the current sub-command
      *
      * @param args of the current command invocation
+     * @param sender command sender
      * @return the current sub-command or null if it is invalid
      */
-    private fun getCommand(args: String, sender: T) : KtCommandBuilder<*>? {
+    private fun getCommand(args: List<String>, sender: T) : KtCommandBuilder<*>? {
         TODO()
     }
 
@@ -82,7 +86,7 @@ inline fun <V : CommandSender> KtCommandBuilder<*>.subCommand(
     builder: KtCommandBuilder<V>.() -> Unit
 ): KtCommandBuilder<V> {
     val subCommand = command(name, builder)
-    // todo register
+    this.subCommands += subCommand
     return subCommand
 }
 
@@ -115,7 +119,7 @@ fun <S : CommandSender, T> KtCommandBuilder<S>.greedyArgument(
     id: String,
     suggests: (() -> List<String>)? = null
 ): Argument<T, List<String>> {
-    val argument = Argument<T, List<String>>(id, suggests, ArgumentType.GREEDY, listOf<String>())
+    val argument = Argument<T, List<String>>(id, suggests, ArgumentType.GREEDY, listOf())
     this.arguments += argument
     return argument
 }
@@ -137,6 +141,16 @@ fun <S : CommandSender, T, V> KtCommandBuilder<S>.argument(
     return argument
 }
 
+object command {
+    operator fun compareTo(some: String) : Int {
+        return 0
+    }
+}
+
+operator fun String.invoke(block: () -> Unit) : String {
+    return this
+}
+
 fun main() {
     // runs "/hello <player!> <shouldPing? = [true|false]> <optional = ...>"
     command<Player>("hello") {
@@ -148,7 +162,7 @@ fun main() {
         val something by argument("name") { Bukkit.getOnlinePlayers().map { it.name } }
         // [shouldPing] is optional -> Lists "true" and "false" as options
         val shouldPing by optionalArgument("shouldPing") { listOf("true", "false") }
-        // [optional] is the rest of the arguments
+        // [optional] is the rest of the strings
         val optional by greedyArgument("additional")
 
         runs {
@@ -159,6 +173,34 @@ fun main() {
             }
         }
     }.register()
+
+    // runs "/teleport <username!> <to?>"
+    command<Player>("teleport") {
+        aliases += "tp"
+
+        permission { hasPermission("teleport") }
+
+        // needed target
+        val target by argument("username") { Bukkit.getOnlinePlayers().map { it.name } }
+        // optional user to teleport [target] to
+        val to by optionalArgument("to") { Bukkit.getOnlinePlayers().map { it.name } }
+
+        runs {
+            // if [to] is specified then teleport [target] to [to]
+            if (to != null) {
+                val toPlayer = Bukkit.getPlayer(to!!)
+                    ?: return@runs sendMessage("The player '$to' is not online.")
+                Bukkit.getPlayer(target)?.teleport(toPlayer)
+                    ?: return@runs sendMessage("The player '$target' is not online.")
+                return@runs
+            }
+
+            // just teleport sender to [target]
+            Bukkit.getPlayer(target)
+                ?. let { teleport(it) }
+                ?: return@runs sendMessage("The player '$target' is not online.")
+        }
+    }
 
     // runs "/test [player|console]"
     command<CommandSender>("test") {
