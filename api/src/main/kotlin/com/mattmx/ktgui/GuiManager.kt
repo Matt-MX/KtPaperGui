@@ -25,6 +25,7 @@ import java.util.*
 object GuiManager : Listener {
     private val players = hashMapOf<Player, IGuiScreen>()
     private var initialized = false
+    private val defaultConfiguration = Configuration()
     private val configurations = hashMapOf<JavaPlugin, Configuration>()
     lateinit var owningPlugin: JavaPlugin
 
@@ -49,6 +50,9 @@ object GuiManager : Listener {
         block(configuration)
         configurations[plugin] = configuration
     }
+
+    @ApiStatus.Experimental
+    fun getConfiguration(plugin: JavaPlugin) = configurations[plugin] ?: defaultConfiguration
 
     fun getPlayers(gui: IGuiScreen) = players.filter { it.value == gui }.keys
     fun getPlayersInGui() = players.toMutableMap()

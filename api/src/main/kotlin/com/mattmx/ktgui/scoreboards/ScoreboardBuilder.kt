@@ -25,6 +25,10 @@ open class ScoreboardBuilder(
         objective.displaySlot = displaySlot
     }
 
+    operator fun unaryPlus() {
+
+    }
+
     /**
      * Call this if you want to dynamically change the title to something else.
      * It still must be provided in the constructor.

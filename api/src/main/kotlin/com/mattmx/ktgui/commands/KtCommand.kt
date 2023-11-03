@@ -200,7 +200,7 @@ fun main() {
                 ?. let { teleport(it) }
                 ?: return@runs sendMessage("The player '$target' is not online.")
         }
-    }
+    }.register()
 
     // runs "/test [player|console]"
     command<CommandSender>("test") {
@@ -220,5 +220,5 @@ fun main() {
         runs {
             sendMessage("Hello, please specify if you are a 'player' or 'console'")
         }
-    }
+    }.register()
 }
