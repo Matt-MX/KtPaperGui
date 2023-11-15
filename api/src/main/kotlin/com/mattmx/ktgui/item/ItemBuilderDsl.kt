@@ -31,11 +31,7 @@ infix fun KT.iBuilder(material: Material): DslIBuilder {
  * @return the item as a stack or a builder.
  */
 inline fun itemBuilderStack(material: Material, builder: DslIBuilder.() -> Unit): ItemStack = itemBuilder(material, builder).build()
-inline fun itemBuilder(material: Material, builder: DslIBuilder.() -> Unit): DslIBuilder {
-    val builderInst = DslIBuilder(material)
-    builder(builderInst)
-    return builderInst
-}
+inline fun itemBuilder(material: Material, builder: DslIBuilder.() -> Unit) = DslIBuilder(material).apply(builder)
 
 inline infix fun ItemStack.builder(builder: DslIBuilder.() -> Unit) =
     itemBuilder(type) {

@@ -34,13 +34,13 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
          *
          * Provide a MutableMap<String, ItemStack> on initialization.
          */
-        GuiCycleButton()
+        LegacyGuiCycleButton()
             .items {
                 this["dirt"] = ItemBuilder(Material.DIRT).name("&6Dirt").lore("&8Click to cycle").make()
                 this["grass_block"] = ItemBuilder(Material.GRASS_BLOCK).lore("&8Click to cycle").name("&6Grass Block").make()
                 this["diamond"] = ItemBuilder(Material.DIAMOND_BLOCK).lore("&8Click to cycle").name("&bDiamond Block").make()
             }.changed {
-                player.sendMessage("&7You changed to ${(button as GuiCycleButton).getSelectedId()}".color())
+                player.sendMessage("&7You changed to ${(button as LegacyGuiCycleButton).getSelectedId()}".color())
             } childOf this slot 10
         /**
          * You may want to allow the user to read all options instead
@@ -59,7 +59,7 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
                 add("&8Right click to increase")
                 add("&8Left click to decrease")
             } material Material.BLUE_STAINED_GLASS_PANE named "&9Amount widget" childOf this slot 16
-        LoreCycleButton()
+        LegacyLoreCycleButton()
             .specialLore {
                 addLore {
                     id = "1"

@@ -1,76 +1,73 @@
 package com.mattmx.ktgui.components.button
 
-import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.dsl.button
+import com.mattmx.ktgui.test
 import org.bukkit.Material
-import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 
-class GuiCycleButton(
-    material: Material = Material.STONE,
-    item: ItemStack? = null,
-) : GuiButton(
-    material, item
-) {
-    protected val map: MutableMap<String, ItemStack> = mutableMapOf()
-    protected var selected: Int = 0
-    protected var changed: ((ButtonClickedEvent) -> Unit)? = null
+open class GuiCycleButton : GuiButton<GuiCycleButton>() {
+    var selected: Int = 0
+        protected set
+    private val states = mutableMapOf<String, ItemStack>()
+    lateinit var changedCallback: (ButtonClickedEvent<GuiCycleButton>) -> Unit
+        protected set
+    val selectedValue: String?
+        get() = states.keys.toList().getOrNull(selected)
 
-    init {
-        click {
-            right = {
-                nextItem(player)
-                changed?.invoke(ButtonClickedEvent(player, this.event, this@GuiCycleButton))
+    operator fun set(key: String, item: ItemStack): GuiCycleButton {
+        this.states[key] = item
+        return this
+    }
+
+    operator fun get(key: String) = states[key]
+
+    fun nextValue(): Int {
+        selected = if (selected + 1 >= states.size) 0 else selected++
+        return selected
+    }
+
+    fun previous(): Int {
+        selected = if (selected - 1 < 0) states.size - 1 else selected--
+        return selected
+    }
+
+    fun setSelected(index: Int): Int {
+        selected =
+            if (index < 0) 0
+            else if (index >= states.size) states.size - 1
+            else index
+        return selected
+    }
+
+    infix fun changed(block: ButtonClickedEvent<GuiCycleButton>.() -> Unit): GuiCycleButton {
+        this.changedCallback = block
+        return this
+    }
+}
+
+fun main(parent: GuiScreen) {
+    GuiCycleButton()
+        .set("something", ItemStack(Material.STONE))
+        .childOf(parent)
+        .slot(1)
+        .click {
+            ClickType.LEFT {
+                println("currently selected: ${button.selectedValue}")
             }
-            left = {
-                prevItem(player)
-                changed?.invoke(ButtonClickedEvent(player, this.event, this@GuiCycleButton))
-            }
+        }.changed {
+
         }
-    }
 
-    fun items(items: MutableMap<String, ItemStack>.() -> Unit) : GuiCycleButton {
-        items.invoke(map)
-        this.item = getSelectedItem()
-        return this
-    }
+    val b = B()
+    b.foo().bar()
+}
 
-    fun getSelectedId() : String? {
-        return map.keys.toMutableList().getOrNull(selected)
-    }
+open class A<T> {
+    fun foo() = this as T
+}
 
-    fun getSelectedItem() : ItemStack? {
-        return map[getSelectedId()]
-    }
-
-    fun nextItem(player: Player) {
-        selected++
-        if (selected >= map.size)
-            selected = 0
-        this.item = getSelectedItem()
-        update(player)
-    }
-
-    fun prevItem(player: Player) {
-        selected--
-        if (selected < 0)
-            selected = map.size - 1
-        this.item = getSelectedItem()
-        update(player)
-    }
-
-    fun changed(cb: ButtonClickedEvent.() -> Unit): GuiCycleButton {
-        changed = cb
-        return this
-    }
-
-    override fun copy(parent: IGuiScreen): GuiButton {
-        val copy = GuiCycleButton()
-        copy.map.putAll(map)
-        copy.changed = changed
-        copy.parent = parent
-        copy.clickCallback = clickCallback
-        copy.close = close
-        copy.item = item
-        return copy
-    }
+class B : A<B>() {
+    fun bar() = this
 }

@@ -114,4 +114,6 @@ object GuiManager : Listener {
             players.remove(player)
         }
     }
+
+    fun isInitialized() = initialized
 }

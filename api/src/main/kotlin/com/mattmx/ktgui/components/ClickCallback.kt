@@ -1,19 +1,22 @@
 package com.mattmx.ktgui.components
 
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
+import com.mattmx.ktgui.components.button.GuiButton
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 
-class ClickCallback {
-    private var callbacks = hashMapOf<Array<ClickType>, ButtonClickedEvent.() -> Unit>()
-    private lateinit var anyCallback: (ButtonClickedEvent.() -> Unit)
+class ClickCallback<T : GuiButton> {
+    private var callbacks = mutableMapOf<Array<ClickType>, ButtonClickedEvent<T>.() -> Unit>()
+    private lateinit var anyCallback: (ButtonClickedEvent<T>.() -> Unit)
 
     /**
      * Called when a click event is received for this GUI element.
      *
      * @param event
      */
-    fun run(event: ButtonClickedEvent) {
+    fun run(event: ButtonClickedEvent<T>) {
+        if (!event.shouldContinueCallback()) return
+
         // Get relevant callbacks
         if (callbacks.isEmpty() && ::anyCallback.isInitialized) {
             return anyCallback(event)
@@ -23,7 +26,10 @@ class ClickCallback {
         if (relevant.isEmpty() && ::anyCallback.isInitialized) {
             return anyCallback(event)
         }
-        relevant.forEach { it.value(event) }
+        relevant.forEach {
+            if (!event.shouldContinueCallback()) return
+            it.value(event)
+        }
     }
 
     /**
@@ -44,7 +50,7 @@ class ClickCallback {
      * }
      * }</pre>
      */
-    fun any(callback: ButtonClickedEvent.() -> Unit) {
+    fun any(callback: ButtonClickedEvent<T>.() -> Unit) {
         anyCallback = callback
     }
 
@@ -66,38 +72,23 @@ class ClickCallback {
      * @param clickType click types to handle
      * @param callback callback for when clicked
      */
-    fun handleClicks(vararg clickType: ClickType, callback: ButtonClickedEvent.() -> Unit) {
+    fun handleClicks(vararg clickType: ClickType, callback: ButtonClickedEvent<T>.() -> Unit) {
         callbacks[clickType.asList().toTypedArray()] = callback
     }
 
-    operator fun ClickType.invoke(callback: ButtonClickedEvent.() -> Unit) {
+    operator fun ClickType.invoke(callback: ButtonClickedEvent<T>.() -> Unit) {
         callbacks[arrayOf(this)] = callback
     }
 
-    operator fun Array<ClickType>.invoke(callback: ButtonClickedEvent.() -> Unit) {
+    operator fun Array<ClickType>.invoke(callback: ButtonClickedEvent<T>.() -> Unit) {
         callbacks[this] = callback
     }
 
     operator fun ClickType.plus(clickType: ClickType) = arrayOf(this, clickType)
     operator fun Array<ClickType>.plus(clickType: ClickType) = arrayOf(*this, clickType)
 
-    fun clone() = ClickCallback().let { copy ->
-        copy.callbacks = this.callbacks.clone() as HashMap<Array<ClickType>, ButtonClickedEvent.() -> Unit>
+    fun clone() = ClickCallback<T>().let { copy ->
         copy.anyCallback = this.anyCallback
         return@let copy
-    }
-}
-
-fun main() {
-    ClickCallback().apply {
-        handleClicks(ClickType.LEFT, ClickType.RIGHT) ret@ {
-            if (!player.hasPermission("click.this"))
-                return@ret
-        }
-
-        any {
-            if (!player.hasPermission("click.slot.$slot"))
-                return@any
-        }
     }
 }

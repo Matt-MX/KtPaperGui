@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin
 open class AnimatedScoreboardBuilder(
     title: String,
     val updateEvery: Long = 2,
-) : ScoreboardBuilder(title) {
+) : LegacyScoreboardBuilder(title) {
     var update: ((AnimatedScoreboardBuilder) -> Unit)? = null
     private var cancel = false
     private var started: Long = 0L

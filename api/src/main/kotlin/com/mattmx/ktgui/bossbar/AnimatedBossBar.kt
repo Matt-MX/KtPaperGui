@@ -4,7 +4,8 @@ import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
 
-class AnimatedBossBar(var updateEvery: Long? = null) : BossBarBuilder() {
+@Deprecated("Simply use the BossBar class in adventure.")
+class AnimatedBossBar(var updateEvery: Long? = null) : LegacyBossBarBuilder() {
     private lateinit var task: BukkitTask
     var update: ((AnimatedBossBar) -> Unit)? = null
 

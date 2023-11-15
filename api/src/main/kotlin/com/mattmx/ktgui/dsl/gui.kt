@@ -4,6 +4,9 @@ import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.utils.not
+import org.bukkit.Material
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryType
 import java.util.function.Supplier
 
@@ -41,6 +44,19 @@ inline fun <reified T : GuiButton> IGuiScreen.button(constructor: Supplier<T> = 
 
 fun main() {
     gui(inventoryType = InventoryType.ANVIL) {
-        
+        button<GuiButton>(Material.DIAMOND_SWORD) {
+            click {
+                ClickType.LEFT left@{
+                    player.sendMessage(!"Left clicked")
+                    shouldContinueCallback(false)
+                }
+            }
+            lore {
+                add(!"test")
+            }
+            ifTexturePackActive {
+                customModelData(1010)
+            }
+        } slot 1 childOf this
     }
 }

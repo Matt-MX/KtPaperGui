@@ -1,11 +1,9 @@
 package com.mattmx.ktgui.commands
 
-import com.mattmx.ktgui.extensions.color
+import com.mattmx.ktgui.utils.not
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.command.PluginCommand
 import org.bukkit.entity.Player
-import java.util.concurrent.CompletableFuture
 
 class DummyCommand(
     val cmd: SimpleCommandBuilder
@@ -16,7 +14,7 @@ class DummyCommand(
         else args[if (args.size - 1 > 0) args.size - 1 else 0]
         cmd.getCommand(args.toMutableList())?.also {
             if (sender !is Player && it.playerOnly) {
-                sender.sendMessage("&cPlayer only command.".color())
+                sender.sendMessage(!"&cPlayer only command.")
                 return false
             }
             if (it.hasPermission(sender)) it.executeFor(sender, args.toList(), current, commandLabel)

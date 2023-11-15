@@ -1,13 +1,11 @@
 package com.mattmx.ktgui.commands
 
-import com.mattmx.ktgui.extensions.color
+import com.mattmx.ktgui.utils.not
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
-import java.util.Date
-import java.util.UUID
 
 class DummyCommandExecutor(
     val cmd: SimpleCommandBuilder
@@ -25,7 +23,7 @@ class DummyCommandExecutor(
 
         cmd.getCommand(args.toMutableList())?.also {
             if (sender !is Player && it.playerOnly) {
-                sender.sendMessage("&cPlayer only command.".color())
+                sender.sendMessage(!"&cPlayer only command.")
                 return false
             }
             if (it.hasPermission(sender)) {
@@ -45,7 +43,7 @@ class DummyCommandExecutor(
 //                }
             } else {
                 cmd.noPermissions?.let { it1 -> it1(CommandInvocation(sender, args.toList(), current, commandLabel)) }
-                sender.sendMessage("&cYou do not have permissions to execute this command.".color())
+                sender.sendMessage(!"&cYou do not have permissions to execute this command.")
             }
         } ?: run {
             cmd.unknown(sender, args.toList(), current, commandLabel)
