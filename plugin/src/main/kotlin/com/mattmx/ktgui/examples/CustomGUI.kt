@@ -1,8 +1,7 @@
 package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.components.button.GuiButton
-import com.mattmx.ktgui.components.button.IGuiButton
-import com.mattmx.ktgui.components.button.LegacyGuiToggleButton
+import com.mattmx.ktgui.components.button.GuiToggleButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.item.itemBuilder
 import com.mattmx.ktgui.utils.not
@@ -14,7 +13,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import kotlin.random.Random
 
-class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffExample GUI", 4), Example {
+class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffExample GUI", 4),
+    Example {
     init {
         /**
          * Thanks to an ItemBuilder, we can create skull objects with a
@@ -30,8 +30,8 @@ class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e244
 
         GuiButton()
             .click {
-                any { player.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f ,1f) }
-            } fromItemBuilder  skull childOf this slot 27
+                any { player.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f, 1f) }
+            } fromItemBuilder skull childOf this slot 27
         /**
          * Fill the bottom slots with gray stained glass panes.
          */
@@ -50,12 +50,13 @@ class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e244
          * We can provide an item state for when the button is enabled, and one for when it's disabled.
          * We can also provide a callback for when a button is pressed.
          */
-        LegacyGuiToggleButton(
+        GuiToggleButton(
             itemBuilder(Material.LIME_STAINED_GLASS_PANE).name(!"&aEnabled").lore(!"&8Click to toggle").build(),
             itemBuilder(Material.RED_STAINED_GLASS_PANE).name(!"&cDisabled").lore(!"&8Click to toggle").build(),
-        ).onChange {
-            player.sendMessage(!"&8&l⤷ &#7f52ffToggled thing to ${button.enabled()}")
-        } slot 10 childOf this
+        ).changeWithClickType(ClickType.LEFT)
+            .changed {
+                player.sendMessage(!"&8&l⤷ &#7f52ffToggled thing to ${button.enabled()}")
+            } slot 10 childOf this
         /**
          * Random example of using callbacks to do different things
          */

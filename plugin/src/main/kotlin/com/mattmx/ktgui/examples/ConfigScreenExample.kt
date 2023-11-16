@@ -6,6 +6,7 @@ import com.mattmx.ktgui.item.itemBuilder
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 
 class ConfigScreenExample : GuiScreen(!"Example Config", 3), Example {
     init {
@@ -19,11 +20,12 @@ class ConfigScreenExample : GuiScreen(!"Example Config", 3), Example {
              * Provide an ItemStack state for both states. You can also add
              * a callback for when the state it changed.
              */
-            LegacyGuiToggleButton(
+            GuiToggleButton(
                 enabled.copy().lore(!"&8This is item $it").build(),
                 disabled.copy().lore(!"&8This is item $it").build())
                 .enabledOnDefault(true)
-                .onChange {
+                .changeWithClickType(ClickType.LEFT)
+                .changed {
                     player.sendMessage(!"&cChanged button ${it}! (${button.enabled()})")
                 } slot slot childOf this
             slot += 2
@@ -35,13 +37,13 @@ class ConfigScreenExample : GuiScreen(!"Example Config", 3), Example {
          *
          * Provide a MutableMap<String, ItemStack> on initialization.
          */
-        LegacyGuiCycleButton()
-            .items {
-                this["dirt"] = itemBuilder(Material.DIRT).name(!"&6Dirt").lore(!"&8Click to cycle").build()
-                this["grass_block"] = itemBuilder(Material.GRASS_BLOCK).lore(!"&8Click to cycle").name(!"&6Grass Block").build()
-                this["diamond"] = itemBuilder(Material.DIAMOND_BLOCK).lore(!"&8Click to cycle").name(!"&bDiamond Block").build()
-            }.changed {
-                player.sendMessage(!"&7You changed to ${button.getSelectedId()}")
+        GuiCycleButton()
+            .set("dirt", itemBuilder(Material.DIRT).name(!"&6Dirt").lore(!"&8Click to cycle").build())
+            .set("grass_block", itemBuilder(Material.GRASS_BLOCK).lore(!"&8Click to cycle").name(!"&6Grass Block").build())
+            .set("diamond", itemBuilder(Material.DIAMOND_BLOCK).lore(!"&8Click to cycle").name(!"&bDiamond Block").build())
+            .withDefaultClickEvents()
+            .changed {
+                player.sendMessage(!"&7You changed to ${button.selectedValue}")
             } childOf this slot 10
         /**
          * You may want to allow the user to read all options instead
@@ -60,30 +62,20 @@ class ConfigScreenExample : GuiScreen(!"Example Config", 3), Example {
                 add(!"&8Right click to increase")
                 add(!"&8Left click to decrease")
             } material Material.BLUE_STAINED_GLASS_PANE named !"&9Amount widget" childOf this slot 16
-        LegacyLoreCycleButton()
-            .specialLore {
-                addLore {
-                    id = "1"
-                    line = "&8 ⤷ Option one"
-                    lineSelected = "&7 ⤷ &aOption one"
+
+        LoreCycleButton()
+            .loreCycle {
+                add(!"&8 ⤷ Option one" withId 0 withSelectedText !"&7 ⤷ &aOption one")
+                add(!"&8 ⤷ Option two" withId 1 withSelectedText !"&7 ⤷ &aOption two")
+                add(!"&8&oThis line is not selectable.")
+                add(!"&8 ⤷ Option three" withId 2 withSelectedText !"&7 ⤷ &aOption three")
+                add(!"  &8 ⤷ Description of option blah blah" withId 2 withSelectedText !"  &7 ⤷ Description of option blah blah")
+            }.click {
+                ClickType.LEFT {
+                    button.selected++
                 }
-                addLore {
-                    id = "2"
-                    line = "&8 ⤷ Option two"
-                    lineSelected = "&7 ⤷ &aOption two"
-                }
-                addLore {
-                    line = "&8&oThis line is not selectable."
-                }
-                addLore {
-                    id = "3"
-                    line = " &8⤷ Option three"
-                    lineSelected = "&7 ⤷ &aOption three"
-                }
-                addLore {
-                    id = "3"
-                    line = "  &8 ⤷ Description of option blah blah"
-                    lineSelected = "  &7 ⤷ Description of option blah blah"
+                ClickType.RIGHT {
+                    button.selected--
                 }
             } material Material.PAPER named !"&d&lLore Cycle option" childOf this slot 13
     }
