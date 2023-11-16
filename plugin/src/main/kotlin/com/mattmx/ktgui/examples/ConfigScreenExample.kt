@@ -18,12 +18,12 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
              * Provide an ItemStack state for both states. You can also add
              * a callback for when the state it changed.
              */
-            GuiToggleButton(
+            LegacyGuiToggleButton(
                 enabled.copy().lore("&8This is item $it").make(),
                 disabled.copy().lore("&8This is item $it").make())
                 .enabledOnDefault(true)
                 .onChange {
-                    player.sendMessage("&cChanged button ${it}! (${(button as GuiToggleButton).enabled()})".color())
+                    player.sendMessage("&cChanged button ${it}! (${(button as LegacyGuiToggleButton).enabled()})".color())
                 } slot slot childOf this
             slot += 2
         }

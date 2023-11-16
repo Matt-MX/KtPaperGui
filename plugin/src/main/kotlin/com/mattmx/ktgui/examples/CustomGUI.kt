@@ -1,14 +1,13 @@
 package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.components.button.GuiButton
-import com.mattmx.ktgui.components.button.GuiToggleButton
+import com.mattmx.ktgui.components.button.LegacyGuiToggleButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.item.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
-import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import kotlin.random.Random
 
@@ -47,11 +46,11 @@ class CustomGUI : GuiScreen("&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e2446
          * We can provide an item state for when the button is enabled, and one for when it's disabled.
          * We can also provide a callback for when a button is pressed.
          */
-        GuiToggleButton(
+        LegacyGuiToggleButton(
             ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled").lore("&8Click to toggle").make(),
             ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled").lore("&8Click to toggle").make(),
         ).onChange {
-            player.sendMessage("&8&l⤷ &#7f52ffToggled thing to ${(button as GuiToggleButton).enabled()}".color())
+            player.sendMessage("&8&l⤷ &#7f52ffToggled thing to ${(button as LegacyGuiToggleButton).enabled()}".color())
         } slot 10 childOf this
         /**
          * Random example of using callbacks to do different things

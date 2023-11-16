@@ -1,16 +1,10 @@
 package com.mattmx.ktgui.examples;
 
-import com.mattmx.ktgui.GuiManager;
 import com.mattmx.ktgui.components.button.GuiButton;
-import com.mattmx.ktgui.components.button.GuiToggleButton;
+import com.mattmx.ktgui.components.button.LegacyGuiToggleButton;
 import com.mattmx.ktgui.components.screen.GuiScreen;
 import com.mattmx.ktgui.item.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.w3c.dom.ranges.Range;
-
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.mattmx.ktgui.utils.ColorKt.color;
 
@@ -30,13 +24,13 @@ public class JavaGuiExample extends GuiScreen {
                 })
                 .slots(10, 11, 12, 13, 14, 15, 16)
                 .childOf(this);
-        new GuiToggleButton(
+        new LegacyGuiToggleButton(
                 new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled").make(),
                 new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled").make()
         ).onChange(e -> {
             e.getPlayer().sendMessage(color(
                     "&#7f52ffJust a quick example to show that all functionality is 1:1 from KtGui -> Java. ("
-                            + ((GuiToggleButton) e.getButton()).enabled() + ")",
+                            + ((LegacyGuiToggleButton) e.getButton()).enabled() + ")",
                     e.getPlayer()));
             return null;
         }).slot(22).childOf(this);

@@ -27,7 +27,7 @@ class NumberWidgetButton(
                 amount(min(64, max(1, item!!.amount - step)))
                 update(e.player)
             }
-            else -> {}
+            else -> { clickCallback.run(e) }
         }
     }
 
