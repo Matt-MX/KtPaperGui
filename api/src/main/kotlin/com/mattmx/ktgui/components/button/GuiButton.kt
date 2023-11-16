@@ -180,6 +180,9 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
+    /**
+     * Updates the item for all players with the parent GUI open.
+     */
     fun update() {
         val itemStack = formatIntoItemStack()
         val players = GuiManager.getPlayers(parent)
