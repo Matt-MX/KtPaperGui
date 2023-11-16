@@ -2,12 +2,19 @@ package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.GuiScreen
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 
 open class GuiCycleButton : GuiButton<GuiCycleButton>() {
-    var selected: Int = 0
-        protected set
+    var selected = 0
+        set(value) {
+            field =
+                if (value < 0) states.size - 1
+                else if (value >= states.size) 0
+                else value
+            update()
+        }
     private val states = mutableMapOf<String, ItemStack>()
     lateinit var changedCallback: (ButtonClickedEvent<GuiCycleButton>) -> Unit
         protected set
@@ -21,23 +28,22 @@ open class GuiCycleButton : GuiButton<GuiCycleButton>() {
 
     operator fun get(key: String) = states[key]
 
-    fun nextValue(): Int {
-        selected = if (selected + 1 >= states.size) 0 else selected++
-        return selected
+    fun withDefaultClickEvents() = apply {
+        click {
+            ClickType.LEFT {
+                selected++
+                if (::changedCallback.isInitialized)
+                    changedCallback.invoke(this)
+            }
+            ClickType.RIGHT {
+                selected--
+                if (::changedCallback.isInitialized)
+                    changedCallback.invoke(this)
+            }
+        }
     }
 
-    fun previous(): Int {
-        selected = if (selected - 1 < 0) states.size - 1 else selected--
-        return selected
-    }
-
-    fun setSelected(index: Int): Int {
-        selected =
-            if (index < 0) 0
-            else if (index >= states.size) states.size - 1
-            else index
-        return selected
-    }
+    override fun getItemStack() = states[selectedValue]
 
     infix fun changed(block: ButtonClickedEvent<GuiCycleButton>.() -> Unit): GuiCycleButton {
         this.changedCallback = block
