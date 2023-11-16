@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.item
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
@@ -172,8 +173,8 @@ class DslIBuilder(var material: Material) {
     fun build(): ItemStack {
         val stack = ItemStack(material)
         var meta = stack.itemMeta!!
-        name?.let { meta.displayName(name) }
-        meta.lore(lore.toMutableList())
+        name?.let { meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(it)) }
+        meta.lore(lore.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
         if (material == Material.LEATHER_BOOTS || material == Material.LEATHER_CHESTPLATE || material == Material.LEATHER_LEGGINGS || material == Material.LEATHER_HELMET) {
             val leatherMeta = meta as LeatherArmorMeta
             leatherMeta.setColor(color)

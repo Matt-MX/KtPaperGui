@@ -1,10 +1,13 @@
 package com.mattmx.ktgui.components.button
 
+import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.extensions.setEnchantments
 import com.mattmx.ktgui.item.DslIBuilder
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.Style
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -38,7 +41,7 @@ open class GuiButton<T : GuiButton<T>>(
         item?.itemMeta?.let {
             val newLore = mutableListOf<Component>()
             lore.invoke(newLore)
-            it.lore(newLore)
+            it.lore(newLore.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
             item?.itemMeta = it
         }
         return this as T
@@ -46,7 +49,7 @@ open class GuiButton<T : GuiButton<T>>(
 
     infix fun named(name: Component) : T {
         val itemMeta = item?.itemMeta
-        itemMeta?.displayName(name)
+        itemMeta?.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(name))
         item?.itemMeta = itemMeta
         return this as T
     }
@@ -163,8 +166,8 @@ open class GuiButton<T : GuiButton<T>>(
         return getItemStack()?.clone()
     }
 
-    override fun slots(): List<Int>? {
-        return slots?.toMutableList()
+    override fun slots(): List<Int> {
+        return slots?.toMutableList() ?: parent.getSlots(this)
     }
 
     fun update(player: Player) : T {
@@ -175,6 +178,16 @@ open class GuiButton<T : GuiButton<T>>(
             player.openInventory.setItem(slot, itemStack)
         }
         return this as T
+    }
+
+    fun update() {
+        val itemStack = formatIntoItemStack()
+        val players = GuiManager.getPlayers(parent)
+        players.forEach { player ->
+            this.slots().forEach { slot ->
+                player.openInventory.setItem(slot, itemStack)
+            }
+        }
     }
 
     override fun copy(parent: IGuiScreen) : T {
