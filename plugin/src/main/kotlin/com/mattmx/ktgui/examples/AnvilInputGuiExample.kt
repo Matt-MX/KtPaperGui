@@ -13,7 +13,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 
-object AnvilInputGuiExample {
+class AnvilInputGuiExample : Example {
 
     /**
      * Each gui needs to be per-player
@@ -66,4 +66,6 @@ object AnvilInputGuiExample {
             }
         }
     }
+
+    override fun run(player: Player) = gui(player).open(player)
 }

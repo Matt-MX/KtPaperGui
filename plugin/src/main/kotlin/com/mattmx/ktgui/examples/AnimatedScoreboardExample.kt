@@ -7,7 +7,7 @@ import com.mattmx.ktgui.utils.not
 import org.bukkit.entity.Player
 import java.lang.Integer.min
 
-object AnimatedScoreboardExample {
+class AnimatedScoreboardExample : Example {
 
     /**
      * Animated scoreboards can be made easily, and cancelled whenever you see fit.
@@ -53,5 +53,7 @@ object AnimatedScoreboardExample {
             player.sendMessage(!"&7Now showing the scoreboard")
         }
     }
+
+    override fun run(player: Player) = toggle(player)
 
 }

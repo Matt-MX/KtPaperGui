@@ -7,9 +7,10 @@ import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
-class InfiniteGuiExample : GuiInfiniteScreen(!"Infinite Screen", 6) {
+class InfiniteGuiExample : GuiInfiniteScreen(!"Infinite Screen", 6), Example {
 
     init {
         button(Material.RED_STAINED_GLASS_PANE) {
@@ -66,8 +67,5 @@ class InfiniteGuiExample : GuiInfiniteScreen(!"Infinite Screen", 6) {
             .forEach { player -> open(player) }
     }
 
-    companion object {
-        lateinit var instance: InfiniteGuiExample
-    }
-
+    override fun run(player: Player) = open(player)
 }

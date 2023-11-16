@@ -11,10 +11,11 @@ import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import java.util.*
 
-object GuiPatternExample {
+class GuiPatternExample : Example {
     val gui = gui(!"Pattern Example", 3) {
 
         val pattern = GuiPattern("""
@@ -50,4 +51,6 @@ object GuiPatternExample {
 
         applyPattern(pattern)
     }
+
+    override fun run(player: Player) = gui.open(player)
 }

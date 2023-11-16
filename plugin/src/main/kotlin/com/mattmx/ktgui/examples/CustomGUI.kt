@@ -10,10 +10,11 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import kotlin.random.Random
 
-class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffExample GUI", 4) {
+class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffExample GUI", 4), Example {
     init {
         /**
          * Thanks to an ItemBuilder, we can create skull objects with a
@@ -87,4 +88,6 @@ class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e244
                 add(!"&8Click to change the time of day by 12000 game ticks")
             } material Material.CLOCK named !"&#7F52FF&lTime switcher" slot 16 childOf this
     }
+
+    override fun run(player: Player) = open(player)
 }

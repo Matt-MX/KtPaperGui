@@ -4,10 +4,11 @@ import com.mattmx.ktgui.components.screen.GuiMultiPageScreen
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
 
-class MultiPageExample : GuiMultiPageScreen(!"Multi-page Example", 6) {
+class MultiPageExample : GuiMultiPageScreen(!"Multi-page Example", 6), Example {
     init {
         Material.values().forEach { material ->
             this += button(material) {
@@ -43,4 +44,7 @@ class MultiPageExample : GuiMultiPageScreen(!"Multi-page Example", 6) {
             named(!"&bPrev Page") slot 45
         }
     }
+
+    override fun run(player: Player) = open(player)
+
 }

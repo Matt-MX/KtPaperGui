@@ -17,38 +17,9 @@ class KotlinGui : JavaPlugin() {
         log = this.logger
         GuiManager.init(this)
 
-        InfiniteGuiExample.instance = InfiniteGuiExample()
-
         val mainColor = "&#7F52FF"
         val subColor = "&#E24462"
-        simpleCommand {
-            name = "ktgui"
-            description = "The KtBukkitGui example command."
-            permission = "ktgui.command"
-            suggestSubCommands = true
-            playerOnly = true
-
-            unknownSubcommand {
-                it.source.sendMessage(!"&cUnknown sub command.")
-            }
-
-            executes {
-                it.source.sendMessage(!"&#7F52FFBy MattMX :3, running KtGui v$version!")
-            }
-
-            subCommands += simpleCommand {
-                name = "debug"
-                permission = "ktgui.command.debug"
-
-                executes {
-                    /**
-                     * TODO
-                     * the debug command should allow a player to inspect and follow a player through a gui tree.
-                     * it should update when the player changes gui, and allow the user to watch the gui too.
-                     */
-                }
-            }
-        }.register(false)
+        // todo impl command
     }
 
     companion object {

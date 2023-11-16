@@ -5,8 +5,9 @@ import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.item.itemBuilder
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
+import org.bukkit.entity.Player
 
-class ConfigScreenExample : GuiScreen(!"Example Config", 3) {
+class ConfigScreenExample : GuiScreen(!"Example Config", 3), Example {
     init {
         // Create ItemStack states for GuiToggleButtons
         val enabled = itemBuilder(Material.LIME_STAINED_GLASS_PANE).name(!"&aEnabled")
@@ -86,4 +87,6 @@ class ConfigScreenExample : GuiScreen(!"Example Config", 3) {
                 }
             } material Material.PAPER named !"&d&lLore Cycle option" childOf this slot 13
     }
+
+    override fun run(player: Player) = open(player)
 }

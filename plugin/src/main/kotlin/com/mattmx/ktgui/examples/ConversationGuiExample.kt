@@ -10,13 +10,14 @@ import com.mattmx.ktgui.utils.legacyColor
 import com.mattmx.ktgui.utils.not
 import net.kyori.adventure.title.Title
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
 /**
  * An example of how we can use the Bukkit Conversation API to create
  * interaction through the chat
  */
-class ConversationGuiExample() : GuiScreen(!"Conversation API", 1) {
+class ConversationGuiExample() : GuiScreen(!"Conversation API", 1), Example {
     init {
         GuiButton()
             .click {
@@ -85,4 +86,6 @@ class ConversationGuiExample() : GuiScreen(!"Conversation API", 1) {
                 add(!"&eRight &7to change GUI name")
             } named !"&6&lConversation API example." material Material.NAME_TAG childOf this slot 4
     }
+
+    override fun run(player: Player) = open(player)
 }
