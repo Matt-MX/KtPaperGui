@@ -1,5 +1,7 @@
 package com.mattmx.ktgui.extensions
 
+import net.kyori.adventure.text.Component
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -9,4 +11,11 @@ fun ItemStack.format(player: Player?, method: (String, Player?) -> String) {
     imeta?.setDisplayName(method(imeta.displayName, player))
     imeta?.lore = imeta?.lore?.map { line -> method(line, player) }
     this.itemMeta = imeta
+}
+
+fun ItemStack.format(player: OfflinePlayer?, method: (Component, OfflinePlayer?) -> Component) {
+    val itemMeta = this.itemMeta
+    itemMeta.displayName(itemMeta.displayName()?.apply { method(this, player) })
+    itemMeta.lore(itemMeta.lore()?.map { line -> method(line, player) })
+    this.itemMeta = itemMeta
 }

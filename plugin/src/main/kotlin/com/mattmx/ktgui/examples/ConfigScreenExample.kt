@@ -2,15 +2,15 @@ package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.components.button.*
 import com.mattmx.ktgui.components.screen.GuiScreen
-import com.mattmx.ktgui.extensions.color
-import com.mattmx.ktgui.item.ItemBuilder
+import com.mattmx.ktgui.item.itemBuilder
+import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 
-class ConfigScreenExample : GuiScreen("Example Config", 3) {
+class ConfigScreenExample : GuiScreen(!"Example Config", 3) {
     init {
         // Create ItemStack states for GuiToggleButtons
-        val enabled = ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aEnabled")
-        val disabled = ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("&cDisabled")
+        val enabled = itemBuilder(Material.LIME_STAINED_GLASS_PANE).name(!"&aEnabled")
+        val disabled = itemBuilder(Material.RED_STAINED_GLASS_PANE).name(!"&cDisabled")
         var slot = 12
         repeat(2) {
             /**
@@ -19,11 +19,11 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
              * a callback for when the state it changed.
              */
             LegacyGuiToggleButton(
-                enabled.copy().lore("&8This is item $it").make(),
-                disabled.copy().lore("&8This is item $it").make())
+                enabled.copy().lore(!"&8This is item $it").build(),
+                disabled.copy().lore(!"&8This is item $it").build())
                 .enabledOnDefault(true)
                 .onChange {
-                    player.sendMessage("&cChanged button ${it}! (${(button as LegacyGuiToggleButton).enabled()})".color())
+                    player.sendMessage(!"&cChanged button ${it}! (${button.enabled()})")
                 } slot slot childOf this
             slot += 2
         }
@@ -36,11 +36,11 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
          */
         LegacyGuiCycleButton()
             .items {
-                this["dirt"] = ItemBuilder(Material.DIRT).name("&6Dirt").lore("&8Click to cycle").make()
-                this["grass_block"] = ItemBuilder(Material.GRASS_BLOCK).lore("&8Click to cycle").name("&6Grass Block").make()
-                this["diamond"] = ItemBuilder(Material.DIAMOND_BLOCK).lore("&8Click to cycle").name("&bDiamond Block").make()
+                this["dirt"] = itemBuilder(Material.DIRT).name(!"&6Dirt").lore(!"&8Click to cycle").build()
+                this["grass_block"] = itemBuilder(Material.GRASS_BLOCK).lore(!"&8Click to cycle").name(!"&6Grass Block").build()
+                this["diamond"] = itemBuilder(Material.DIAMOND_BLOCK).lore(!"&8Click to cycle").name(!"&bDiamond Block").build()
             }.changed {
-                player.sendMessage("&7You changed to ${(button as LegacyGuiCycleButton).getSelectedId()}".color())
+                player.sendMessage(!"&7You changed to ${button.getSelectedId()}")
             } childOf this slot 10
         /**
          * You may want to allow the user to read all options instead
@@ -56,9 +56,9 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
          */
         NumberWidgetButton()
             .lore {
-                add("&8Right click to increase")
-                add("&8Left click to decrease")
-            } material Material.BLUE_STAINED_GLASS_PANE named "&9Amount widget" childOf this slot 16
+                add(!"&8Right click to increase")
+                add(!"&8Left click to decrease")
+            } material Material.BLUE_STAINED_GLASS_PANE named !"&9Amount widget" childOf this slot 16
         LegacyLoreCycleButton()
             .specialLore {
                 addLore {
@@ -84,6 +84,6 @@ class ConfigScreenExample : GuiScreen("Example Config", 3) {
                     line = "  &8 ⤷ Description of option blah blah"
                     lineSelected = "  &7 ⤷ Description of option blah blah"
                 }
-            } material Material.PAPER named "&d&lLore Cycle option" childOf this slot 13
+            } material Material.PAPER named !"&d&lLore Cycle option" childOf this slot 13
     }
 }

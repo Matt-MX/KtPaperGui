@@ -12,13 +12,13 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 interface IGuiScreen {
 
-    fun getSlots(button: IGuiButton) : List<Int>
+    fun getSlots(button: IGuiButton<*>) : List<Int>
 
     fun totalSlots() : Int
 
     fun size() : Int { return 0 }
 
-    fun setSlot(button: IGuiButton, slot: Int) : IGuiScreen
+    fun setSlot(button: IGuiButton<*>, slot: Int) : IGuiScreen
 
     fun open(player: Player)
 
@@ -26,7 +26,7 @@ interface IGuiScreen {
 
     fun destroy() {}
 
-    fun addChild(child: IGuiButton)
+    fun addChild(child: IGuiButton<*>)
 
     /**
      * Will be called if a player with this gui

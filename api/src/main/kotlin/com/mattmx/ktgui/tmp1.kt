@@ -60,24 +60,5 @@ fun main() {
     }
     some += "hello"
 
-    gui<GuiScreen> {
-        title = "something"
-        rows = 6
-
-        button<GuiButton>(Material.STONE) {
-            named("something")
-            lore {
-                add("test")
-            }
-
-            click {
-                (ClickType.LEFT + ClickType.RIGHT) {
-                    player.sendMessage("Left or right clicked")
-                }
-            }
-        }
-
-    }
-
     println(some())
 }

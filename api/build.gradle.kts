@@ -1,32 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-// Root build file
-
-
 plugins {
-    kotlin("jvm") version "1.7.21"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
     `maven-publish`
-}
-
-project.version = "2.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 dependencies {
     implementation(kotlin("reflect"))
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 tasks.test {

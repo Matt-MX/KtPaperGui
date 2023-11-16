@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack
  * @param button button that was clicked
  * @param itemClicked [ItemStack] that was clicked
  */
-data class ButtonClickedEvent<T : IGuiButton>(
+data class ButtonClickedEvent<T : IGuiButton<*>>(
     val player: Player,
     val event: InventoryClickEvent,
     val itemClicked: ItemStack? = event.currentItem

@@ -3,13 +3,14 @@ package com.mattmx.ktgui.components
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.dsl.gui
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 class GuiPattern(
     private var pattern: String
 ) {
-    private val items = hashMapOf<Char, IGuiButton>()
+    private val items = hashMapOf<Char, IGuiButton<*>>()
     var blankSpaceChar = '-'
 
     /**
@@ -22,7 +23,8 @@ class GuiPattern(
         if (guiScreen.type != null) return
         val map = build(guiScreen.rows)
         map.entries.forEach {
-            it.key childOf guiScreen slots it.value
+            it.key.childOf(guiScreen)
+            it.key.slots(it.value)
         }
     }
 
@@ -33,8 +35,8 @@ class GuiPattern(
      * @param rows the number of rows the gui will have.
      * @return a compiled map of Buttons to their respective slots in the gui.
      */
-    fun build(rows: Int) : Map<IGuiButton, ArrayList<Int>> {
-        val map = mutableMapOf<IGuiButton, ArrayList<Int>>()
+    fun build(rows: Int) : Map<IGuiButton<*>, ArrayList<Int>> {
+        val map = mutableMapOf<IGuiButton<*>, ArrayList<Int>>()
         val maxSlot = rows * 9
         trimPattern()
         val charArr = pattern.toCharArray()
@@ -76,7 +78,7 @@ class GuiPattern(
      * @param char target character specified in the [pattern]
      * @param button that the char will be set to
      */
-    operator fun set(char: Char, button: IGuiButton) = items.put(char, button)
+    operator fun set(char: Char, button: IGuiButton<*>) = items.put(char, button)
 
     /**
      * Returns the gui button of a character
@@ -84,7 +86,7 @@ class GuiPattern(
      * @param char
      * @return gui button of a character, or null if it hasn't been set yet
      */
-    operator fun get(char: Char) : IGuiButton? = items[char]
+    operator fun get(char: Char) : IGuiButton<*>? = items[char]
 }
 
 /**

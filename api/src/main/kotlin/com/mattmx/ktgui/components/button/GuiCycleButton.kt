@@ -1,8 +1,6 @@
 package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.GuiScreen
-import com.mattmx.ktgui.dsl.button
-import com.mattmx.ktgui.test
 import org.bukkit.Material
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack

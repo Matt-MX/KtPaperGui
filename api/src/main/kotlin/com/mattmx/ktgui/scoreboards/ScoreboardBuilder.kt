@@ -22,7 +22,7 @@ open class ScoreboardBuilder(
     // Holds the lines of text, we are able to remove them because of this
     private val scoreboardLines = arrayListOf<Component>()
 
-    private val scoreboard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
+    val scoreboard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
     private val objective: Objective = scoreboard.registerNewObjective(name, Criteria.DUMMY, title)
 
     /**

@@ -1,15 +1,9 @@
-main: com.mattmx.ktgui.KotlinBukkitGui
-name: ktgui
-author: MattMX
-load: STARTUP
-version: 2.0
-api-version: 1.19
+name: KtGUI
+version: '2.0'
+main: com.mattmx.ktgui.KotlinGui
+api-version: 1.20
+prefix: KtGUI
+authors: [ MattMX ]
+description: Declarative GUI Library for Paper.
 softdepend:
-  - ProtocolLib
   - PlaceholderAPI
-
-permissions:
-  ktgui.command.example:
-    description: View gui examples
-  ktgui.command.debug:
-    description: View gui debug

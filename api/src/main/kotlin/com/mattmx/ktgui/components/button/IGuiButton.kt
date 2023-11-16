@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 
-interface IGuiButton {
+interface IGuiButton<T> {
     /**
      * @return the ItemStack we want to display.
      */
@@ -20,15 +20,15 @@ interface IGuiButton {
 
     fun formatIntoItemStack(player: Player? = null) : ItemStack?
 
-    fun copy(parent: IGuiScreen) : IGuiButton
+    fun copy(parent: IGuiScreen) : T
 
-    infix fun slot(slot: Int) : IGuiButton
+    infix fun slot(slot: Int) : T
 
-    infix fun slots(slots: List<Int>) : IGuiButton
+    infix fun slots(slots: List<Int>) : T
 
     fun slots() : List<Int>?
 
-    infix fun childOf(parent: IGuiScreen) : IGuiButton
+    infix fun childOf(parent: IGuiScreen) : T
 
     fun destroy()
 }

@@ -6,8 +6,6 @@ plugins {
     `maven-publish`
 }
 
-project.version = "-SNAPSHOT"
-
 repositories {
     mavenCentral()
     maven("https://maven.pvphub.me/releases")
@@ -18,13 +16,7 @@ repositories {
 dependencies {
     implementation(project(":api"))
     implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 tasks.test {
@@ -34,7 +26,7 @@ tasks.test {
 sourceSets["main"].resources.srcDir("src/resources/")
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks {
@@ -43,7 +35,7 @@ tasks {
     }
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+val compile = tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveBaseName.set("ktgui-plugin")
     mergeServiceFiles()
 }

@@ -1,10 +1,12 @@
 package com.mattmx.ktgui.components.screen
 
+import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
+import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
 open class GuiMultiPageScreen(
-    title: String = "null",
+    title: Component = Component.empty(),
     rows: Int = 1,
     protected var maxPages: Int = -1,
     protected var minSlot: Int = 9,
@@ -12,14 +14,14 @@ open class GuiMultiPageScreen(
     private val startPage: Int = 0
 ) : GuiScreen(title, rows) {
     protected var page = startPage
-    protected var itemList = arrayListOf<IGuiButton>()
+    protected var itemList = arrayListOf<GuiButton<*>>()
 
     init {
         open { p ->
             update(p)
         }
-        click { ce ->
-            ce.generic = {
+        click { c ->
+             c.any {
                 if (slot in minSlot until maxSlot) {
                     val index = slot + (page * pageSize()) - minSlot
                     itemList.getOrNull(index)?.onButtonClick(this)
@@ -66,21 +68,21 @@ open class GuiMultiPageScreen(
         return setPage(player, page - 1)
     }
 
-    operator fun plusAssign(button: IGuiButton) = add(button)
+    operator fun plusAssign(button: GuiButton<*>) = add(button)
 
-    fun add(button: IGuiButton) {
+    fun add(button: GuiButton<*>) {
         itemList += button
     }
 
     override fun copy(): IGuiScreen {
         val screen = GuiMultiPageScreen(title, rows, maxPages, minSlot, maxSlot, startPage)
-        screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, IGuiButton>
-        screen.itemList = itemList.map { it.copy(screen) }.toMutableList() as ArrayList<IGuiButton>
+        screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, GuiButton<*>>
+        screen.itemList = itemList.map { it.copy(screen) }.toMutableList() as ArrayList<GuiButton<*>>
         screen.type = type
         screen.rows = rows
-        screen.click = click
+        screen.clickCallback = clickCallback
         screen.moveCallback = moveCallback
-        screen.close = close
+        screen.closeCallback = closeCallback
         screen.quitCallback = quitCallback
         screen.openCallback = openCallback
         return screen

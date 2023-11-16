@@ -3,6 +3,7 @@ package com.mattmx.ktgui.scoreboards
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
+@Deprecated("No longer needed", ReplaceWith("ScoreboardBuilder"))
 open class AnimatedScoreboardBuilder(
     title: String,
     val updateEvery: Long = 2,

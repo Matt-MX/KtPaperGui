@@ -5,7 +5,7 @@ import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import org.bukkit.event.inventory.ClickType
 
-class ClickCallback<T : IGuiButton> {
+class ClickCallback<T : IGuiButton<*>> {
     private var callbacks = mutableMapOf<Array<ClickType>, ButtonClickedEvent<T>.() -> Unit>()
     private lateinit var anyCallback: (ButtonClickedEvent<T>.() -> Unit)
 

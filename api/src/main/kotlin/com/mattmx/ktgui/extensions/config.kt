@@ -3,6 +3,7 @@ package com.mattmx.ktgui.extensions
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.utils.component
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.configuration.file.FileConfiguration
 
@@ -17,21 +18,15 @@ fun String.translatableList(config: FileConfiguration): List<String> {
 fun List<String>.component() = map { it.component }
     .reduce { c1, c2 -> c1.append(c2) }
 
-fun String.translatableButton(config: FileConfiguration) : GuiButton? {
+fun String.translatableButton(config: FileConfiguration) : GuiButton<*>? {
     val section = config.getConfigurationSection(this)
         ?: return null
-    return button<GuiButton> {
+    return button<GuiButton<*>> {
         materialOf(section.getString("material"), Material.AIR)
         amount(section.getInt("amount", 1))
-        named(section.getString("name"))
-        lore { addAll(section.getStringList("lore")) }
-        // enchant
-        // potion effects
+        named(section.getString("name")?.component ?: Component.empty())
+        lore { addAll(section.getStringList("lore").map { it.component }) }
+        // todo enchant
+        // todo potion effects
     }
-}
-
-fun main(config: FileConfiguration) {
-    "some.key.to.message"
-        .translatableList(config)
-        .component()
 }

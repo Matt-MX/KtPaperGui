@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.event
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.utils.isAsync
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
@@ -9,7 +10,7 @@ import org.bukkit.event.HandlerList
 class PreGuiOpenEvent(
     val gui: IGuiScreen,
     val player: Player
-) : Event(), Cancellable {
+) : Event(isAsync()), Cancellable {
     private var _cancelled: Boolean = false
     override fun getHandlers() = _handlers
 

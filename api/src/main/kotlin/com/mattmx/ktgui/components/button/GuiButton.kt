@@ -11,10 +11,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 
-open class GuiButton<T : IGuiButton>(
+open class GuiButton<T : GuiButton<T>>(
     material: Material = Material.STONE,
     var item: ItemStack? = null
-) : IGuiButton {
+) : IGuiButton<T> {
     lateinit var parent: IGuiScreen
         protected set
 
@@ -24,7 +24,7 @@ open class GuiButton<T : IGuiButton>(
         protected set
     var closeCallback: ((ButtonClickedEvent<T>) -> Unit)? = null
         protected set
-    var ifTexturePackActive: ((GuiButton<T>) -> Unit)? = null
+    var ifTexturePackActive: ((T) -> Unit)? = null
         protected set
 
     // todo should remove this once we have no need for it (parent has been declared)
@@ -92,17 +92,17 @@ open class GuiButton<T : IGuiButton>(
         return this as T
     }
 
-    infix fun material(material: Material) : IGuiButton {
+    infix fun material(material: Material) : T {
         item?.let {
             it.type = material
-            return this
+            return this as T
         }
         item = ItemStack(material)
         return this as T
     }
 
-    infix fun customModelData(model: Int) : IGuiButton {
-        val meta = item?.itemMeta ?: return this
+    infix fun customModelData(model: Int) : T {
+        val meta = item?.itemMeta ?: return this as T
         meta.setCustomModelData(model)
         item?.itemMeta = meta
         return this as T
@@ -177,13 +177,13 @@ open class GuiButton<T : IGuiButton>(
         return this as T
     }
 
-    override fun copy(parent: IGuiScreen) : GuiButton<T> {
+    override fun copy(parent: IGuiScreen) : T {
         val copy = GuiButton<T>()
         copy.parent = parent
         copy.item = item?.clone()
         copy.clickCallback = clickCallback.clone()
         copy.closeCallback = closeCallback
         copy.ifTexturePackActive = ifTexturePackActive
-        return copy
+        return copy as T
     }
 }

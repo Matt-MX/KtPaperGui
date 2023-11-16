@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.item
 
+import net.kyori.adventure.text.Component
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
@@ -32,11 +33,12 @@ infix fun KT.iBuilder(material: Material): DslIBuilder {
  */
 inline fun itemBuilderStack(material: Material, builder: DslIBuilder.() -> Unit): ItemStack = itemBuilder(material, builder).build()
 inline fun itemBuilder(material: Material, builder: DslIBuilder.() -> Unit) = DslIBuilder(material).apply(builder)
+fun itemBuilder(material: Material) = DslIBuilder(material)
 
 inline infix fun ItemStack.builder(builder: DslIBuilder.() -> Unit) =
     itemBuilder(type) {
-        name = itemMeta?.displayName
-        itemMeta?.lore?.toMutableList()?.let { lore = it }
+        name = itemMeta?.displayName()
+        itemMeta?.lore()?.let { lore = it.toMutableList() }
         itemMeta?.enchants?.forEach { (ench, lvl) ->
             enchantments += ench lvl lvl
         }
@@ -65,8 +67,8 @@ infix fun <F> Enchantment.level(level: F): Pair<Enchantment, F> = Pair(this, lev
 operator fun DslIBuilder.invoke() = build()
 
 class DslIBuilder(var material: Material) {
-    var name: String? = null
-    var lore = mutableListOf<String>()
+    var name: Component? = null
+    var lore = mutableListOf<Component>()
     var amount = 1
     val enchantments = hashMapOf<Enchantment, Int>()
     val potionEffects = hashMapOf<PotionEffectType, Pair<Int, Int>>()
@@ -85,8 +87,8 @@ class DslIBuilder(var material: Material) {
         material = m; return this
     }
 
-    infix fun named(n: String) = name(n)
-    infix fun name(n: String): DslIBuilder {
+    infix fun named(n: Component) = name(n)
+    infix fun name(n: Component): DslIBuilder {
         name = n; return this
     }
 
@@ -94,7 +96,7 @@ class DslIBuilder(var material: Material) {
         amount = a; return this
     }
 
-    infix fun lore(l: String): DslIBuilder {
+    infix fun lore(l: Component): DslIBuilder {
         lore += l; return this
     }
 
@@ -140,7 +142,7 @@ class DslIBuilder(var material: Material) {
     }
 
     // Method for formatting all strings of the item (Can be inlined)
-    inline infix fun format(cb: String.() -> String): DslIBuilder {
+    inline infix fun format(cb: Component.() -> Component): DslIBuilder {
         name?.let { name = cb(it) }
         lore = lore.map { cb(it) }.toMutableList()
         return this
@@ -170,8 +172,8 @@ class DslIBuilder(var material: Material) {
     fun build(): ItemStack {
         val stack = ItemStack(material)
         var meta = stack.itemMeta!!
-        name?.let { meta.setDisplayName(name) }
-        meta.lore = lore.toMutableList()
+        name?.let { meta.displayName(name) }
+        meta.lore(lore.toMutableList())
         if (material == Material.LEATHER_BOOTS || material == Material.LEATHER_CHESTPLATE || material == Material.LEATHER_LEGGINGS || material == Material.LEATHER_HELMET) {
             val leatherMeta = meta as LeatherArmorMeta
             leatherMeta.setColor(color)

@@ -5,22 +5,22 @@ import org.bukkit.event.inventory.ClickType
 
 @Deprecated("in favour of ClickCallback")
 class LegacyClickCallback {
-    var left : (ButtonClickedEvent.() -> Unit)? = null
-    var shiftLeft : (ButtonClickedEvent.() -> Unit)? = null
-    var right : (ButtonClickedEvent.() -> Unit)? = null
-    var shiftRight : (ButtonClickedEvent.() -> Unit)? = null
-    var windowBorderLeft : (ButtonClickedEvent.() -> Unit)? = null
-    var windowBorderRight : (ButtonClickedEvent.() -> Unit)? = null
-    var middle : (ButtonClickedEvent.() -> Unit)? = null
-    var numberKey : (ButtonClickedEvent.() -> Unit)? = null
-    var doubleClick : (ButtonClickedEvent.() -> Unit)? = null
-    var drop : (ButtonClickedEvent.() -> Unit)? = null
-    var ctrlDrop : (ButtonClickedEvent.() -> Unit)? = null
-    var creative : (ButtonClickedEvent.() -> Unit)? = null
-    var swapOffhand : (ButtonClickedEvent.() -> Unit)? = null
-    var generic : (ButtonClickedEvent.() -> Unit)? = null
+    var left : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var shiftLeft : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var right : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var shiftRight : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var windowBorderLeft : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var windowBorderRight : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var middle : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var numberKey : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var doubleClick : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var drop : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var ctrlDrop : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var creative : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var swapOffhand : (ButtonClickedEvent<*>.() -> Unit)? = null
+    var generic : (ButtonClickedEvent<*>.() -> Unit)? = null
 
-    fun accept(e: ButtonClickedEvent) {
+    fun accept(e: ButtonClickedEvent<*>) {
         when (e.event.click) {
             ClickType.LEFT -> left?.also { it.invoke(e) } ?: generic?.invoke(e)
             ClickType.SHIFT_LEFT -> shiftLeft?.also { it.invoke(e) } ?: generic?.invoke(e)

@@ -5,10 +5,10 @@ import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
-import com.mattmx.ktgui.event.AsyncPreGuiOpenEvent
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
+import com.mattmx.ktgui.utils.isAsync
 import com.mattmx.ktgui.utils.legacy
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -38,10 +38,9 @@ open class GuiScreen(
         }
 
     var items = hashMapOf<Int, GuiButton<*>>()
-        private set
 
-    private lateinit var clickCallback: ClickCallback<*>
-    private lateinit var closeCallback: (InventoryCloseEvent) -> Unit
+    protected lateinit var clickCallback: ClickCallback<*>
+    protected lateinit var closeCallback: (InventoryCloseEvent) -> Unit
     protected lateinit var quitCallback: (PlayerQuitEvent) -> Unit
     protected lateinit var moveCallback: (PlayerMoveEvent) -> Unit
 
@@ -57,7 +56,7 @@ open class GuiScreen(
         else max(min(rows, 6), 1) * 9
     }
 
-    override fun getSlots(button: IGuiButton): List<Int> {
+    override fun getSlots(button: IGuiButton<*>): List<Int> {
         return items.entries
             .filter { it.value == button }
             .map { it.key }
@@ -67,12 +66,12 @@ open class GuiScreen(
         return items.size
     }
 
-    override fun setSlot(button: IGuiButton, slot: Int): GuiScreen {
+    override fun setSlot(button: IGuiButton<*>, slot: Int): GuiScreen {
         items[slot] = button as GuiButton<*>
         return this
     }
 
-    fun slotsUsed() : List<Int> = items.map { it.key }
+    fun slotsUsed(): List<Int> = items.map { it.key }
 
     infix fun type(type: InventoryType) = apply { this.type = type }
 
@@ -90,7 +89,12 @@ open class GuiScreen(
 
     override fun open(player: Player) {
         // format the items
-        val inv: Inventory = if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(player, totalSlots(), title)
+        val inv: Inventory =
+            if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(
+                player,
+                totalSlots(),
+                title
+            )
 
         if (firePreBuildEvent(player)) return
 
@@ -102,50 +106,41 @@ open class GuiScreen(
         openIfNotCancelled(player, inv)
     }
 
-    fun firePreBuildEvent(player: Player) : Boolean {
+    fun firePreBuildEvent(player: Player): Boolean {
         return if (Bukkit.isPrimaryThread()) firePreBuildEventSync(player)
         else firePreBuildEventAsync(player).get()
     }
 
-    private fun firePreBuildEventSync(player: Player) : Boolean {
+    private fun firePreBuildEventSync(player: Player): Boolean {
         val event = PreGuiBuildEvent(this, player)
         Bukkit.getPluginManager().callEvent(event)
         return event.isCancelled
     }
 
-    private fun firePreBuildEventAsync(player: Player) : Future<Boolean> {
-        return Bukkit.getScheduler().callSyncMethod(com.mattmx.ktgui.GuiManager.owningPlugin) {
+    private fun firePreBuildEventAsync(player: Player): Future<Boolean> {
+        return Bukkit.getScheduler().callSyncMethod(GuiManager.owningPlugin) {
             firePreBuildEventSync(player)
         }
     }
 
     fun openIfNotCancelled(player: Player, inventory: Inventory) {
-        if (Bukkit.isPrimaryThread()) {
-            if (!firePreGuiOpenEvent(player)) {
-                player.openInventory(inventory)
-                player.setOpenGui(this)
-                openCallback?.invoke(player)
-            }
-        } else {
-            if (!firePreGuiOpenEventAsync(player)) {
-                // Must open inventory sync
-                Bukkit.getScheduler().runTask(com.mattmx.ktgui.GuiManager.owningPlugin) { _ ->
+        if (!firePreGuiOpenEvent(player)) {
+            if (isAsync()) {
+                Bukkit.getScheduler().runTask(GuiManager.owningPlugin) { ->
                     player.openInventory(inventory)
                     player.setOpenGui(this)
                     openCallback?.invoke(player)
                 }
+            } else {
+                player.openInventory(inventory)
+                player.setOpenGui(this)
+                openCallback?.invoke(player)
             }
         }
     }
 
-   protected fun firePreGuiOpenEvent(player: Player) : Boolean {
+    protected fun firePreGuiOpenEvent(player: Player): Boolean {
         val event = PreGuiOpenEvent(this, player)
-        Bukkit.getPluginManager().callEvent(event)
-        return event.isCancelled
-    }
-
-    protected fun firePreGuiOpenEventAsync(player: Player) : Boolean {
-        val event = AsyncPreGuiOpenEvent(this, player)
         Bukkit.getPluginManager().callEvent(event)
         return event.isCancelled
     }
@@ -172,10 +167,10 @@ open class GuiScreen(
     fun open(openCallback: (Player) -> Unit) = apply { this.openCallback = openCallback }
 
     infix fun click(clickCallbackBuilder: (ClickCallback<*>) -> Unit) = apply {
-        this.clickCallback = ClickCallback<IGuiButton>().apply(clickCallbackBuilder)
+        this.clickCallback = ClickCallback<IGuiButton<*>>().apply(clickCallbackBuilder)
     }
 
-    override fun addChild(child: IGuiButton) {
+    override fun addChild(child: IGuiButton<*>) {
         child.slots()?.forEach {
             items[it] = child as GuiButton<*>
         }
@@ -184,7 +179,7 @@ open class GuiScreen(
     override fun click(e: InventoryClickEvent) {
         val button = items[e.rawSlot]
 
-        val event = ButtonClickedEvent<GuiButton<*>>(e.whoClicked as Player, e)
+        val event = ButtonClickedEvent<IGuiButton<*>>(e.whoClicked as Player, e)
         if (button != null)
             event.button = button
         if (::clickCallback.isInitialized) {
@@ -200,15 +195,15 @@ open class GuiScreen(
         }
     }
 
-    fun last() : Int {
+    fun last(): Int {
         return totalSlots() - 1
     }
 
-    fun middle() : Int {
+    fun middle(): Int {
         return kotlin.math.floor(totalSlots() * 0.5).toInt()
     }
 
-    fun first() : Int {
+    fun first(): Int {
         return 0
     }
 
