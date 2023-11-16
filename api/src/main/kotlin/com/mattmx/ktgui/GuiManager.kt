@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.annotations.ApiStatus
 import java.io.ObjectInputFilter.Config
@@ -38,6 +39,14 @@ object GuiManager : Listener {
     }
 
     /**
+     * Should be called on your plugin's [onDisable] method.
+     * Closes all GUIs for all players.
+     */
+    fun shutdown() {
+        Bukkit.getOnlinePlayers().forEach { player -> forceClose(player) }
+    }
+
+    /**
      * Each plugin can configure generic things like feedback messages,
      * that KTBukkitGui handles under the hud.
      *
@@ -60,6 +69,11 @@ object GuiManager : Listener {
     fun setOpenGui(player: Player, gui: IGuiScreen) = players.set(player, gui)
     fun clearGui(player: Player) = players.remove(player)
     inline fun <reified T> getPlayers(clazz: Class<T>) = getPlayersInGui().filter { it.value::class.java == clazz }
+
+    @EventHandler
+    fun onDisable(e: PluginDisableEvent) {
+        Bukkit.getOnlinePlayers().forEach { player -> forceClose(player) }
+    }
 
     @EventHandler
     fun onInventoryClick(e: InventoryClickEvent) {
