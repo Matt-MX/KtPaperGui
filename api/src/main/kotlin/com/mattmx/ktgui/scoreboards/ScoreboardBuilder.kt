@@ -1,10 +1,12 @@
 package com.mattmx.ktgui.scoreboards
 
 import com.mattmx.ktgui.utils.legacy
+import com.mattmx.ktgui.utils.legacyColor
 import com.mattmx.ktgui.utils.not
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.scoreboard.Criteria
+import org.bukkit.scoreboard.DisplaySlot
 import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Scoreboard
 import java.util.UUID
@@ -23,7 +25,9 @@ open class ScoreboardBuilder(
     private val scoreboardLines = arrayListOf<Component>()
 
     val scoreboard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
-    private val objective: Objective = scoreboard.registerNewObjective(name, Criteria.DUMMY, title)
+    private val objective: Objective = scoreboard.registerNewObjective(name, Criteria.DUMMY, title).apply {
+        displaySlot = DisplaySlot.SIDEBAR
+    }
 
     /**
      * Shorthand operator for [add] function.
@@ -39,7 +43,7 @@ open class ScoreboardBuilder(
      */
     fun add(line: Component): Int {
         if (scoreboardLines.size > LegacyScoreboardBuilder.MAX_LINES) throw IndexOutOfBoundsException("You can't add more than 16 lines.")
-        val name = (!("&r".repeat(scoreboardLines.size))).legacy()
+        val name = "&r".repeat(scoreboardLines.size).legacyColor()
         val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)
         team.suffix(line)
         team.addEntry(name)

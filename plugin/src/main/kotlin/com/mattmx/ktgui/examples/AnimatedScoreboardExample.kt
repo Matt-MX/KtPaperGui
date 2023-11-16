@@ -1,9 +1,11 @@
 package com.mattmx.ktgui.examples
 
+import com.mattmx.ktgui.KotlinGui
 import com.mattmx.ktgui.extensions.removeScoreboard
 import com.mattmx.ktgui.extensions.stripColor
 import com.mattmx.ktgui.scoreboards.scoreboard
 import com.mattmx.ktgui.utils.not
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.lang.Integer.min
 
@@ -29,14 +31,21 @@ class AnimatedScoreboardExample : Example {
         add(!"&aRAM usage: 0mb")
     }
 
-    fun update() = builder.apply {
+    init {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(KotlinGui.plugin!!, { -> update() }, 2, 2)
+    }
+
+    private fun update() = builder.apply {
         iterations++
         val chars = min((iterations % text.length), text.length)
         // Set the first line to a new string.
         this[0] = !"&c${text.substring(chars)}"
         // Remember with RGB strings, the rgb values are there too, taking up the length.
         // Strip the color before referring to their length etc.
-        this[1] = !rgbText.substring(0, rgbText.length - min((iterations % rgbText.stripColor().length), rgbText.stripColor().length - 1))
+        this[1] = !rgbText.substring(
+            0,
+            rgbText.length - min((iterations % rgbText.stripColor().length), rgbText.stripColor().length - 1)
+        )
         val runtime = Runtime.getRuntime()
         val usedMemInMB = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L
         val maxHeapSizeInMB = runtime.maxMemory() / 1048576L
