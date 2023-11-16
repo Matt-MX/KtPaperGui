@@ -27,7 +27,7 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
 ) : Event() {
     val slot = event.rawSlot
     val currentGui = player.getOpenGui()
-    private var callbackShouldContinue = false
+    private var callbackShouldContinue = true
     lateinit var button: T
 
     fun isButton() = ::button.isInitialized
