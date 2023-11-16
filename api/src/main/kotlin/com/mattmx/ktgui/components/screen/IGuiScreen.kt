@@ -20,11 +20,7 @@ interface IGuiScreen {
 
     fun setSlot(button: IGuiButton, slot: Int) : IGuiScreen
 
-    fun createCopyAndOpen(player: Player) : IGuiScreen
-
     fun open(player: Player)
-
-    fun copyAndFormat(player: Player) : IGuiScreen
 
     fun copy() : IGuiScreen
 

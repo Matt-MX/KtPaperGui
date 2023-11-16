@@ -79,10 +79,10 @@ open class GuiMultiPageScreen(
         screen.type = type
         screen.rows = rows
         screen.click = click
-        screen.move = move
+        screen.moveCallback = moveCallback
         screen.close = close
-        screen.quit = quit
-        screen.open = open
+        screen.quitCallback = quitCallback
+        screen.openCallback = openCallback
         return screen
     }
 }

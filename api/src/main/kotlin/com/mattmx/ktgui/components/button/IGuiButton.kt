@@ -14,7 +14,7 @@ interface IGuiButton {
     /**
      * Called when this button is clicked
      */
-    fun onButtonClick(e: ButtonClickedEvent)
+    fun onButtonClick(e: ButtonClickedEvent<*>)
 
     fun onButtonDrag(e: InventoryDragEvent)
 

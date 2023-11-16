@@ -1,28 +1,28 @@
 package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.extensions.format
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 
-// fixme: sometimes doesn't change on first click (after this gui has been opened already)
+@Deprecated("No longer supported", ReplaceWith("LoreCycleButton"))
 class LegacyLoreCycleButton(
     material: Material = Material.STONE,
     item: ItemStack? = null,
     var selected: Int = 0,
-    private var changed: ((LegacyLoreCycleButton, ButtonClickedEvent?) -> Unit)? = null,
+    private var changed: ((LegacyLoreCycleButton, ButtonClickedEvent<LegacyLoreCycleButton>?) -> Unit)? = null,
     val lores: MutableList<LoreEntry> = mutableListOf()
-) : GuiButton(material, item) {
+) : GuiButton<LegacyLoreCycleButton>(material, item) {
     var selectableLores = mutableListOf<Int>()
 
     init {
         click {
-            right = {
+            ClickType.RIGHT {
                 nextItem(player)
                 changed?.invoke(this@LegacyLoreCycleButton, this)
             }
-            left = {
+            ClickType.LEFT {
                 prevItem(player)
                 changed?.invoke(this@LegacyLoreCycleButton, this)
             }
@@ -43,7 +43,7 @@ class LegacyLoreCycleButton(
         update(player)
     }
 
-    fun changed(cb: (LegacyLoreCycleButton, ButtonClickedEvent?) -> Unit): LegacyLoreCycleButton {
+    fun changed(cb: (LegacyLoreCycleButton, ButtonClickedEvent<LegacyLoreCycleButton>?) -> Unit): LegacyLoreCycleButton {
         changed = cb
         return this
     }
@@ -53,7 +53,7 @@ class LegacyLoreCycleButton(
      * <null, String> (Denoting a normal Lore line)
      * <String, String> (ID pointing to lore value)
      */
-    inline fun specialLore(lore: MutableList<LoreEntry>.() -> Unit): GuiButton {
+    inline fun specialLore(lore: MutableList<LoreEntry>.() -> Unit): LegacyLoreCycleButton {
         lore.invoke(lores)
         // get all selectable lores
         selectableLores.clear()
@@ -68,7 +68,7 @@ class LegacyLoreCycleButton(
         return this
     }
 
-    fun clearSpecialLore() : GuiButton {
+    fun clearSpecialLore() : LegacyLoreCycleButton {
         lores.clear()
         selectableLores.clear()
         selected = 0
@@ -105,7 +105,6 @@ class LegacyLoreCycleButton(
             it.lore = loreToApply
             i.itemMeta = it
         }
-        i?.format(player, format)
         return i
     }
 
@@ -114,13 +113,13 @@ class LegacyLoreCycleButton(
         var line: String,
         var lineSelected: String)
 
-    override fun copy(parent: IGuiScreen): GuiButton {
+    override fun copy(parent: IGuiScreen): LegacyLoreCycleButton {
         val copy = LegacyLoreCycleButton(lores = lores, item = item)
         copy.selectableLores = selectableLores.toMutableList()
         copy.changed = changed
         copy.parent = parent
         copy.clickCallback = clickCallback
-        copy.close = close
+        copy.closeCallback = closeCallback
         return copy
     }
 }

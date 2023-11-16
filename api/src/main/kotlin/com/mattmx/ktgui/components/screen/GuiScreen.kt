@@ -1,15 +1,16 @@
 package com.mattmx.ktgui.components.screen
 
-import com.mattmx.ktgui.components.LegacyClickCallback
-import com.mattmx.ktgui.components.Formattable
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.event.AsyncPreGuiOpenEvent
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
-import com.mattmx.ktgui.extensions.color
 import com.mattmx.ktgui.extensions.setOpenGui
+import com.mattmx.ktgui.utils.legacy
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -24,18 +25,27 @@ import java.lang.Integer.min
 import java.util.concurrent.Future
 
 open class GuiScreen(
-    var title: String = "null",
+    title: Component = Component.empty(),
     var rows: Int = 1,
     var type: InventoryType? = null,
-) : IGuiScreen, Formattable {
-    var items = hashMapOf<Int, IGuiButton>()
+) : IGuiScreen {
+    var title: Component = title
+        set(value) {
+            field = value
+            GuiManager.getPlayers(this).forEach { player ->
+                player.openInventory.title = value.legacy()
+            }
+        }
 
-    var click: LegacyClickCallback? = null
-    var close: ((InventoryCloseEvent) -> Unit)? = null
-    protected var quit: ((PlayerQuitEvent) -> Unit)? = null
-    protected var move: ((PlayerMoveEvent) -> Unit)? = null
+    var items = hashMapOf<Int, GuiButton<*>>()
+        private set
 
-    protected var open: ((Player) -> Unit)? = null
+    private lateinit var clickCallback: ClickCallback<*>
+    private lateinit var closeCallback: (InventoryCloseEvent) -> Unit
+    protected lateinit var quitCallback: (PlayerQuitEvent) -> Unit
+    protected lateinit var moveCallback: (PlayerMoveEvent) -> Unit
+
+    protected var openCallback: ((Player) -> Unit)? = null
 
     /**
      * Return the default size of the inventory type
@@ -58,42 +68,23 @@ open class GuiScreen(
     }
 
     override fun setSlot(button: IGuiButton, slot: Int): GuiScreen {
-        items[slot] = button
+        items[slot] = button as GuiButton<*>
         return this
     }
 
-    fun slotsUsed() : List<Int> {
-        return items.map { it.key }
-    }
+    fun slotsUsed() : List<Int> = items.map { it.key }
 
-    infix fun type(type: InventoryType): GuiScreen {
-        this.type = type
-        return this
-    }
+    infix fun type(type: InventoryType) = apply { this.type = type }
 
-    infix fun title(title: String): GuiScreen {
-        this.title = title
-        return this
-    }
+    infix fun title(title: Component) = apply { this.title = title }
 
-    infix fun rows(rows: Int): GuiScreen {
-        this.rows = rows
-        return this
-    }
+    infix fun rows(rows: Int) = apply { this.rows = rows }
 
-    override fun createCopyAndOpen(player: Player): IGuiScreen {
-        val gui = copyAndFormat(player)
-        gui.open(player)
-        return gui
-    }
-
-    fun openAndFormat(player: Player) {
-        title = title.color(player)
-        open(player)
-    }
+    @Deprecated("Guis should no longer be formatted per player, handle that yourself.", ReplaceWith("open(player)"))
+    fun openAndFormat(player: Player) = open(player)
 
     fun forceClose(player: Player) {
-        com.mattmx.ktgui.GuiManager.players.remove(player.uniqueId)
+        GuiManager.clearGui(player)
         player.closeInventory()
     }
 
@@ -133,7 +124,7 @@ open class GuiScreen(
             if (!firePreGuiOpenEvent(player)) {
                 player.openInventory(inventory)
                 player.setOpenGui(this)
-                open?.invoke(player)
+                openCallback?.invoke(player)
             }
         } else {
             if (!firePreGuiOpenEventAsync(player)) {
@@ -141,19 +132,19 @@ open class GuiScreen(
                 Bukkit.getScheduler().runTask(com.mattmx.ktgui.GuiManager.owningPlugin) { _ ->
                     player.openInventory(inventory)
                     player.setOpenGui(this)
-                    open?.invoke(player)
+                    openCallback?.invoke(player)
                 }
             }
         }
     }
 
-    fun firePreGuiOpenEvent(player: Player) : Boolean {
+   protected fun firePreGuiOpenEvent(player: Player) : Boolean {
         val event = PreGuiOpenEvent(this, player)
         Bukkit.getPluginManager().callEvent(event)
         return event.isCancelled
     }
 
-    fun firePreGuiOpenEventAsync(player: Player) : Boolean {
+    protected fun firePreGuiOpenEventAsync(player: Player) : Boolean {
         val event = AsyncPreGuiOpenEvent(this, player)
         Bukkit.getPluginManager().callEvent(event)
         return event.isCancelled
@@ -161,63 +152,45 @@ open class GuiScreen(
 
     override fun copy(): IGuiScreen {
         val screen = GuiScreen(title)
-        screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, IGuiButton>
+        screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, GuiButton<*>>
         screen.type = type
         screen.rows = rows
-        screen.click = click
-        screen.move = move
-        screen.close = close
-        screen.quit = quit
-        screen.open = open
+        screen.clickCallback = clickCallback
+        screen.closeCallback = closeCallback
+        screen.moveCallback = moveCallback
+        screen.quitCallback = quitCallback
+        screen.openCallback = openCallback
         return screen
     }
 
-    override fun copyAndFormat(player: Player): GuiScreen {
-        val screen = copy() as GuiScreen
-        screen.format(player)
-        return screen
-    }
+    fun move(moveCallback: (PlayerMoveEvent) -> Unit) = apply { this.moveCallback = moveCallback }
 
-    fun move(me: (PlayerMoveEvent) -> Unit): GuiScreen {
-        move = me
-        return this
-    }
+    fun quit(quitCallback: (PlayerQuitEvent) -> Unit) = apply { this.quitCallback = quitCallback }
 
-    fun quit(qe: (PlayerQuitEvent) -> Unit): GuiScreen {
-        quit = qe
-        return this
-    }
+    fun close(closeCallback: (InventoryCloseEvent) -> Unit) = apply { this.closeCallback = closeCallback }
 
-    fun close(ic: (InventoryCloseEvent) -> Unit): GuiScreen {
-        close = ic
-        return this
-    }
+    fun open(openCallback: (Player) -> Unit) = apply { this.openCallback = openCallback }
 
-    fun open(oc: (Player) -> Unit) : GuiScreen {
-        open = oc
-        return this
-    }
-
-    infix fun click(ce: (LegacyClickCallback) -> Unit): GuiScreen {
-        this.click = LegacyClickCallback()
-        ce.invoke(this.click!!)
-        return this
+    infix fun click(clickCallbackBuilder: (ClickCallback<*>) -> Unit) = apply {
+        this.clickCallback = ClickCallback<IGuiButton>().apply(clickCallbackBuilder)
     }
 
     override fun addChild(child: IGuiButton) {
         child.slots()?.forEach {
-            items[it] = child
+            items[it] = child as GuiButton<*>
         }
     }
 
     override fun click(e: InventoryClickEvent) {
         val button = items[e.rawSlot]
-        // If dev wants to handle click calls globally
-        click?.let {
-            it.accept(ButtonClickedEvent(e.whoClicked as Player, e, button))
-            return
+
+        val event = ButtonClickedEvent<GuiButton<*>>(e.whoClicked as Player, e)
+        if (button != null)
+            event.button = button
+        if (::clickCallback.isInitialized) {
+            clickCallback.run(event)
         }
-        button?.onButtonClick(ButtonClickedEvent(e.whoClicked as Player, e, button))
+        button?.onButtonClick(event)
     }
 
     override fun drag(e: InventoryDragEvent) {
@@ -240,22 +213,17 @@ open class GuiScreen(
     }
 
     override fun close(e: InventoryCloseEvent) {
-        close?.invoke(e)
+        if (::closeCallback.isInitialized)
+            closeCallback(e)
     }
 
     override fun quit(e: PlayerQuitEvent) {
-        quit?.invoke(e)
+        if (::quitCallback.isInitialized)
+            quitCallback(e)
     }
 
     override fun move(e: PlayerMoveEvent) {
-        move?.invoke(e)
-    }
-
-    override fun format(p: Player) {
-        title = title.color(p)
-    }
-
-    companion object {
-        operator fun invoke() = GuiButton()
+        if (::moveCallback.isInitialized)
+            moveCallback(e)
     }
 }

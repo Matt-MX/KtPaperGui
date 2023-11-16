@@ -2,10 +2,10 @@ package com.mattmx.ktgui.components
 
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
+import com.mattmx.ktgui.components.button.IGuiButton
 import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.InventoryClickEvent
 
-class ClickCallback<T : GuiButton> {
+class ClickCallback<T : IGuiButton> {
     private var callbacks = mutableMapOf<Array<ClickType>, ButtonClickedEvent<T>.() -> Unit>()
     private lateinit var anyCallback: (ButtonClickedEvent<T>.() -> Unit)
 
@@ -14,21 +14,21 @@ class ClickCallback<T : GuiButton> {
      *
      * @param event
      */
-    fun run(event: ButtonClickedEvent<T>) {
+    fun run(event: ButtonClickedEvent<*>) {
         if (!event.shouldContinueCallback()) return
 
         // Get relevant callbacks
         if (callbacks.isEmpty() && ::anyCallback.isInitialized) {
-            return anyCallback(event)
+            return anyCallback(event as ButtonClickedEvent<T>)
         }
 
         val relevant = callbacks.entries.filter { it.key.contains(event.event.click) }
         if (relevant.isEmpty() && ::anyCallback.isInitialized) {
-            return anyCallback(event)
+            return anyCallback(event as ButtonClickedEvent<T>)
         }
         relevant.forEach {
             if (!event.shouldContinueCallback()) return
-            it.value(event)
+            it.value(event as ButtonClickedEvent<T>)
         }
     }
 

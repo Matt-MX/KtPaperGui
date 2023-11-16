@@ -1,8 +1,5 @@
 package com.mattmx.ktgui.extensions
 
-import com.mattmx.ktgui.item.itemBuilder
-import com.mattmx.ktgui.utils.component
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -12,11 +9,4 @@ fun ItemStack.format(player: Player?, method: (String, Player?) -> String) {
     imeta?.setDisplayName(method(imeta.displayName, player))
     imeta?.lore = imeta?.lore?.map { line -> method(line, player) }
     this.itemMeta = imeta
-}
-
-fun main() {
-    itemBuilder(Material.STONE) {
-        name = "&c&lFormatted name"
-        // todo needs to apply formatting via [component()]
-    }.build()
 }

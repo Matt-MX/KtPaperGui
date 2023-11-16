@@ -20,15 +20,17 @@ import org.bukkit.inventory.ItemStack
  * @param button button that was clicked
  * @param itemClicked [ItemStack] that was clicked
  */
-data class ButtonClickedEvent<T : GuiButton<T>>(
+data class ButtonClickedEvent<T : IGuiButton>(
     val player: Player,
     val event: InventoryClickEvent,
-    val button: T,
     val itemClicked: ItemStack? = event.currentItem
 ) : Event() {
     val slot = event.rawSlot
     val currentGui = player.getOpenGui()
     private var callbackShouldContinue = false
+    lateinit var button: T
+
+    fun isButton() = ::button.isInitialized
 
     override fun getHandlers() = HandlerList()
 

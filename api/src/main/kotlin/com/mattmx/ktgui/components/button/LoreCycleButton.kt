@@ -1,21 +1,27 @@
 package com.mattmx.ktgui.components.button
 
 import net.kyori.adventure.text.Component
+import kotlin.math.max
+import kotlin.math.min
 
 class LoreCycleButton : GuiButton<LoreCycleButton>() {
-    private var selected = 0
+    var selected = 0
+        set(value) {
+            val selectable = selectableLines
+            field = max(min(value, selectable.size - 1), 0)
+        }
     private lateinit var lines: List<LoreCycleLine>
+    val selectableLines
+        get() = lines.filter { line -> line.id >= 0 }
     val selectedLoreLine: LoreCycleLine?
-        get() = lines.getOrNull(selected)
+        get() = selectableLines.getOrNull(selected)
 
-    fun loreCycle(block: LoreCycleLineBuilder.() -> Unit) : LoreCycleButton {
-        val builder = LoreCycleLineBuilder().apply(block)
-        lines = builder.lines
-        return this
+    fun loreCycle(block: LoreCycleLineBuilder.() -> Unit) = apply {
+        lines = LoreCycleLineBuilder().apply(block).lines
     }
 
     @Deprecated("This should not be used in this class.", ReplaceWith("this"))
-    override fun lore(lore: MutableList<Component>.() -> Unit): GuiButton<LoreCycleButton> {
+    override fun lore(lore: MutableList<Component>.() -> Unit): LoreCycleButton {
         return this
     }
 

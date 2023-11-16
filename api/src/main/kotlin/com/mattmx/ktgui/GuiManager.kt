@@ -58,6 +58,7 @@ object GuiManager : Listener {
     fun getPlayersInGui() = players.toMutableMap()
     fun getPlayer(player: Player) = players[player]
     fun setOpenGui(player: Player, gui: IGuiScreen) = players.set(player, gui)
+    fun clearGui(player: Player) = players.remove(player)
     inline fun <reified T> getPlayers(clazz: Class<T>) = getPlayersInGui().filter { it.value::class.java == clazz }
 
     @EventHandler

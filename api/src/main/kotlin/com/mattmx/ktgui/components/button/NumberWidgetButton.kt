@@ -12,12 +12,12 @@ class NumberWidgetButton(
     material: Material = Material.STONE,
     val startValue: Int = 1,
     val step: Int = 1
-) : GuiButton(material) {
+) : GuiButton<NumberWidgetButton>(material) {
     init {
         amount(startValue)
     }
 
-    override fun onButtonClick(e: ButtonClickedEvent) {
+    override fun onButtonClick(e: ButtonClickedEvent<*>) {
         when (e.event.click) {
             ClickType.RIGHT -> {
                 amount(min(64, max(1, item!!.amount + step)))

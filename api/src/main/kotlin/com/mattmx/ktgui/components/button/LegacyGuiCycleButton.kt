@@ -6,6 +6,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 
+@Deprecated("No longer supported", ReplaceWith("LoreCycleButton"))
 class LegacyGuiCycleButton(
     material: Material = Material.STONE,
     item: ItemStack? = null,
@@ -20,11 +21,11 @@ class LegacyGuiCycleButton(
         click {
             ClickType.RIGHT {
                 nextItem(player)
-                changed?.invoke(ButtonClickedEvent(player, this.event, this@LegacyGuiCycleButton))
+                changed?.invoke(ButtonClickedEvent<LegacyGuiCycleButton>(player, this.event).apply { button = this@LegacyGuiCycleButton })
             }
             ClickType.LEFT {
                 prevItem(player)
-                changed?.invoke(ButtonClickedEvent(player, this.event, this@LegacyGuiCycleButton))
+                changed?.invoke(ButtonClickedEvent<LegacyGuiCycleButton>(player, this.event).apply { button = this@LegacyGuiCycleButton })
             }
         }
     }
