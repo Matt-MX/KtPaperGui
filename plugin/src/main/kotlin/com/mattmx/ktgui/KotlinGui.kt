@@ -33,7 +33,8 @@ class KotlinGui : JavaPlugin() {
             "pattern" to { GuiPatternExample() },
             "infinite" to { InfiniteGuiExample() },
             "pages" to { MultiPageExample() },
-            "counter" to { TitleCounterExample() }
+            "counter" to { TitleCounterExample() },
+            "signals" to { SignalExample() }
         )
 
         simpleCommand {
