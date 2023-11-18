@@ -13,6 +13,13 @@ open class Argument<S : CommandSender, T, V>(
     private val cast: (String.() -> V)? = null
 ) {
     lateinit var id: String
+    private var description: String? = null
+
+    infix fun withDescription(description: String?) = apply {
+        this.description = description
+    }
+
+    fun description() = description
 
     fun getDefaultSuggestions() : List<String>? {
         // todo need to invoke [suggests] with fake [CommandContext]

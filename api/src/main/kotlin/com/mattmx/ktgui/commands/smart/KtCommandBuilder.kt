@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.commands.smart
 
+import com.mattmx.ktgui.configuration.Configuration
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -59,13 +60,15 @@ open class KtCommandBuilder<S : CommandSender>(val name: String) {
 
     // something i saw on another command dsl, doesn't solve problem
     lateinit var contextRef: ContextRef<S>
+
     class ContextRef<S : CommandSender>(
         var context: CommandContext<S>
     )
+
     operator fun <T, V> Argument<S, T, V>.provideDelegate(
         thisRef: Any?,
         property: KProperty<*>,
-    ) : ReadOnlyProperty<T, V> {
+    ): ReadOnlyProperty<T, V> {
         id = property.name
 
         println("KtCommandBuilder#provideDelegate")
@@ -81,26 +84,41 @@ open class KtCommandBuilder<S : CommandSender>(val name: String) {
     }
 
     /**
-     * Builds a usage for this command
+     * Builds a usage for this command.
+     * You can create your own method with the [Configuration] class.
      *
      * @return a formatted string for usage of the command
      */
-    fun getUsage(maxArgumentOptionsDisplayed: Int = 5) = "$name " +
-            if (subcommands.isNotEmpty())
-                subcommands.joinToString("|") { subcommand ->
-                    subcommand.name
-                }
-            else
-                expectedArguments.joinToString(" ") { arg ->
-                    val suggestions = arg.getDefaultSuggestions()?.let {
-                        if (it.size <= maxArgumentOptionsDisplayed) " = [" + it.joinToString("|") + "]"
-                        else " = [...]"
-                    } ?: ""
+    fun getUsage(showDescriptions: Boolean = false, maxArgumentOptionsDisplayed: Int = 5): String {
+        var builder = "$name "
+        if (subcommands.isNotEmpty())
+            builder += subcommands.joinToString("|") { subcommand -> subcommand.name }
+        else {
+            var end = ""
+            builder += expectedArguments.joinToString(" ") { arg ->
+                val suggestions = arg.getDefaultSuggestions()?.let {
+                    if (it.size <= maxArgumentOptionsDisplayed) " = [" + it.joinToString("|") + "]"
+                    else " = [...]"
+                } ?: ""
 
-                    when (arg.type) {
-                        ArgumentType.REQUIRED_SINGLE -> "<${arg.id}!$suggestions>"
-                        ArgumentType.OPTIONAL_SINGLE -> "<${arg.id}?$suggestions>"
-                        else -> "<${arg.id}...>"
+                // Apply descriptions
+                if (showDescriptions && arg.description() != null) {
+                    val extra = when (arg.type) {
+                        ArgumentType.REQUIRED_SINGLE -> "(Required)"
+                        ArgumentType.OPTIONAL_SINGLE -> "(Optional)"
+                        else -> "(Sentence)"
                     }
+                    end += "\n> ${arg.id} - ${arg.description()} $extra"
                 }
+
+                when (arg.type) {
+                    ArgumentType.REQUIRED_SINGLE -> "<${arg.id}!$suggestions>"
+                    ArgumentType.OPTIONAL_SINGLE -> "<${arg.id}?$suggestions>"
+                    else -> "<${arg.id}...>"
+                }
+            }
+            builder += end
+        }
+        return builder
+    }
 }
