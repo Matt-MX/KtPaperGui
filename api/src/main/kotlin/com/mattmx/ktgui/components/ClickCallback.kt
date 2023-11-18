@@ -87,6 +87,21 @@ class ClickCallback<T : IGuiButton<*>> {
     operator fun ClickType.plus(clickType: ClickType) = arrayOf(this, clickType)
     operator fun Array<ClickType>.plus(clickType: ClickType) = arrayOf(*this, clickType)
 
+    fun left(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.LEFT.invoke(callback)
+    fun right(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.RIGHT.invoke(callback)
+    fun leftShift(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.SHIFT_LEFT.invoke(callback)
+    fun rightShift(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.SHIFT_RIGHT.invoke(callback)
+    fun drop(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.DROP.invoke(callback)
+    fun ctrlDrop(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.CONTROL_DROP.invoke(callback)
+    fun creative(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.CREATIVE.invoke(callback)
+    fun windowBorderLeft(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.WINDOW_BORDER_LEFT.invoke(callback)
+    fun windowBorderRight(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.WINDOW_BORDER_RIGHT.invoke(callback)
+    fun middle(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.MIDDLE.invoke(callback)
+    fun numberKey(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.NUMBER_KEY.invoke(callback)
+    fun double(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.DOUBLE_CLICK.invoke(callback)
+    fun offhand(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.SWAP_OFFHAND.invoke(callback)
+    fun unknown(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.UNKNOWN.invoke(callback)
+
     fun clone() = ClickCallback<T>().let { copy ->
         copy.anyCallback = this.anyCallback
         return@let copy
