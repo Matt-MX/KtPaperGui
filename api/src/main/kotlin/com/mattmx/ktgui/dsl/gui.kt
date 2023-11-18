@@ -2,6 +2,7 @@ package com.mattmx.ktgui.dsl
 
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.components.button.SignalButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import net.kyori.adventure.text.Component
@@ -25,3 +26,5 @@ inline fun <reified T : IGuiButton<*>> button(
 inline fun button(material: Material, block: GuiButton<*>.() -> Unit) = GuiButton(material).apply(block)
 inline fun IGuiScreen.button(material: Material, block: GuiButton<*>.() -> Unit) =
     GuiButton(material).apply(block).apply { childOf(this@button) }
+fun IGuiScreen.signalButton(material: Material, block: SignalButton.() -> Unit) =
+    SignalButton(material, block).apply { childOf(this@signalButton) }

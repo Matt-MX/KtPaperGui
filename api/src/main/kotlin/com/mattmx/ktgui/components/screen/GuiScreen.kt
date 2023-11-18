@@ -5,6 +5,9 @@ import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.components.button.SignalButton
+import com.mattmx.ktgui.components.signal.GuiSignalOwner
+import com.mattmx.ktgui.components.signal.SignalListener
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
@@ -27,8 +30,8 @@ import java.util.concurrent.Future
 open class GuiScreen(
     title: Component = Component.empty(),
     var rows: Int = 1,
-    var type: InventoryType? = null,
-) : IGuiScreen {
+    var type: InventoryType? = null
+) : IGuiScreen, GuiSignalOwner<SignalButton> {
     var title: Component = title
         set(value) {
             field = value
@@ -38,6 +41,7 @@ open class GuiScreen(
         }
 
     var items = hashMapOf<Int, GuiButton<*>>()
+    override var currentlyProcessing: SignalButton? = null
 
     protected lateinit var clickCallback: ClickCallback<*>
     protected lateinit var closeCallback: (InventoryCloseEvent) -> Unit
@@ -171,6 +175,13 @@ open class GuiScreen(
     }
 
     override fun addChild(child: IGuiButton<*>) {
+
+        if (child is SignalButton) {
+            currentlyProcessing = child
+            child.apply(child.builder)
+            currentlyProcessing = null
+        }
+
         child.slots()?.forEach {
             items[it] = child as GuiButton<*>
         }
