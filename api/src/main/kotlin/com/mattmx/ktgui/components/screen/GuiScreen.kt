@@ -7,7 +7,6 @@ import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.button.SignalButton
 import com.mattmx.ktgui.components.signal.GuiSignalOwner
-import com.mattmx.ktgui.components.signal.SignalListener
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui

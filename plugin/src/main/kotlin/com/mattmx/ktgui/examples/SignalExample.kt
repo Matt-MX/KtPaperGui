@@ -24,6 +24,7 @@ class SignalExample : Example {
 
         // we must use this method instead of the regular button() {} method.
         signalButton(Material.KNOWLEDGE_BOOK) {
+            title = !"Signals &7(item $listIndex)"
             // whenever we use the signal variable, ktgui will recognize the usage and automatically
             // update your button whenever the variable changes.
             named(!"&7'&f${list[listIndex]}&7'")
@@ -47,7 +48,7 @@ class SignalExample : Example {
                     player.sendMessage(!"&7Next item: &f$old &7-> &f$listIndex")
                 }
             }
-        } slot 4
+        } slot last()
     }
 
     override fun run(player: Player) = gui.open(player)

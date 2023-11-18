@@ -3,11 +3,9 @@ package com.mattmx.ktgui.components.button
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.components.signal.SignalListener
 import com.mattmx.ktgui.extensions.setEnchantments
 import com.mattmx.ktgui.item.DslIBuilder
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
