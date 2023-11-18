@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.components
 
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
-import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import org.bukkit.event.inventory.ClickType
 
