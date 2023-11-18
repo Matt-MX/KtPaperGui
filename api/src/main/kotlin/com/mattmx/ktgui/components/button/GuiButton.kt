@@ -46,9 +46,11 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
-    infix fun named(name: Component) : T {
+    infix fun named(name: Component?) : T {
         val itemMeta = item?.itemMeta
-        itemMeta?.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(name))
+        if (name != null)
+            itemMeta?.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(name))
+        else itemMeta?.displayName(null)
         item?.itemMeta = itemMeta
         return this as T
     }

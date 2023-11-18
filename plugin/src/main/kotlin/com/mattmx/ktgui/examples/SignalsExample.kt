@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.InventoryType
  * Here is an example demonstrating usage of [Signal]s.
  * We can use the [signal] method and provide an initial value.
  */
-class SignalExample : Example {
+class SignalsExample : Example {
     val gui = gui(!"Signals", InventoryType.HOPPER) {
         // static list of data as example
         val list = listOf("first item", "second item", "third item", "fourth item", "fifth item", "sixth item")

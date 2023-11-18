@@ -101,6 +101,11 @@ class ClickCallback<T : IGuiButton<*>> {
     fun offhand(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.SWAP_OFFHAND.invoke(callback)
     fun unknown(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.UNKNOWN.invoke(callback)
 
+    fun clear() {
+        anyCallback = {}
+        callbacks.clear()
+    }
+
     fun clone() = ClickCallback<T>().let { copy ->
         copy.anyCallback = this.anyCallback
         return@let copy

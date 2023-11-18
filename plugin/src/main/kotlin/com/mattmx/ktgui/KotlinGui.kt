@@ -5,7 +5,6 @@ import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scoreboard.Score
 import java.util.logging.Logger
 
 class KotlinGui : JavaPlugin() {
@@ -34,7 +33,8 @@ class KotlinGui : JavaPlugin() {
             "infinite" to { InfiniteGuiExample() },
             "pages" to { MultiPageExample() },
             "counter" to { TitleCounterExample() },
-            "signals" to { SignalExample() }
+            "signals" to { SignalsExample() },
+            "signals-list" to { SignalsListExample() }
         )
 
         simpleCommand {
