@@ -7,7 +7,7 @@ import org.bukkit.boss.BarStyle
 import org.bukkit.boss.BossBar
 import org.bukkit.entity.Player
 
-@Deprecated("Simply use the BossBar class in adventure.")
+@Deprecated("Simply use the BossBar class in adventure.", ReplaceWith("net.kyori.adventure.bossbar.BossBar"))
 open class LegacyBossBarBuilder {
     var title = ""
     var color: BarColor = BarColor.WHITE
@@ -34,10 +34,13 @@ open class LegacyBossBarBuilder {
     fun clear() = bar.removeAll()
 }
 
+@Deprecated("Simply use the BossBar class in adventure.", ReplaceWith("net.kyori.adventure.bossbar.BossBar"))
 inline fun bossBar(builder: LegacyBossBarBuilder.() -> Unit) = bossBarDsl(LegacyBossBarBuilder(), builder)
+
+@Deprecated("Simply use the BossBar class in adventure.", ReplaceWith("net.kyori.adventure.bossbar.BossBar"))
 inline fun animatedBossBar(period: Long? = null, builder: AnimatedBossBar.() -> Unit) = bossBarDsl(AnimatedBossBar(period), builder)
 
-@Deprecated("Simply use the BossBar class in adventure.")
+@Deprecated("Simply use the BossBar class in adventure.", ReplaceWith("net.kyori.adventure.bossbar.BossBar"))
 inline fun <T : LegacyBossBarBuilder> bossBarDsl(instance: T, builder: T.() -> Unit) : T {
     builder(instance)
     instance.build()
