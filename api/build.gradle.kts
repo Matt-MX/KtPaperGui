@@ -13,6 +13,8 @@ tasks.test {
     useJUnitPlatform()
 }
 
+version = rootProject.version
+
 sourceSets["main"].resources.srcDir("src/resources/")
 
 tasks.withType<KotlinCompile> {
@@ -30,6 +32,11 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     mergeServiceFiles()
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 publishing {
     repositories {
         maven {
@@ -44,6 +51,9 @@ publishing {
     publications {
         create<MavenPublication>("ktgui") {
             from(components["java"])
+            groupId = "com.mattmx"
+            artifactId = "ktgui"
+            version = rootProject.version.toString()
         }
     }
 }

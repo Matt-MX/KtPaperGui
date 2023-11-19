@@ -15,11 +15,11 @@ class ScoreboardExample : Example{
     }
 
     fun toggle(player: Player) {
-        if (player.scoreboard == builder.scoreboard) {
+        if (builder.isShownFor(player)) {
             player.removeScoreboard()
             player.sendMessage(!"&7No longer showing the scoreboard")
         } else {
-            player.scoreboard = builder.scoreboard
+            player.scoreboard = builder.scoreboard()
             player.sendMessage(!"&7Now showing the scoreboard")
         }
     }

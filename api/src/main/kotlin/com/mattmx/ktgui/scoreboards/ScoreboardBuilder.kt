@@ -5,11 +5,13 @@ import com.mattmx.ktgui.utils.legacyColor
 import com.mattmx.ktgui.utils.not
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Criteria
 import org.bukkit.scoreboard.DisplaySlot
 import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Scoreboard
-import java.util.UUID
+import java.util.*
 
 open class ScoreboardBuilder(
     title: Component,
@@ -24,7 +26,7 @@ open class ScoreboardBuilder(
     // Holds the lines of text, we are able to remove them because of this
     private val scoreboardLines = arrayListOf<Component>()
 
-    val scoreboard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
+    private val scoreboard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
     private val objective: Objective = scoreboard.registerNewObjective(name, Criteria.DUMMY, title).apply {
         displaySlot = DisplaySlot.SIDEBAR
     }
@@ -90,6 +92,11 @@ open class ScoreboardBuilder(
         scoreboard.resetScores(name)
     }
 
+    fun scoreboard() = scoreboard
+    fun isShownFor(player: Player) = player.scoreboard == scoreboard
+    fun showFor(player: Player) {
+        player.scoreboard = scoreboard
+    }
 }
 
 fun scoreboard(title: Component, block: ScoreboardBuilder.() -> Unit) = ScoreboardBuilder(title).apply(block)

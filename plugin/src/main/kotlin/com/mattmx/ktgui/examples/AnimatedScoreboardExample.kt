@@ -32,7 +32,7 @@ class AnimatedScoreboardExample : Example {
     }
 
     init {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(KotlinGui.plugin!!, { -> update() }, 2, 2)
+        Bukkit.getScheduler().runTaskTimer(KotlinGui.plugin!!, { -> update() }, 20, 2)
     }
 
     private fun update() = builder.apply {
@@ -42,23 +42,23 @@ class AnimatedScoreboardExample : Example {
         this[0] = !"&c${text.substring(chars)}"
         // Remember with RGB strings, the rgb values are there too, taking up the length.
         // Strip the color before referring to their length etc.
-        this[1] = !rgbText.substring(
-            0,
-            rgbText.length - min((iterations % rgbText.stripColor().length), rgbText.stripColor().length - 1)
-        )
+//        this[1] = !rgbText.substring(
+//            0,
+//            rgbText.length - min((iterations % rgbText.stripColor().length), rgbText.stripColor().length - 1)
+//        )
         val runtime = Runtime.getRuntime()
         val usedMemInMB = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L
         val maxHeapSizeInMB = runtime.maxMemory() / 1048576L
         // Update the memory usage of the server
-        this[5] = !"&aRam usage: ${usedMemInMB}mb/${maxHeapSizeInMB}"
+//        this[5] = !"&aRam usage: ${usedMemInMB}mb/${maxHeapSizeInMB}"
     }
 
     fun toggle(player: Player) {
-        if (player.scoreboard == builder.scoreboard) {
+        if (builder.isShownFor(player)) {
             player.removeScoreboard()
             player.sendMessage(!"&7No longer showing the scoreboard")
         } else {
-            player.scoreboard = builder.scoreboard
+            player.scoreboard = builder.scoreboard()
             player.sendMessage(!"&7Now showing the scoreboard")
         }
     }

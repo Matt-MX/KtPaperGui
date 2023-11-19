@@ -2,11 +2,10 @@ plugins {
     kotlin("jvm") version "1.7.21"
 }
 
+project.version = "2.0"
 subprojects {
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
-
-    project.version = "2.0"
 
     repositories {
         mavenCentral()
