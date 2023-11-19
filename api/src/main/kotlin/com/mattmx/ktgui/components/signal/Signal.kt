@@ -109,4 +109,7 @@ class Signal<T, V>(initial: V, private val owner: SignalOwner) : ReadWriteProper
         this.listeners += signalListener
         return true
     }
+
+    fun listeners() = listeners.toMutableList()
+    fun removeListener(listener: SignalListener<V>) = listeners.remove(listener)
 }

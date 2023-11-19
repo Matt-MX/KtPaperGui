@@ -14,6 +14,7 @@ class SignalButton(
         lore { clear() }
         named(null)
         clickCallback.clear()
+        item = null
 
         builder(this)
         update()
