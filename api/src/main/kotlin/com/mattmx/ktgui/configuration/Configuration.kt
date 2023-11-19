@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.configuration
 
-import com.mattmx.ktgui.commands.smart.KtCommandBuilder
+import com.mattmx.ktgui.commands.declarative.KtCommandBuilder
 
 data class Configuration(
     var commandConfiguration: CommandConfiguration = CommandConfiguration()

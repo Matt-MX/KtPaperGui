@@ -1,4 +1,4 @@
-package com.mattmx.ktgui.commands.smart
+package com.mattmx.ktgui.commands.declarative
 
 import com.mattmx.ktgui.configuration.Configuration
 import kotlin.properties.ReadOnlyProperty
