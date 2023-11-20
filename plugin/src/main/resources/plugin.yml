@@ -1,5 +1,5 @@
 name: KtGUI
-version: '2.0'
+version: '${version}'
 main: com.mattmx.ktgui.KotlinGui
 api-version: 1.20
 prefix: KtGUI
