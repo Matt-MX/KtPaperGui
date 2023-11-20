@@ -16,10 +16,6 @@ import kotlin.random.Random
 class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e24462i &8» &#7f52ffExample GUI", 4),
     Example {
     init {
-        /**
-         * Thanks to an ItemBuilder, we can create skull objects with a
-         * player skull skin!
-         */
         val skull = itemBuilder(Material.PLAYER_HEAD)
             .skull(Bukkit.getOfflinePlayer("MattMX"))
             .name(!"&#7F52FF&lMattMX")
@@ -32,13 +28,10 @@ class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e244
             .click {
                 any { player.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f, 1f) }
             } fromItemBuilder skull childOf this slot 27
-        /**
-         * Fill the bottom slots with gray stained glass panes.
-         */
+        // Fill the bottom slots with gray stained-glass panes.
         GuiButton(Material.GRAY_STAINED_GLASS_PANE) slots (28..34).toList() named !" " childOf this
-        /**
-         * We can also easily make close buttons with just a few lines of code.
-         */
+
+        // We can also easily make close buttons with just a few lines of code.
         GuiButton()
             .click {
                 any { forceClose(player) }
@@ -46,7 +39,6 @@ class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e244
                 add(!"&8Click to close the Gui Interface")
             }.materialOf("barrier", Material.DIRT) named !"&c&lClose" slot 35 childOf this
         /**
-         * The GuiToggleButton is an example of what you can accomplish with this library.
          * We can provide an item state for when the button is enabled, and one for when it's disabled.
          * We can also provide a callback for when a button is pressed.
          */
@@ -70,7 +62,7 @@ class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e244
                     }
                 }
                 ClickType.DROP {
-                    player.sendMessage("&8&l⤷ &#7f52ffWhat a party pooper. :(")
+                    player.sendMessage(!"&8What a party pooper. :(")
                 }
             }.lore {
                 add(!"&8Party time!")
