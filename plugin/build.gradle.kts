@@ -31,7 +31,7 @@ tasks.withType<KotlinCompile> {
 
 tasks {
     withType<ProcessResources> {
-        val props = "version" to rootProject.version
+        val props = "version" to version
         inputs.properties(props)
         filteringCharset = "UTF-8"
         filesMatching("plugin.yml") {
@@ -44,6 +44,6 @@ tasks {
 }
 
 val compile = tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveBaseName.set("ktgui-plugin")
+    archiveBaseName.set("ktgui-plugin-${rootProject.version}")
     mergeServiceFiles()
 }
