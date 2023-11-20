@@ -24,7 +24,7 @@ open class ScoreboardBuilder(
         }
 
     // Holds the lines of text, we are able to remove them because of this
-    private val scoreboardLines = arrayListOf<Component>()
+    private val scoreboardLines = arrayListOf<String>()
 
     private val scoreboard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
     private val objective: Objective = scoreboard.registerNewObjective(name, Criteria.DUMMY, title).apply {
@@ -50,7 +50,7 @@ open class ScoreboardBuilder(
         team.suffix(line)
         team.addEntry(name)
         objective.getScore(name).score = LegacyScoreboardBuilder.MAX_LINES - scoreboardLines.size
-        scoreboardLines.add(line)
+        scoreboardLines.add(name)
         return scoreboardLines.size - 1
     }
 
@@ -67,10 +67,10 @@ open class ScoreboardBuilder(
         if (index >= scoreboardLines.size) {
             repeat(index - scoreboardLines.size + 1) {
                 // fill with whitespace
-                + !" "
+                +!" "
             }
         }
-        val name = scoreboardLines[index].legacy()
+        val name = scoreboardLines[index]
         val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)
         team.suffix(line)
         if (!team.hasEntry(name)) team.addEntry(name)
@@ -82,7 +82,8 @@ open class ScoreboardBuilder(
      * @param index of the line
      * @return line requested
      */
-    operator fun get(index: Int) : Component? = scoreboardLines.getOrNull(index)
+    operator fun get(index: Int): Component? =
+        scoreboardLines.getOrNull(index)?.let { scoreboard.getTeam(it)?.suffix() }
 
     /**
      * Clears all scoreboard content

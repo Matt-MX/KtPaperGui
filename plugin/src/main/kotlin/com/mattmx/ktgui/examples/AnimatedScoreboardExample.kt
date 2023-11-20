@@ -28,7 +28,7 @@ class AnimatedScoreboardExample : Example {
         add(!"&#fb0000&lR&#fc4800&la&#fd8f00&li&#bab800&ln&#55d200&lb&#0fd91e&lo&#08bc77&lw&#009ed0&l!")
         add(!"&aThis line is not animated")
         add(!" ")
-        add(!"&aRAM usage: 0mb")
+        add(!"&aRAM usage: 0mb/0mb")
     }
 
     init {
@@ -42,15 +42,15 @@ class AnimatedScoreboardExample : Example {
         this[0] = !"&c${text.substring(chars)}"
         // Remember with RGB strings, the rgb values are there too, taking up the length.
         // Strip the color before referring to their length etc.
-//        this[1] = !rgbText.substring(
-//            0,
-//            rgbText.length - min((iterations % rgbText.stripColor().length), rgbText.stripColor().length - 1)
-//        )
+        this[1] = !rgbText.substring(
+            0,
+            rgbText.length - min((iterations % rgbText.stripColor().length), rgbText.stripColor().length - 1)
+        )
         val runtime = Runtime.getRuntime()
         val usedMemInMB = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L
         val maxHeapSizeInMB = runtime.maxMemory() / 1048576L
         // Update the memory usage of the server
-//        this[5] = !"&aRam usage: ${usedMemInMB}mb/${maxHeapSizeInMB}"
+        this[5] = !"&aRam usage: ${usedMemInMB}mb/${maxHeapSizeInMB}"
     }
 
     fun toggle(player: Player) {
