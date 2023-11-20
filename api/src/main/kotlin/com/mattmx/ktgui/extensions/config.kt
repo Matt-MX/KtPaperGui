@@ -2,6 +2,7 @@ package com.mattmx.ktgui.extensions
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.button.GuiButton
+import com.mattmx.ktgui.components.button.SignalButton
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.item.lvl
 import com.mattmx.ktgui.utils.component
@@ -24,10 +25,34 @@ fun List<String>.component() = map { it.component }
     .reduce { c1, c2 -> c1.append(c2) }
 
 private val ENCHANT_LINE_REGEX = "[A-Za-z_]+(:\\d+)?".toRegex()
-fun String.translatableButton(config: FileConfiguration): GuiButton<*>? {
+
+/**
+ * A function for reading the basic information of a [GuiButton],
+ * gets the material, amount, name, lore, enchantments and potion meta.
+ *
+ * Where [this] is the path to the button.
+ *
+ * @param config configuration file to pull the data from
+ * @param button to apply the changes to
+ * @return a [GuiButton] with changes applied or null if the path is invalid
+ */
+fun String.translatableButton(config: FileConfiguration) = this.translatableButton(config, GuiButton(Material.AIR))
+
+/**
+ * A function for reading the basic information of a [GuiButton],
+ * gets the material, amount, name, lore, enchantments and potion meta.
+ *
+ * Where [this] is the path to the button.
+ *
+ * @param T the type of [GuiButton]
+ * @param config configuration file to pull the data from
+ * @param button to apply the changes to
+ * @return button as [T] with changes applied or null if the path is invalid
+ */
+fun <T : GuiButton<T>> String.translatableButton(config: FileConfiguration, button: GuiButton<T>) : T? {
     val section = config.getConfigurationSection(this)
         ?: return null
-    return button<GuiButton<*>> {
+    return button.apply {
         materialOf(section.getString("material"), Material.AIR)
         amount(section.getInt("amount", 1))
         named(section.getString("name")?.component ?: Component.empty())
@@ -52,7 +77,7 @@ fun String.translatableButton(config: FileConfiguration): GuiButton<*>? {
         }
         enchant { putAll(enchants) }
         // todo potion effects
-    }
+    } as T
 }
 
 fun FileConfiguration.setButton(path: String, button: GuiButton<*>) {
