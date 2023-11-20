@@ -34,8 +34,10 @@ class KotlinGui : JavaPlugin() {
             "pages" to { MultiPageExample() },
             "counter" to { TitleCounterExample() },
             "signals" to { SignalsExample() },
-            "signals-list" to { SignalsListExample() }
+            "signals-list" to { SignalsListExample() },
+            "hook" to { GuiHookExample() }
         )
+        GuiHookExample.registerListener(this)
 
         simpleCommand {
             name = "ktgui"

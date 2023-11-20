@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.Inventory
 import java.lang.Integer.max
 import java.lang.Integer.min
+import java.util.UUID
 import java.util.concurrent.Future
 
 open class GuiScreen(
@@ -39,6 +40,8 @@ open class GuiScreen(
             }
         }
 
+    // Can be used to identify dsl guis
+    var id: String = UUID.randomUUID().toString()
     var items = hashMapOf<Int, GuiButton<*>>()
     override var currentlyProcessing: SignalButton? = null
 
