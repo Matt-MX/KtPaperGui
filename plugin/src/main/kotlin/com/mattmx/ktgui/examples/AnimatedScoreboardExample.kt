@@ -17,14 +17,14 @@ class AnimatedScoreboardExample : Example {
      * automatically.
      */
     private val text = "Hello world"
-    private val rgbText = "&#773383This line has RGB"
+    private val rgbText = "This line has RGB"
     private var iterations = 0
     private val builder = scoreboard(!"&6&lAnimated") {
         /**
          * Default lines that we start off with, before animation occurs.
          */
         add(!"&a$text")
-        add(!rgbText)
+        add(!"&#773383$rgbText")
         add(!"&#fb0000&lR&#fc4800&la&#fd8f00&li&#bab800&ln&#55d200&lb&#0fd91e&lo&#08bc77&lw&#009ed0&l!")
         add(!"&aThis line is not animated")
         add(!" ")
@@ -42,10 +42,10 @@ class AnimatedScoreboardExample : Example {
         this[0] = !"&c${text.substring(chars)}"
         // Remember with RGB strings, the rgb values are there too, taking up the length.
         // Strip the color before referring to their length etc.
-        this[1] = !rgbText.substring(
+        this[1] = !("&#773383" + rgbText.substring(
             0,
             rgbText.length - min((iterations % rgbText.stripColor().length), rgbText.stripColor().length - 1)
-        )
+        ))
         val runtime = Runtime.getRuntime()
         val usedMemInMB = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L
         val maxHeapSizeInMB = runtime.maxMemory() / 1048576L
