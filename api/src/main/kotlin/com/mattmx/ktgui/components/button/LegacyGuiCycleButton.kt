@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack
 @Deprecated("No longer supported", ReplaceWith("LoreCycleButton"))
 class LegacyGuiCycleButton(
     material: Material = Material.STONE,
-    item: ItemStack? = null,
+    item: ItemStack? = ItemStack(material),
 ) : GuiButton<LegacyGuiCycleButton>(
     material, item
 ) {

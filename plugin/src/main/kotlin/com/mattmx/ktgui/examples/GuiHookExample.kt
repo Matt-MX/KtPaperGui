@@ -2,13 +2,16 @@ package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.KotlinGui
 import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.components.signal.signal
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.dsl.gui
+import com.mattmx.ktgui.dsl.signalButton
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 
 class GuiHookExample : Example {
     val gui = gui(!"Title", 3) {
@@ -30,12 +33,23 @@ class GuiHookExample : Example {
                 if (gui !is GuiScreen) return@event
                 if ((gui as GuiScreen).id != "kgui.example.gui-hook") return@event
 
-                button(Material.PURPLE_DYE) {
+                var signalExampleVar by (gui as GuiScreen).signal(0)
+                gui.signalButton(Material.PURPLE_DYE) {
                     named(!"&d&lA button")
                     lore {
                         add(!"&fThis button was added after the gui was built.")
+                        add(!"&fWe can even add our own signals here and whatnot: $signalExampleVar")
+                        add(!"&a&l[CLICK]")
                     }
-                } childOf gui slot 15
+                    click {
+                        ClickType.LEFT {
+                            signalExampleVar++
+                        }
+                        ClickType.RIGHT {
+                            signalExampleVar--
+                        }
+                    }
+                } slot 15
             }
         }
     }

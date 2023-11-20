@@ -3,6 +3,7 @@ package com.mattmx.ktgui.components.button
 import com.mattmx.ktgui.components.signal.SignalListener
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 
 class SignalButton(
     val material: Material,
@@ -14,7 +15,7 @@ class SignalButton(
         lore { clear() }
         named(null)
         clickCallback.clear()
-        item = null
+        item = ItemStack(material)
 
         builder(this)
         update()

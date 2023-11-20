@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 
 open class GuiButton<T : GuiButton<T>>(
     material: Material = Material.STONE,
-    var item: ItemStack? = null
+    var item: ItemStack? = ItemStack(material)
 ) : IGuiButton<T> {
     lateinit var parent: IGuiScreen
         protected set
