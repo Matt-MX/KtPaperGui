@@ -35,9 +35,14 @@ The KtGUI library provides a plethora of utilities to help speed up the developm
 With Kotlin's amazing DSL, you can create guis in a declarative style. Simply stating exactly what you want, where you want it.
 With KtGUI, you can speed up development of guis tenfold.
 
-<h3>[View Examples »](https://google.com/)</h3>
-
 </p>
+
+<h3>
+
+[View Examples »](https://google.com/)
+
+</h3>
+
 </div>
 
 <div align="right">
@@ -48,9 +53,13 @@ Recently we introduced Signals into the library. They allow you to dynamically u
 Simply change your variables, and the components that mention it will update for your users.
 Making dynamic GUIs has never been easier.
 
-<h3>[View Examples »](https://google.com/)</h3>
-
 </p>
+
+<h3>
+
+[View Examples »](https://google.com/)
+
+</h3>
 </div>
 
 <div align="left">
@@ -61,10 +70,13 @@ KtGUI provides two types of command DSL: Declarative and Simple.
 Simple gives you complete control and responsibility over how the command executes, and arguments are processed.
 Meanwhile Declarative commands use Delegated properties to allow for easy argument handling - simply state
 your arguments and their datatype, and KtGUI will do the rest under the hood. 
-
-<h3>[View Examples »](https://google.com/)</h3>
-    
+ 
 </p>
+<h3>
+
+[View Examples »](https://google.com/)
+
+</h3>
 </div>
 
 <div align="right">
@@ -74,9 +86,12 @@ your arguments and their datatype, and KtGUI will do the rest under the hood.
 We also provide a way to easily create handlers for **Bukkit Events**, so you don't always need to make a whole
 new class just for your EventListeners.
 
-<h3>[View Examples »](https://google.com/)</h3>
-
 </p>
+<h3>
+
+[View Examples »](https://google.com/)
+
+</h3>
 </div>
 
 <div align="left">
@@ -88,9 +103,12 @@ a gui and adding or modifying whatever you want.
     
 This can prove very useful for making extensions to other plugins.
 
-<h3>[View Examples »](https://google.com/)</h3>
-
 </p>
+<h3>
+
+[View Examples »](https://google.com/)
+
+</h3>
 </div>
 
 <div align="right">
@@ -100,7 +118,10 @@ This can prove very useful for making extensions to other plugins.
 Making scoreboards has never been easier with our lightweight scoreboard DSL.
 With the ability to define and animate your personalized scoreboards however you like.
 
-<h3>[View Examples »](https://google.com/)</h3>
-
 </p>
+<h3>
+
+[View Examples »](https://google.com/)
+
+</h3>
 </div>
