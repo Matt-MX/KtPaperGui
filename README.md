@@ -1,6 +1,6 @@
 
 <p align="center">
-    <img src="./ProjectBanner.png" width="512px">
+    <img src="./ProjectBanner.png" width="512px" title="Logo* Not final">
 </p>
 <h2 align="center">Declarative guis for Paper!</h2>
 
