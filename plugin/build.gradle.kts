@@ -31,7 +31,7 @@ tasks.withType<KotlinCompile> {
 
 tasks {
     withType<ProcessResources> {
-        val props = "version" to version
+        val props = "version" to rootProject.version
         inputs.properties(props)
         filteringCharset = "UTF-8"
         filesMatching("plugin.yml") {
