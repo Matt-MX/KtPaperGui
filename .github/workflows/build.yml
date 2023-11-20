@@ -18,3 +18,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Run build with Gradle Wrapper
         run: ./gradlew build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-outputs
+          path: build/libs/*.jar
