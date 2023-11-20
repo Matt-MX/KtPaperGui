@@ -57,7 +57,7 @@ Making dynamic GUIs has never been easier.
 
 <h3>
 
-[View Examples »](https://google.com/)
+[« View Examples](https://google.com/)
 
 </h3>
 </div>
@@ -89,7 +89,7 @@ new class just for your EventListeners.
 </p>
 <h3>
 
-[View Examples »](https://google.com/)
+[« View Examples](https://google.com/)
 
 </h3>
 </div>
@@ -121,7 +121,7 @@ With the ability to define and animate your personalized scoreboards however you
 </p>
 <h3>
 
-[View Examples »](https://google.com/)
+[« View Examples](https://google.com/)
 
 </h3>
 </div>
