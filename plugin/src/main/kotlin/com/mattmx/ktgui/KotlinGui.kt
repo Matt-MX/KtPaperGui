@@ -46,7 +46,7 @@ class KotlinGui : JavaPlugin() {
             suggestSubCommands = true
 
             executes {
-                it.source.sendMessage(!"${mainColor}You are running ${subColor}KtGUI v${pluginMeta.version}")
+                source.sendMessage(!"${mainColor}You are running ${subColor}KtGUI v${pluginMeta.version}")
             }
 
             subCommands += simpleCommand {
@@ -55,13 +55,13 @@ class KotlinGui : JavaPlugin() {
                 playerOnly = true
 
                 executes {
-                    val exampleId = it.args.getOrNull(1)
-                        ?: return@executes it.source.sendMessage(!"${mainColor}Please provide a valid example id.")
+                    val exampleId = args.getOrNull(1)
+                        ?: return@executes source.sendMessage(!"${mainColor}Please provide a valid example id.")
 
                     val example = examples[exampleId]
-                        ?:return@executes it.source.sendMessage(!"${mainColor}Please provide a valid example id.")
+                        ?:return@executes source.sendMessage(!"${mainColor}Please provide a valid example id.")
 
-                    example().run(it.player())
+                    example().run(player())
                 }
                 suggests {
                     examples.keys.filter { ex -> ex.startsWith(it.lastArg) }
