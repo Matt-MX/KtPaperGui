@@ -42,7 +42,7 @@ open class SimpleCommandBuilder(
         return this
     }
 
-    fun noPermissions(cb: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
+    fun noPermissions(cb: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
         noPermissions = cb
         return this
     }
@@ -57,7 +57,7 @@ open class SimpleCommandBuilder(
         return permission == null || executor.hasPermission(permission!!)
     }
 
-    fun onCooldown(executes: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
+    fun onCooldown(executes: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
         this.cooldownCallback = executes
         return this
     }
@@ -66,12 +66,12 @@ open class SimpleCommandBuilder(
         this.cooldownCallback?.invoke(invocation)
     }
 
-    fun executes(execute: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
+    fun executes(execute: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
         this.execute = execute
         return this
     }
 
-    fun unknownSubcommand(unknown: (CommandInvocation) -> Unit) : SimpleCommandBuilder {
+    fun unknownSubcommand(unknown: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
         this.unknown = unknown
         return this
     }
@@ -92,7 +92,7 @@ open class SimpleCommandBuilder(
         return aliases.toMutableList() + name
     }
 
-    fun getSuggetions(invocation: CommandInvocation) : List<String> {
+    fun getSuggestions(invocation: CommandInvocation) : List<String> {
         suggests?.also {
             return it(invocation) ?: listOf()
         } ?: run {

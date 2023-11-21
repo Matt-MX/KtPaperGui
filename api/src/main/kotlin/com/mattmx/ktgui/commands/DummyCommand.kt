@@ -34,7 +34,7 @@ class DummyCommand(
         var argss = args.toMutableList()
         argss = if (argss.size - 1 < 0) mutableListOf("") else argss.subList(0, argss.size - 1)
         cmd.getCommand(argss)?.let {
-            return it.getSuggetions(CommandInvocation(sender, args.toList(), current, alias)).toMutableList()
+            return it.getSuggestions(CommandInvocation(sender, args.toList(), current, alias)).toMutableList()
         }
         return mutableListOf()
     }
