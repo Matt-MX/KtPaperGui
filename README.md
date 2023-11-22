@@ -17,7 +17,7 @@ The KtGUI library provides a plethora of utilities to help speed up the developm
 |&emsp;&emsp;
 [Wiki](https://google.com/) 
 &emsp;&emsp;|&emsp;&emsp; 
-[Issues](https://google.com/) 
+[Downloads](https://github.com/Matt-MX/KtBukkitGui/actions)
 &emsp;&emsp;|&emsp;&emsp; 
 [Help](https://google.com/)
 &emsp;&emsp;|
