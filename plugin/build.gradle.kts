@@ -50,7 +50,7 @@ tasks {
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveBaseName.set("ktgui-plugin")
-    archiveClassifier.set("all")
+    archiveClassifier.set("")
     archiveVersion.set(rootProject.version.toString())
     exclude("kotlin.*")
     mergeServiceFiles()
