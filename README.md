@@ -15,11 +15,11 @@ The KtGUI library provides a plethora of utilities to help speed up the developm
 <h3>
 
 |&emsp;&emsp;
-[Wiki](https://google.com/) 
+[Wiki](https://github.com/Matt-MX/KtBukkitGui/wiki) 
 &emsp;&emsp;|&emsp;&emsp; 
 [Downloads](https://github.com/Matt-MX/KtBukkitGui/actions)
 &emsp;&emsp;|&emsp;&emsp; 
-[Help](https://google.com/)
+[Help](https://github.com/Matt-MX/KtBukkitGui/wiki)
 &emsp;&emsp;|
 
 </h3>
