@@ -39,7 +39,7 @@ With KtGUI, you can speed up development of guis tenfold.
 
 <h3>
 
-[View Examples »]([https://google.com/](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/TitleCounterExample.kt))
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/TitleCounterExample.kt)
 
 </h3>
 
@@ -57,7 +57,7 @@ Making dynamic GUIs has never been easier.
 
 <h3>
 
-[« View Examples]([https://google.com/](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/SignalsExample.kt))
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/SignalsExample.kt)
 
 </h3>
 </div>
