@@ -106,7 +106,7 @@ This can prove very useful for making extensions to other plugins.
 </p>
 <h3>
 
-[View Examples »](https://google.com/)
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/GuiHookExample.kt)
 
 </h3>
 </div>
