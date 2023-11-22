@@ -1,14 +1,10 @@
 plugins {
     kotlin("jvm") version "1.7.21"
-    id("org.ajoberstar.grgit") version "4.1.0"
 }
 
-fun getCheckedOutGitCommitHash(): String = grgit.head().abbreviatedId
-
-val commitHash = getCheckedOutGitCommitHash()
 val version = "2.0"
 
-rootProject.version = "$version-$commitHash"
+rootProject.version = version
 
 subprojects {
     apply(plugin = "java")

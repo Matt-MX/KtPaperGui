@@ -58,12 +58,7 @@ open class KtCommandBuilder<S : CommandSender>(val name: String) {
         return subcommands.firstOrNull { it.name == firstArg || it.aliases.contains(firstArg) }
     }
 
-    // something i saw on another command dsl, doesn't solve problem
-    lateinit var contextRef: ContextRef<S>
-
-    class ContextRef<S : CommandSender>(
-        var context: CommandContext<S>
-    )
+    private lateinit var context: CommandContext<S>
 
     operator fun <T, V> Argument<S, T, V>.provideDelegate(
         thisRef: Any?,
@@ -71,16 +66,14 @@ open class KtCommandBuilder<S : CommandSender>(val name: String) {
     ): ReadOnlyProperty<T, V> {
         id = property.name
 
-        println("KtCommandBuilder#provideDelegate")
-        return ReadOnlyProperty { _, _ -> getter.invoke(contextRef.context) }
+        return ReadOnlyProperty { thisRef, property -> context.getValue(this) as V }
     }
 
     operator fun invoke(context: CommandContext<S>) {
-        if (!::contextRef.isInitialized)
-            contextRef = ContextRef(context)
-        else this.contextRef.context = context
-
-        runs.invoke(context)
+        // save values of args
+        this.context = context
+        val values = expectedArguments.map { it.id to it.getValue(context) }
+        runs.invoke(context.withValues(values))
     }
 
     /**

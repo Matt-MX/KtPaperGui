@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(kotlin("reflect"))
+    compileOnly(kotlin("reflect"))
 }
 
 tasks.test {

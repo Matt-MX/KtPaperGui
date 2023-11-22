@@ -27,7 +27,6 @@ open class Argument<S : CommandSender, T, V>(
     }
 
     fun getValue(context: CommandContext<S>): V {
-        println("getValue")
-        return getter(context)
+        return context.getValue(this) ?: getter(context)
     }
 }

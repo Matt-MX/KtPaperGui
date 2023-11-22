@@ -22,12 +22,13 @@ fun main() {
         runs {
             thread {
                 Thread.sleep(1000)
-                println("[You -> $username]")
+                println(ref("username"))
+                println("[You -> $username] $message")
             }
         }
     }
 
     println(msg.getUsage(true))
-    msg(CommandContext(CommandSender(), argsOf("MattMX")))
+    msg(CommandContext(CommandSender(), argsOf("MattMX test")))
     msg(CommandContext(CommandSender(), argsOf("GabbySimon")))
 }
