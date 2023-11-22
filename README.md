@@ -39,7 +39,7 @@ With KtGUI, you can speed up development of guis tenfold.
 
 <h3>
 
-[View Examples »](https://google.com/)
+[View Examples »]([https://google.com/](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/TitleCounterExample.kt))
 
 </h3>
 
@@ -57,7 +57,7 @@ Making dynamic GUIs has never been easier.
 
 <h3>
 
-[« View Examples](https://google.com/)
+[« View Examples]([https://google.com/](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/SignalsExample.kt))
 
 </h3>
 </div>
@@ -74,7 +74,7 @@ your arguments and their datatype, and KtGUI will do the rest under the hood.
 </p>
 <h3>
 
-[View Examples »](https://google.com/)
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/KotlinGui.kt#L42)
 
 </h3>
 </div>
@@ -121,7 +121,7 @@ With the ability to define and animate your personalized scoreboards however you
 </p>
 <h3>
 
-[« View Examples](https://google.com/)
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/AnimatedScoreboardExample.kt)
 
 </h3>
 </div>
