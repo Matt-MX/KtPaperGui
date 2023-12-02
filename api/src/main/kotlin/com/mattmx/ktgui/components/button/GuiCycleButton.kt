@@ -13,7 +13,8 @@ open class GuiCycleButton : GuiButton<GuiCycleButton>() {
                 if (value < 0) states.size - 1
                 else if (value >= states.size) 0
                 else value
-            update()
+            if (hasParent())
+                update()
         }
     private val states = mutableMapOf<String, ItemStack>()
     lateinit var changedCallback: (ButtonClickedEvent<GuiCycleButton>) -> Unit
