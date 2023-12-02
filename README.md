@@ -15,11 +15,11 @@ The KtGUI library provides a plethora of utilities to help speed up the developm
 <h3>
 
 |&emsp;&emsp;
-[Wiki](https://google.com/) 
+[Wiki](https://github.com/Matt-MX/KtBukkitGui/wiki) 
 &emsp;&emsp;|&emsp;&emsp; 
-[Issues](https://google.com/) 
+[Downloads](https://github.com/Matt-MX/KtBukkitGui/actions)
 &emsp;&emsp;|&emsp;&emsp; 
-[Help](https://google.com/)
+[Help](https://github.com/Matt-MX/KtBukkitGui/wiki)
 &emsp;&emsp;|
 
 </h3>
@@ -39,7 +39,7 @@ With KtGUI, you can speed up development of guis tenfold.
 
 <h3>
 
-[View Examples »](https://google.com/)
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/TitleCounterExample.kt)
 
 </h3>
 
@@ -57,7 +57,7 @@ Making dynamic GUIs has never been easier.
 
 <h3>
 
-[« View Examples](https://google.com/)
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/SignalsExample.kt)
 
 </h3>
 </div>
@@ -74,7 +74,7 @@ your arguments and their datatype, and KtGUI will do the rest under the hood.
 </p>
 <h3>
 
-[View Examples »](https://google.com/)
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/KotlinGui.kt#L42)
 
 </h3>
 </div>
@@ -106,7 +106,7 @@ This can prove very useful for making extensions to other plugins.
 </p>
 <h3>
 
-[View Examples »](https://google.com/)
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/GuiHookExample.kt)
 
 </h3>
 </div>
@@ -121,7 +121,7 @@ With the ability to define and animate your personalized scoreboards however you
 </p>
 <h3>
 
-[« View Examples](https://google.com/)
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/AnimatedScoreboardExample.kt)
 
 </h3>
 </div>
