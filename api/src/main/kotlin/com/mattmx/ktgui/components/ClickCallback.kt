@@ -107,7 +107,12 @@ class ClickCallback<T : IGuiButton<*>> {
     }
 
     fun clone() = ClickCallback<T>().let { copy ->
-        copy.anyCallback = this.anyCallback
+        if (::anyCallback.isInitialized)
+            copy.anyCallback = this.anyCallback
+        copy.callbacks = mutableMapOf()
+        for ((types, callback) in callbacks) {
+            copy.callbacks[types] = callback
+        }
         return@let copy
     }
 }
