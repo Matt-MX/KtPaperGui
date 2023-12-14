@@ -1,10 +1,10 @@
 package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.signal.SignalListener
-import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
+@Deprecated("No longer supported", ReplaceWith("EffectBlock"))
 class SignalButton(
     val material: Material,
     val builder: (SignalButton) -> Unit

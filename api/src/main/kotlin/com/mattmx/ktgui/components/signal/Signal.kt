@@ -102,6 +102,8 @@ class Signal<T, V>(initial: V, private val owner: SignalOwner) : ReadWriteProper
     /**
      * Adds a dependency if it isn't already registered.
      *
+     * Will not duplicate dependencies
+     *
      * @param signalListener the [SignalListener] to register.
      */
     fun addDependency(signalListener: SignalListener<V>) : Boolean {

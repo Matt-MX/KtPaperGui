@@ -14,7 +14,7 @@ interface IGuiScreen {
 
     fun totalSlots() : Int
 
-    fun size() : Int { return 0 }
+    fun numberOfItems() : Int { return 0 }
 
     fun setSlot(button: IGuiButton<*>, slot: Int) : IGuiScreen
 

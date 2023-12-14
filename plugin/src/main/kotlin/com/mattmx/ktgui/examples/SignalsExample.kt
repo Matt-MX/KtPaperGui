@@ -3,8 +3,8 @@ package com.mattmx.ktgui.examples
 import com.mattmx.ktgui.components.signal.Signal
 import com.mattmx.ktgui.components.signal.signal
 import com.mattmx.ktgui.dsl.button
+import com.mattmx.ktgui.dsl.effect
 import com.mattmx.ktgui.dsl.gui
-import com.mattmx.ktgui.dsl.signalButton
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -23,15 +23,17 @@ class SignalsExample : Example {
         var listIndex by signal(0)
 
         // we must use this method instead of the regular button() {} method.
-        signalButton(Material.KNOWLEDGE_BOOK) {
-            title = !"Signals &7(item $listIndex)"
-            // whenever we use the signal variable, ktgui will recognize the usage and automatically
-            // update your button whenever the variable changes.
-            named(!"&7'&f${list[listIndex]}&7'")
-            lore {
-                add(!"&7Char length: &f${list[listIndex].length}")
-            }
-        } slot 2
+        effect {
+            button(Material.KNOWLEDGE_BOOK) {
+                title = !"Signals &7(item $listIndex)"
+                // whenever we use the signal variable, ktgui will recognize the usage and automatically
+                // update your button whenever the variable changes.
+                named(!"&7'&f${list[listIndex]}&7'")
+                lore {
+                    add(!"&7Char length: &f${list[listIndex].length}")
+                }
+            } slot 2
+        }
 
         button(Material.LIME_DYE) {
             named(!"&a&l[CLICK]")

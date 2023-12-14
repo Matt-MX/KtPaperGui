@@ -2,10 +2,10 @@ package com.mattmx.ktgui.components.screen
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.ClickCallback
+import com.mattmx.ktgui.components.EffectBlock
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
-import com.mattmx.ktgui.components.button.SignalButton
 import com.mattmx.ktgui.components.signal.GuiSignalOwner
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
@@ -22,6 +22,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.util.UUID
@@ -31,7 +32,7 @@ open class GuiScreen(
     title: Component = Component.empty(),
     var rows: Int = 1,
     var type: InventoryType? = null
-) : IGuiScreen, GuiSignalOwner<SignalButton> {
+) : IGuiScreen, GuiSignalOwner<EffectBlock<GuiScreen>> {
     var title: Component = title
         set(value) {
             field = value
@@ -43,7 +44,7 @@ open class GuiScreen(
     // Can be used to identify dsl guis
     var id: String = UUID.randomUUID().toString()
     var items = hashMapOf<Int, GuiButton<*>>()
-    override var currentlyProcessing: SignalButton? = null
+    override var currentlyProcessing: EffectBlock<GuiScreen>? = null
 
     protected lateinit var clickCallback: ClickCallback<*>
     protected lateinit var closeCallback: (InventoryCloseEvent) -> Unit
@@ -68,7 +69,7 @@ open class GuiScreen(
             .map { it.key }
     }
 
-    override fun size(): Int {
+    override fun numberOfItems(): Int {
         return items.size
     }
 
@@ -91,6 +92,22 @@ open class GuiScreen(
     fun forceClose(player: Player) {
         GuiManager.clearGui(player)
         player.closeInventory()
+    }
+
+    fun refresh() {
+        val inv = arrayOfNulls<ItemStack?>(totalSlots())
+
+        items.forEach { (slot, item) ->
+            if (slot < inv.size)
+                inv[slot] = item.formatIntoItemStack()
+        }
+
+        GuiManager.getPlayers(this)
+            .forEach { player ->
+                for ((index, item) in inv.withIndex()) {
+                    player.openInventory.setItem(index, item)
+                }
+            }
     }
 
     override fun open(player: Player) {
@@ -176,14 +193,13 @@ open class GuiScreen(
         this.clickCallback = ClickCallback<IGuiButton<*>>().apply(clickCallbackBuilder)
     }
 
+    fun addEffect(effect: EffectBlock<GuiScreen>) {
+        currentlyProcessing = effect
+        effect.block.invoke(this)
+        currentlyProcessing = null
+    }
+
     override fun addChild(child: IGuiButton<*>) {
-
-        if (child is SignalButton) {
-            currentlyProcessing = child
-            child.apply(child.builder)
-            currentlyProcessing = null
-        }
-
         child.slots()?.forEach {
             items[it] = child as GuiButton<*>
         }

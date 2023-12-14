@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.dsl
 
+import com.mattmx.ktgui.components.EffectBlock
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.button.SignalButton
@@ -26,5 +27,10 @@ inline fun <reified T : IGuiButton<*>> button(
 inline fun button(material: Material, block: GuiButton<*>.() -> Unit) = GuiButton(material).apply(block)
 inline fun IGuiScreen.button(material: Material, block: GuiButton<*>.() -> Unit) =
     GuiButton(material).apply(block).apply { childOf(this@button) }
+
+@Deprecated("No longer supported, use effect block.", ReplaceWith("effect"))
 fun IGuiScreen.signalButton(material: Material, block: SignalButton.() -> Unit) =
     SignalButton(material, block).apply { childOf(this@signalButton) }
+
+fun GuiScreen.effect(block: GuiScreen.() -> Unit) =
+    EffectBlock(this, block).apply { this@effect.addEffect(this) }
