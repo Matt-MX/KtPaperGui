@@ -4,3 +4,5 @@
 /build/
 /build/classes/kotlin/main/
 /build/classes/kotlin/test/
+/api/build
+/plugin/build

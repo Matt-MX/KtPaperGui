@@ -1,47 +1,127 @@
 
 <p align="center">
-    <img src="./ProjectBanner.png" width="512px">
+    <img src="./ProjectBanner.png" width="512px" title="Logo* Not final">
 </p>
-<h2 align="center">Declarative guis for Bukkit!</h2>
+<h2 align="center">Declarative guis for Paper!</h2>
+
+<div align="center">
+<p>
+The KtGUI library provides a plethora of utilities to help speed up the development of your PaperMC plugins.
+</p>
+</div>
+
+<div align="center">
+
+<h3>
+
+|&emsp;&emsp;
+[Wiki](https://github.com/Matt-MX/KtBukkitGui/wiki) 
+&emsp;&emsp;|&emsp;&emsp; 
+[Downloads](https://github.com/Matt-MX/KtBukkitGui/actions)
+&emsp;&emsp;|&emsp;&emsp; 
+[Help](https://github.com/Matt-MX/KtBukkitGui/wiki)
+&emsp;&emsp;|
+
+</h3>
+
+</div>
 
 ---
 
-<br>
+<div align="left">
+<h1>GUI DSL</h1>
+<p>
 
-| <h2>About</h2><br/><p align="left">A lightweight GUI library with almost unlimited customization. Featuring a declarative style to make it easier for everyone to create beautiful GUIs with minimal code.<br>We also bake our registered GUIs then format them to certain players.</p>                                   | <img src="./ProjectLogo.png" width=50%a>                                                                                                                                                                                                                                                      |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                                                                                                                                               |
-| <p align="center"><img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8Y29kZXxlbnwwfHwwfHw%3D&w=1000&q=80" width=100%></p>                                                                                                                              | <h2 align="center">Usage</h2><br><p align="right">    To make it      even easier for people to take advantage of, we have provided some simple and stunning example guis. Click to view them.<br>We also provide documentation in our code. Combined with the usages, what can't you do?</p> |
-| <h2 align="center">Examples</h2><br><p align="left">We have provided plenty of examples of usages.<br>This includes creating GUIs on the fly as well as making them ready for usage.<br>Since this is written in kotlin, the library works perfect with Java and is just as easy to use and lightweight as in Kotlin!</p> | <p align="center"><img src="./img/examples_cmd.png"></p>                                                                                                                                                                                                                                      |
+With Kotlin's amazing DSL, you can create guis in a declarative style. Simply stating exactly what you want, where you want it.
+With KtGUI, you can speed up development of guis tenfold.
 
-<h2 id="example_buttons" align="right">Dynamic buttons</h2>
+</p>
 
-| <p align="center"><img src="./img/example_buttons.gif"></p> | <p align="right">The Component based system allows for you to create your own widgets and button types.<br/>Different types of buttons may behave differently and control parts of your server/plugin.<br/>We even offer a few pre-made custom buttons for you to play around with.<br/><a href="https://github.com/Matt-MX/KtBukkitGui/blob/master/src/main/kotlin/com/mattmx/ktgui/examples/ConfigScreenExample.kt">Check out the code »</a></p> |
-|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+<h3>
 
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/TitleCounterExample.kt)
 
-<h2 id="example_static">Pre-defined GUIs</h2>
+</h3>
 
-| <p align="left">This example shows off a lightweight GUI example. Look at what you can achieve with only a few lines of code!<br><a href="https://github.com/Matt-MX/KtBukkitGui/blob/master/src/main/kotlin/com/mattmx/ktgui/examples/CustomGUI.kt">Check out the code »</a></p> | <p align="center"><img src="./img/static_gui.gif" width=100%></p> |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+</div>
 
-<h2 id="realtime" align="right">Realtime built GUIs</h2>
+<div align="right">
+<h1>Signals</h1>
+<p>
 
-| <p align="center"><img src="./img/dynamic_gui.gif" width=100%></p> | <p align="right">Want to create GUIs dynamically? We support that! Simple create a new `GuiScreen` object and treat it as you would normally. This can allow you to make guis do whatever you want, whenever you want!<br><a href="https://github.com/Matt-MX/KtBukkitGui/blob/master/src/main/kotlin/com/mattmx/ktgui/examples/DynamicExample.kt#L20">Check out the code »</a></p> |
-|--------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+Recently we introduced Signals into the library. They allow you to dynamically update components with absolute ease.
+Simply change your variables, and the components that mention it will update for your users.
+Making dynamic GUIs has never been easier.
 
+</p>
 
-<h2 id="example_furnace">Other Types of GUIs</h2>
+<h3>
 
-| <p align="left">We also offer the same easy-to-use support for every type of GUI in the game, here's a quick example of a custom furnace GUI.<br><a href="https://github.com/Matt-MX/KtBukkitGui/blob/master/src/main/kotlin/com/mattmx/ktgui/examples/DynamicExample.kt#L77">Check out the code »</a></p> | <p align="center"><img src="./img/example_furnace.png" width=100%></p> |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/SignalsExample.kt)
 
-<h2 id="example_conversation" align="right">Conversation API</h2>
+</h3>
+</div>
 
-| <p align="center"><img src="./img/example_conversation.gif" width=100%></p> | <p align = "right">Comes with a build-in conersation API to make it easy for you to get string player input.<br>Quickly build lightweight conversations and execute them per-player to get different types of input from them: Player names, strings, numbers (with range), fixed inputs.<br><a href="https://github.com/Matt-MX/KtBukkitGui/blob/master/src/main/kotlin/com/mattmx/ktgui/examples/ConversationGuiExample.kt">Check out the code »</a></p> |
-|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+<div align="left">
+<h1>Command DSL</h1>
+<p>
 
-<h2 id="example_furnace">Animated and normal scoreboards</h2>
+KtGUI provides two types of command DSL: Declarative and Simple.
+Simple gives you complete control and responsibility over how the command executes, and arguments are processed.
+Meanwhile Declarative commands use Delegated properties to allow for easy argument handling - simply state
+your arguments and their datatype, and KtGUI will do the rest under the hood. 
+ 
+</p>
+<h3>
 
-| <p align="left">We like to make ourself proud of our extremely lightweight scoreboard API.<br>We give you the option, built-in, to create animated or static scoreboards to pretty-up your server.<br><a href="https://github.com/Matt-MX/KtBukkitGui/blob/master/src/main/kotlin/com/mattmx/ktgui/examples/ScoreboardExample.kt">Static Example »</a><br><a href="https://github.com/Matt-MX/KtBukkitGui/blob/master/src/main/kotlin/com/mattmx/ktgui/examples/AnimatedScoreboardExample.kt">Animated Example »</a></p> | <p align="center"><img src="./img/example_scoreboard.gif" width=100%></p> |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/KotlinGui.kt#L42)
+
+</h3>
+</div>
+
+<div align="right">
+<h1>Events DSL</h1>
+<p>
+
+We also provide a way to easily create handlers for **Bukkit Events**, so you don't always need to make a whole
+new class just for your EventListeners.
+
+</p>
+<h3>
+
+[« View Examples](https://google.com/)
+
+</h3>
+</div>
+
+<div align="left">
+<h1>GUI Hooks</h1>
+<p>
+
+We also provide some events to allow you to change any GUI just before it is opened, essentially hooking into
+a gui and adding or modifying whatever you want.
+    
+This can prove very useful for making extensions to other plugins.
+
+</p>
+<h3>
+
+[View Examples »](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/GuiHookExample.kt)
+
+</h3>
+</div>
+
+<div align="right">
+<h1>Scoreboards</h1>
+<p>
+
+Making scoreboards has never been easier with our lightweight scoreboard DSL.
+With the ability to define and animate your personalized scoreboards however you like.
+
+</p>
+<h3>
+
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/AnimatedScoreboardExample.kt)
+
+</h3>
+</div>
