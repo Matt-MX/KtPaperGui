@@ -49,7 +49,7 @@ class GuiHookExample : Example {
                 if ((gui as GuiScreen).id != "kgui.example.gui-hook") return@event
 
                 var signalExampleVar by (gui as GuiScreen).signal(0)
-                gui.signalButton(Material.PURPLE_DYE) {
+                gui.button(Material.PURPLE_DYE) {
                     named(!"&d&lA button")
                     lore {
                         add(!"&fThis button was added after the gui was built.")
