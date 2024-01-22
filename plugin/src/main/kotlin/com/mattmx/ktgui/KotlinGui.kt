@@ -1,9 +1,16 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.simpleCommand
+import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.block.Block
+import org.bukkit.entity.FallingBlock
+import org.bukkit.event.entity.EntityChangeBlockEvent
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 

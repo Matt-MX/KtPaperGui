@@ -28,6 +28,8 @@ open class GuiButton<T : GuiButton<T>>(
         protected set
     var ifTexturePackActive: ((T) -> Unit)? = null
         protected set
+    var postBuild: ((ItemStack) -> Unit)? = null
+        protected set
 
     // todo should remove this once we have no need for it (parent has been declared)
     private var slots: ArrayList<Int>? = null
@@ -122,6 +124,13 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
+    /**
+     * Code runs after the [GuiButton] has built an [ItemStack]
+     */
+    infix fun postBuild(block: ItemStack.() -> Unit) = apply {
+        postBuild = block
+    } as T
+
     infix fun fromItemBuilder(builder: DslIBuilder) : T {
         item = builder.build()
         return this as T
@@ -162,9 +171,9 @@ open class GuiButton<T : GuiButton<T>>(
         if (player?.hasResourcePack() == true && ifTexturePackActive != null) {
             val copy = this.copy(this.parent)
             ifTexturePackActive!!(copy)
-            return copy.item
+            return copy.item.apply { this?.let { postBuild?.invoke(it) } }
         }
-        return getItemStack()?.clone()
+        return getItemStack()?.clone().apply { this?.let { postBuild?.invoke(it) } }
     }
 
     override fun slots(): List<Int> {

@@ -12,6 +12,8 @@ import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.potion.PotionType
 
 class GuiHookExample : Example {
     val gui = gui(!"Title", 3) {
@@ -23,6 +25,19 @@ class GuiHookExample : Example {
                 add(!"&fThis button was added regularly.")
             }
         } slots listOf(11, 13)
+
+        button(Material.LINGERING_POTION) {
+            named(!"&fA potion")
+            lore {
+                add(!"&fThis is a custom potion")
+            }
+            // Will run before the button is made into an itemstack
+            postBuild {
+                editMeta(PotionMeta::class.java) { meta ->
+                    meta.basePotionType = PotionType.STRONG_STRENGTH
+                }
+            }
+        } slot last()
     }
 
     override fun run(player: Player) = gui.open(player)
