@@ -1,11 +1,9 @@
 package com.mattmx.ktgui.scoreboards
 
-import com.mattmx.ktgui.utils.legacy
 import com.mattmx.ktgui.utils.legacyColor
-import com.mattmx.ktgui.utils.not
+import com.mattmx.ktgui.scheduling.not
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Criteria
 import org.bukkit.scoreboard.DisplaySlot

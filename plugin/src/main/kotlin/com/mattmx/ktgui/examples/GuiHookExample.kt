@@ -6,9 +6,8 @@ import com.mattmx.ktgui.components.signal.signal
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.dsl.gui
-import com.mattmx.ktgui.dsl.signalButton
 import com.mattmx.ktgui.event.PreGuiBuildEvent
-import com.mattmx.ktgui.utils.not
+import com.mattmx.ktgui.scheduling.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType

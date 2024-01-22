@@ -10,7 +10,7 @@ import com.mattmx.ktgui.components.signal.GuiSignalOwner
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
-import com.mattmx.ktgui.utils.isAsync
+import com.mattmx.ktgui.scheduling.isAsync
 import com.mattmx.ktgui.utils.legacy
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit

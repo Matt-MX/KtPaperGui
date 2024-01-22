@@ -3,7 +3,7 @@ package com.mattmx.ktgui.examples
 import com.mattmx.ktgui.components.button.*
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.item.itemBuilder
-import com.mattmx.ktgui.utils.not
+import com.mattmx.ktgui.scheduling.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
