@@ -118,7 +118,7 @@ class LegacyLoreCycleButton(
         copy.selectableLores = selectableLores.toMutableList()
         copy.changed = changed
         copy.parent = parent
-        copy.clickCallback = clickCallback
+        copy.click = click
         copy.closeCallback = closeCallback
         return copy
     }

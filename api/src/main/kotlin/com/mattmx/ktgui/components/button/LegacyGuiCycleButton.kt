@@ -70,7 +70,7 @@ class LegacyGuiCycleButton(
         copy.map.putAll(map)
         copy.changed = changed
         copy.parent = parent
-        copy.clickCallback = clickCallback
+        copy.click = click
         copy.item = item
         return copy
     }
