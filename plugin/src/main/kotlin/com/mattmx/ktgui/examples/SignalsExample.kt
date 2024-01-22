@@ -6,6 +6,7 @@ import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.effect
 import com.mattmx.ktgui.dsl.gui
 import com.mattmx.ktgui.scheduling.not
+import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType

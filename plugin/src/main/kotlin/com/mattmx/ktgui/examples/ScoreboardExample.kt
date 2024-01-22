@@ -3,6 +3,7 @@ package com.mattmx.ktgui.examples
 import com.mattmx.ktgui.extensions.removeScoreboard
 import com.mattmx.ktgui.scoreboards.scoreboard
 import com.mattmx.ktgui.scheduling.not
+import com.mattmx.ktgui.utils.not
 import org.bukkit.entity.Player
 
 class ScoreboardExample : Example{

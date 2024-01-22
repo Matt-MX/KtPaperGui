@@ -4,7 +4,7 @@ import com.mattmx.ktgui.KotlinGui
 import com.mattmx.ktgui.extensions.removeScoreboard
 import com.mattmx.ktgui.extensions.stripColor
 import com.mattmx.ktgui.scoreboards.scoreboard
-import com.mattmx.ktgui.scheduling.not
+import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.lang.Integer.min

@@ -2,7 +2,7 @@ package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.simpleCommand
 import com.mattmx.ktgui.examples.*
-import com.mattmx.ktgui.scheduling.not
+import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger

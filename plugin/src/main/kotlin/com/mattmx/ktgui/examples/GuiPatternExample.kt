@@ -6,6 +6,7 @@ import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.gui
 import com.mattmx.ktgui.item.itemBuilderStack
 import com.mattmx.ktgui.scheduling.not
+import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
