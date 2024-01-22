@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.event
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.utils.isAsync
+import com.mattmx.ktgui.scheduling.isAsync
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event

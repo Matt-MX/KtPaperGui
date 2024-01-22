@@ -2,9 +2,7 @@ package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.InventoryClickEvent
 import java.lang.Integer.max
 import java.lang.Integer.min
 
@@ -27,7 +25,7 @@ class NumberWidgetButton(
                 amount(min(64, max(1, item!!.amount - step)))
                 update(e.player)
             }
-            else -> { clickCallback.run(e) }
+            else -> { click.run(e) }
         }
     }
 

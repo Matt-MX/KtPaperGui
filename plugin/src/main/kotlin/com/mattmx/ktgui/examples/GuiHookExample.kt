@@ -6,8 +6,8 @@ import com.mattmx.ktgui.components.signal.signal
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.dsl.gui
-import com.mattmx.ktgui.dsl.signalButton
 import com.mattmx.ktgui.event.PreGuiBuildEvent
+import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -49,7 +49,7 @@ class GuiHookExample : Example {
                 if ((gui as GuiScreen).id != "kgui.example.gui-hook") return@event
 
                 var signalExampleVar by (gui as GuiScreen).signal(0)
-                gui.signalButton(Material.PURPLE_DYE) {
+                gui.button(Material.PURPLE_DYE) {
                     named(!"&d&lA button")
                     lore {
                         add(!"&fThis button was added after the gui was built.")

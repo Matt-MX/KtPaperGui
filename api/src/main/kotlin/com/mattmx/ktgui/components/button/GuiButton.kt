@@ -20,7 +20,7 @@ open class GuiButton<T : GuiButton<T>>(
     lateinit var parent: IGuiScreen
         protected set
 
-    var clickCallback = ClickCallback<T>()
+    var click = ClickCallback<T>()
         protected set
     var dragCallback: ((InventoryDragEvent) -> Unit)? = null
         protected set
@@ -141,7 +141,7 @@ open class GuiButton<T : GuiButton<T>>(
     }
 
     inline fun click(block: ClickCallback<T>.() -> Unit) : T {
-        block.invoke(clickCallback)
+        block.invoke(click)
         return this as T
     }
 
@@ -160,7 +160,7 @@ open class GuiButton<T : GuiButton<T>>(
     }
 
     override fun onButtonClick(e: ButtonClickedEvent<*>) {
-        clickCallback.run(e)
+        click.run(e)
     }
 
     override fun onButtonDrag(e: InventoryDragEvent) {
@@ -207,7 +207,7 @@ open class GuiButton<T : GuiButton<T>>(
         val copy = GuiButton<T>()
         copy.parent = parent
         copy.item = item?.clone()
-        copy.clickCallback = clickCallback.clone()
+        copy.click = click.clone()
         copy.closeCallback = closeCallback
         copy.ifTexturePackActive = ifTexturePackActive
         return copy as T

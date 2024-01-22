@@ -1,11 +1,10 @@
 package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.GuiManager
-import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiInfiniteScreen
 import com.mattmx.ktgui.dsl.button
+import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType

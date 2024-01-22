@@ -14,7 +14,7 @@ class SignalButton(
         // clear all data of the button
         lore { clear() }
         named(null)
-        clickCallback.clear()
+        click.clear()
         item = ItemStack(material)
 
         builder(this)

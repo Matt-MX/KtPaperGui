@@ -3,7 +3,9 @@ package com.mattmx.ktgui
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.configuration.Configuration
 import com.mattmx.ktgui.extensions.getOpenGui
-import jdk.jfr.Experimental
+import com.mattmx.ktgui.scheduling.Scheduling
+import com.mattmx.ktgui.scheduling.TaskTracker
+import com.mattmx.ktgui.scheduling.TaskTrackerTask
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -16,8 +18,6 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.annotations.ApiStatus
-import java.io.ObjectInputFilter.Config
-import java.util.*
 
 /**
  * Handles all GUI click events, as well
@@ -30,10 +30,11 @@ object GuiManager : Listener {
     private val configurations = hashMapOf<JavaPlugin, Configuration>()
     lateinit var owningPlugin: JavaPlugin
 
-    fun init(plugin: JavaPlugin) : Boolean {
+    fun init(plugin: JavaPlugin): Boolean {
         if (initialized) return false
         initialized = true
         owningPlugin = plugin
+        Scheduling.plugin = plugin
         Bukkit.getPluginManager().registerEvents(this, plugin)
         return true
     }
