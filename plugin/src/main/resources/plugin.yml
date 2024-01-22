@@ -1,7 +1,7 @@
 name: KtGUI
 version: '${version}'
 main: com.mattmx.ktgui.KotlinGui
-api-version: 1.20
+api-version: 1.17
 prefix: KtGUI
 authors: [ MattMX ]
 description: Declarative GUI Library for Paper.
