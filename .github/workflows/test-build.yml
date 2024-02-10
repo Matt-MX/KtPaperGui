@@ -4,7 +4,7 @@ on:
     - "refactor"
 
 jobs:
-  build-gradle-project:
+  test-build-gradle-project:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
