@@ -6,7 +6,7 @@ on:
     - "main"
 
 jobs:
-  build-gradle-project:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,3 +20,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Run build with Gradle Wrapper
         run: ./gradlew build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-outputs
+          path: plugin/build/libs/ktgui-plugin-*.jar
