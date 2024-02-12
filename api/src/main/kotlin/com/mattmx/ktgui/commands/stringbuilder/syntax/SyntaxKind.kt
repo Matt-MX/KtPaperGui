@@ -6,6 +6,7 @@ enum class SyntaxKind(
     IDENTIFIER,
 
     COLON(":"),
+    QUESTION("?"),
     FORWARD_SLASH("/"),
     OPEN_DIAMOND("<"),
     CLOSE_DIAMOND(">"),

@@ -6,12 +6,31 @@ fun main() {
     val testCmd = +
     "/test <player:player> <msg:string...>"<CommandSender> {
         runs {
-//            val player by argument()
-//            val msg by argument()
+            val player by argument()
+            val msg by argument()
 
-            println("test")
+            println("[${player}]: $msg")
+        }
+    } missing {
+        println("Missing arg '${argument.name()}'")
+    }
+
+    "/hello"<CommandSender> {
+        runs {
+            println("hello")
+        }
+    } + "world"<CommandSender> {
+        runs {
+            println("hello world")
+        }
+    } + "<msg:string...?>"<CommandSender> {
+        runs {
+            val msg by argument()
+            println("hello world ($msg)")
         }
     }
+
+    testCmd.invoke(RawCommandContext(listOf("mattmx", "hello", "world")))
 
     val foo = +
     "/foo"<CommandSender> {

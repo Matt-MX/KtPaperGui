@@ -11,4 +11,6 @@ class ArgumentContext<T>(
     fun isEmpty() = value.isEmpty
 
     fun getOrNull() = value.orElse(null)
+
+    override fun toString() = getOrNull().toString()
 }

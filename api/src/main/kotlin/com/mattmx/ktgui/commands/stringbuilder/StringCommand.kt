@@ -1,43 +1,63 @@
 package com.mattmx.ktgui.commands.stringbuilder
 
-import com.mattmx.ktgui.commands.CommandInvocation
-import com.mattmx.ktgui.commands.declarative.ArgumentType
 import com.mattmx.ktgui.commands.stringbuilder.arg.Argument
+import com.mattmx.ktgui.commands.stringbuilder.arg.ArgumentContext
+import com.mattmx.ktgui.commands.stringbuilder.syntax.CommandDeclarationSyntax
+import com.mattmx.ktgui.commands.stringbuilder.syntax.Parser
+import com.mattmx.ktgui.commands.stringbuilder.syntax.SubCommandDeclarationSyntax
+import com.mattmx.ktgui.commands.stringbuilder.syntax.VariableDeclarationSyntax
 import com.mattmx.ktgui.configuration.Configuration
 import org.bukkit.command.CommandSender
+import java.util.Optional
 
-class StringCommand<T : CommandSender> {
+class StringCommand<T : CommandSender>(
+    source: String
+) {
     lateinit var name: String
     var aliases = arrayOf<String>()
     var subcommands = arrayOf<StringCommand<*>>()
     var expectedArguments = arrayOf<Argument<*>>()
-    private lateinit var permission: (CommandContext<T>) -> Boolean
-    private lateinit var runs: (CommandContext<T>) -> Unit
-    private lateinit var missing: (CommandContext<T>) -> Unit
+    private var permission: Optional<(RunnableCommandContext<T>) -> Boolean> = Optional.empty()
+    private var runs: Optional<(RunnableCommandContext<T>) -> Unit> = Optional.empty()
+    private var missing: Optional<(MissingArgContext<T>) -> Unit> = Optional.empty()
 
     init {
-        // todo parse params
-        name = "test"
+        val parsed = Parser(source).parse()
+
+        for (syntax in parsed) {
+            when (syntax) {
+                is VariableDeclarationSyntax -> {
+                    expectedArguments += Argument<Any>(syntax.getName(), syntax.getType(), null, !syntax.getType().isOptional)
+                }
+                is CommandDeclarationSyntax -> {
+                    // todo should be top level only
+                    name = syntax.getName()
+                }
+                is SubCommandDeclarationSyntax -> {
+                    name = syntax.getName()
+                }
+            }
+        }
     }
 
-    infix fun missing(block: CommandContext<T>.() -> Unit) = apply {
-        this.missing = block
+    infix fun missing(block: MissingArgContext<T>.() -> Unit) = apply {
+        this.missing = Optional.of(block)
     }
 
-    infix fun runs(block: CommandContext<T>.() -> Unit) = apply {
-        this.runs = block
+    infix fun runs(block: RunnableCommandContext<T>.() -> Unit) = apply {
+        this.runs = Optional.of(block)
     }
 
     inline operator fun <V : CommandSender> String.invoke(block: StringCommand<V>.() -> Unit) =
-        StringCommand<V>().let {
+        StringCommand<V>(this).let {
             // todo could also have parameters
             subcommands += it
         }
 
-    fun getSuggestions(context: CommandContext<T>): List<String> {
+    fun getSuggestions(context: RawCommandContext<T>): List<String> {
         val currentArgument = getCurrentArgument(context)
         val suggestions = currentArgument?.suggestions()?.invoke(context) ?: return emptyList()
-        val lastArgument = context.args.lastOrNull() ?: ""
+        val lastArgument = context.rawArgs.lastOrNull() ?: ""
         return suggestions.filter { suggestion -> suggestion.startsWith(lastArgument, true) }.toList()
     }
 
@@ -48,14 +68,15 @@ class StringCommand<T : CommandSender> {
      * @param sender command sender
      * @return the current argument or null if it is invalid
      */
-    private fun getCurrentArgument(context: CommandContext<T>): Argument<*>? {
+    private fun getCurrentArgument(context: RawCommandContext<T>): Argument<*>? {
         if (expectedArguments.isEmpty()) return null
-        // Greedy arguments will eat the rest of the arguments
-        if (expectedArguments.first().type() == Argument.Type.GREEDY) return expectedArguments.first()
+
+        // Greedy arguments will eat the rest of the arguments todo
+        if (expectedArguments.first().type().isVararg) return expectedArguments.first()
 
         repeat(expectedArguments.size) { argIndex ->
             val registered = expectedArguments.getOrNull(argIndex) ?: return null
-            val comparing = context.args.getOrNull(argIndex) ?: return null
+            val comparing = context.rawArgs.getOrNull(argIndex) ?: return null
             // todo need to think about optional args!!! wtf do we do there
         }
 
@@ -66,6 +87,27 @@ class StringCommand<T : CommandSender> {
 
     fun register() = apply {
 
+    }
+
+    fun invoke(context: RawCommandContext<T>) {
+
+        // Set variables
+        val argumentValues = hashMapOf<String, ArgumentContext<*>>()
+        for ((index, arg) in expectedArguments.withIndex()) {
+            // todo var offset for sub-commands?
+            val value = context.rawArgs.getOrNull(index)
+
+            if (arg.isRequired() && value == null) {
+                val missingArgContext = MissingArgContext<T>(arg, context.rawArgs)
+                missing.ifPresent { it.invoke(missingArgContext) }
+                return
+            } else {
+                argumentValues[arg.name()] = ArgumentContext(Optional.ofNullable(value), arg as Argument<String>)
+            }
+        }
+
+        val runnableContext = RunnableCommandContext<T>(argumentValues, context.rawArgs)
+        runs.ifPresent { it.invoke(runnableContext) }
     }
 
     /**
@@ -82,8 +124,8 @@ class StringCommand<T : CommandSender> {
             var end = ""
             builder += expectedArguments.joinToString(" ") { arg ->
                 val suggestions = arg.getDefaultSuggestions()?.let {
-                    if (it.size <= maxArgumentOptionsDisplayed) " = [" + it.joinToString("|") + "]"
-                    else " = [...]"
+                    if (it.isNotEmpty() && it.size <= maxArgumentOptionsDisplayed) " = [" + it.joinToString("|") + "]"
+                    else ":${arg.type().typeName}"
                 } ?: ""
 
                 // Apply descriptions
@@ -103,4 +145,4 @@ class StringCommand<T : CommandSender> {
 }
 
 inline operator fun <T : CommandSender> String.invoke(block: StringCommand<T>.() -> Unit) =
-    StringCommand<T>().apply(block)
+    StringCommand<T>(this).apply(block)

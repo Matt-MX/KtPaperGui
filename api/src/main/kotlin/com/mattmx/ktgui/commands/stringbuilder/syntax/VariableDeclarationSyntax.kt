@@ -6,13 +6,14 @@ class VariableDeclarationSyntax(
     private val colonToken: SyntaxToken,
     private val typeToken: SyntaxToken,
     private val ellipsisToken: SyntaxToken,
+    private val optional: SyntaxToken,
     private val closeDiamondBracesToken: SyntaxToken,
 ) : CommandBuilderSyntax() {
     override fun kind() = SyntaxKind.VARIABLE_DECLARATION
 
     fun getName() = varNameToken.text!!
 
-    fun getType() = VariableType(typeToken.text!!, ellipsisToken.text != null)
+    fun getType() = VariableType(typeToken.text!!, ellipsisToken.text != null, optional.text != null)
 
     override fun children() = listOf(openDiamondBracesToken, varNameToken, colonToken, typeToken, closeDiamondBracesToken)
 }

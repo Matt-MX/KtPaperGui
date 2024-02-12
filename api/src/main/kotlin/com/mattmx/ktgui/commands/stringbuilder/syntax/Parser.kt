@@ -37,7 +37,7 @@ class Parser(
         if (current().kind == kind) {
             return nextToken()
         }
-        return SyntaxToken(SyntaxKind.BAD_TOKEN, current().start, "null", null)
+        return SyntaxToken(SyntaxKind.BAD_TOKEN, current().start, null, null)
     }
 
     fun parse(): ArrayList<CommandBuilderSyntax> {
@@ -64,9 +64,10 @@ class Parser(
         val colon = matchToken(SyntaxKind.COLON)
         val type = matchToken(SyntaxKind.IDENTIFIER)
         val ellipsis = matchToken(SyntaxKind.ELLIPSIS)
+        val optional = matchToken(SyntaxKind.QUESTION)
         val closeDiamondBraces = matchToken(SyntaxKind.CLOSE_DIAMOND)
 
-        return VariableDeclarationSyntax(openDiamondBraces, varName, colon, type, ellipsis, closeDiamondBraces)
+        return VariableDeclarationSyntax(openDiamondBraces, varName, colon, type, ellipsis, optional, closeDiamondBraces)
     }
 
     private fun parseCommand(): CommandDeclarationSyntax {
@@ -81,12 +82,4 @@ class Parser(
 
         return SubCommandDeclarationSyntax(commandName)
     }
-}
-
-fun main() {
-    val parsed = Parser("/test foo <username_test:string...>").parse()
-
-    println((parsed[0] as CommandDeclarationSyntax).getName())
-    println((parsed[1] as SubCommandDeclarationSyntax).getName())
-    println((parsed[2] as VariableDeclarationSyntax).getType())
 }

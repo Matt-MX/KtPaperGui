@@ -3,7 +3,7 @@ package com.mattmx.ktgui.commands.declarative
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class CommandContext<S : CommandSender>(
+open class CommandContext<S : CommandSender>(
     val sender: S,
     val args: Array<String>,
 ) {
