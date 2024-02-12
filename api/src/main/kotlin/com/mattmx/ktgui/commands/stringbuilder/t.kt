@@ -5,7 +5,12 @@ import org.bukkit.command.CommandSender
 fun main() {
     val testCmd = +
     "/test <player:player> <msg:string...>"<CommandSender> {
-        runs { println("test") }
+        runs {
+//            val player by argument()
+//            val msg by argument()
+
+            println("test")
+        }
     }
 
     val foo = +

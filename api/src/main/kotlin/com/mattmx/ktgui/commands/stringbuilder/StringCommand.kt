@@ -17,6 +17,7 @@ class StringCommand<T : CommandSender> {
 
     init {
         // todo parse params
+        name = "test"
     }
 
     infix fun missing(block: CommandContext<T>.() -> Unit) = apply {
