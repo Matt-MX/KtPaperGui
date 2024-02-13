@@ -8,7 +8,7 @@ import java.util.*
 class Argument<T>(
     private val name: String,
     private val type: VariableType,
-    private val description: String? = null,
+    var description: String? = null,
     private val required: Boolean = true
 ) {
     private var suggests = Optional.empty<(RawCommandContext<*>) -> List<String>?>()
@@ -21,7 +21,7 @@ class Argument<T>(
 
     fun isRequired() = required
 
-    fun withSuggestions(suggest: RawCommandContext<*>.() -> List<String>?) = apply {
+    fun suggests(suggest: RawCommandContext<*>.() -> List<String>?) = apply {
         this.suggests = Optional.of(suggest)
     }
 

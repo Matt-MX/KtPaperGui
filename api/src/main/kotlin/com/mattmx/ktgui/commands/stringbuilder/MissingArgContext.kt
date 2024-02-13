@@ -4,6 +4,6 @@ import com.mattmx.ktgui.commands.stringbuilder.arg.Argument
 import org.bukkit.command.CommandSender
 
 class MissingArgContext<T : CommandSender>(
-    val argument: Argument<*>,
+    val missingArgument: Argument<*>,
     args: List<String>
 ) : RawCommandContext<T>(args)

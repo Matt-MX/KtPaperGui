@@ -6,6 +6,7 @@ import com.mattmx.ktgui.commands.stringbuilder.syntax.CommandDeclarationSyntax
 import com.mattmx.ktgui.commands.stringbuilder.syntax.Parser
 import com.mattmx.ktgui.commands.stringbuilder.syntax.SubCommandDeclarationSyntax
 import com.mattmx.ktgui.commands.stringbuilder.syntax.VariableDeclarationSyntax
+import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import com.mattmx.ktgui.configuration.Configuration
 import org.bukkit.command.CommandSender
 import java.util.Optional
@@ -27,12 +28,19 @@ class StringCommand<T : CommandSender>(
         for (syntax in parsed) {
             when (syntax) {
                 is VariableDeclarationSyntax -> {
-                    expectedArguments += Argument<Any>(syntax.getName(), syntax.getType(), null, !syntax.getType().isOptional)
+                    expectedArguments += Argument<Any>(
+                        syntax.getName(),
+                        syntax.getType(),
+                        null,
+                        !syntax.getType().isOptional
+                    )
                 }
+
                 is CommandDeclarationSyntax -> {
                     // todo should be top level only
                     name = syntax.getName()
                 }
+
                 is SubCommandDeclarationSyntax -> {
                     name = syntax.getName()
                 }
@@ -46,6 +54,17 @@ class StringCommand<T : CommandSender>(
 
     infix fun runs(block: RunnableCommandContext<T>.() -> Unit) = apply {
         this.runs = Optional.of(block)
+    }
+
+    infix fun args(block: ArgumentOptions<T>.() -> Unit) = apply {
+        ArgumentOptions<T>(this).apply(block)
+    }
+
+    class ArgumentOptions<T : CommandSender>(private val command: StringCommand<T>) {
+        operator fun String.invoke(block: Argument<*>.() -> Unit) =
+            command.expectedArguments.firstOrNull { it.name() == this }
+                ?.apply(block)
+                ?: error("Unregistered argument '$this'.")
     }
 
     inline operator fun <V : CommandSender> String.invoke(block: StringCommand<V>.() -> Unit) =
@@ -95,7 +114,9 @@ class StringCommand<T : CommandSender>(
         val argumentValues = hashMapOf<String, ArgumentContext<*>>()
         for ((index, arg) in expectedArguments.withIndex()) {
             // todo var offset for sub-commands?
-            val value = context.rawArgs.getOrNull(index)
+            val value = if (arg.type().isVararg) {
+                context.rawArgs.subList(index, context.rawArgs.size).joinToString(" ")
+            } else context.rawArgs.getOrNull(index)
 
             if (arg.isRequired() && value == null) {
                 val missingArgContext = MissingArgContext<T>(arg, context.rawArgs)
@@ -116,27 +137,31 @@ class StringCommand<T : CommandSender>(
      *
      * @return a formatted string for usage of the command
      */
-    fun getUsage(showDescriptions: Boolean = false, maxArgumentOptionsDisplayed: Int = 5): String {
-        var builder = "$name "
+    fun getUsage(options: CommandUsageOptions = CommandUsageOptions()): String {
+        var builder = "${options.namePrefix}$name${options.gap}"
         if (subcommands.isNotEmpty())
-            builder += subcommands.joinToString("|") { subcommand -> subcommand.name }
+            builder += subcommands.joinToString(options.subCommands.divider) { subcommand -> subcommand.name }
         else {
             var end = ""
             builder += expectedArguments.joinToString(" ") { arg ->
-                val suggestions = arg.getDefaultSuggestions()?.let {
-                    if (it.isNotEmpty() && it.size <= maxArgumentOptionsDisplayed) " = [" + it.joinToString("|") + "]"
-                    else ":${arg.type().typeName}"
-                } ?: ""
+
+                val suggestions =
+                    if (options.arguments.showSuggestions) {
+                        val suggestions = arg.getDefaultSuggestions()
+                        if (!suggestions.isNullOrEmpty()) {
+                            val opt = options.arguments
+                            "${opt.suggestionsChar}${opt.suggestionsPrefix}${suggestions.joinToString(opt.suggestionsDivider)}${opt.suggestionsSuffix}"
+                        } else "${options.arguments.typeChar}${arg.type().typeName}"
+                    } else "${options.arguments.typeChar}${arg.type().typeName}"
 
                 // Apply descriptions
-                if (showDescriptions) {
-                    val extra = if (arg.isRequired()) "(Required)" else "(Optional)"
-                    end += "\n> ${arg.name()} - ${arg.description()} $extra"
+                if (options.arguments.showDescriptions) {
+                    val extra =
+                        if (arg.isRequired()) options.arguments.descriptionsRequired else options.arguments.descriptionsOptional
+                    end += "\n${options.arguments.descriptionsPrefix}${arg.name()}${options.arguments.descriptionDivider}${arg.description()}$extra"
                 }
 
-                if (arg.isRequired()) {
-                    "<${arg.name()}!$suggestions>"
-                } else "<${arg.name()}?$suggestions>"
+                "${options.arguments.prefix}${arg.name()}${if (arg.isRequired()) options.arguments.required else options.arguments.optional}$suggestions${options.arguments.suffix}"
             }
             builder += end
         }
