@@ -20,7 +20,7 @@ import java.util.*
 class SignalsListExample : Example {
     val gui = gui(!"Signals (List)", InventoryType.HOPPER) {
         // Instead of using 'by' keyword we just assign the signal
-        val list = signal<Any, ArrayList<String>>(arrayListOf())
+        val list = signal(arrayListOf<String>())
 
         effect {
             button(Material.KNOWLEDGE_BOOK) {
