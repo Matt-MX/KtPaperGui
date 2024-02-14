@@ -46,7 +46,7 @@ public class JavaUpdateExample implements Example {
         // Test Signals
         Signal<String> signalExample = gui.createSignal("mattmx");
 
-        gui.effect(() -> new GuiButton(Material.DIAMOND)
+        gui.effectBlock(() -> new GuiButton(Material.DIAMOND)
                 .named(Component.text(signalExample.get()))
                 .slot(5)
                 .childOf(gui)

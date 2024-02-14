@@ -250,7 +250,7 @@ open class GuiScreen(
     infix fun <S> createSignal(initial: S) = Signal(initial, this)
 
     @JavaCompatibility
-    infix fun effect(block: Runnable) = apply {
+    infix fun effectBlock(block: Runnable) = apply {
         EffectBlock(this) { block.run() }.apply { addEffect(this) }
     }
 
