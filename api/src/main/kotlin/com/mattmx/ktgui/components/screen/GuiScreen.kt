@@ -54,7 +54,7 @@ open class GuiScreen(
     override var currentlyProcessing: EffectBlock<GuiScreen>? = null
 
     var click = ClickCallback<IGuiButton<*>>()
-        private set
+        protected set
     protected lateinit var closeCallback: (InventoryCloseEvent) -> Unit
     protected lateinit var quitCallback: (PlayerQuitEvent) -> Unit
     protected lateinit var moveCallback: (PlayerMoveEvent) -> Unit
