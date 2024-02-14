@@ -1,15 +1,24 @@
 package com.mattmx.ktgui.examples;
 
+import com.mattmx.ktgui.GuiManager;
 import com.mattmx.ktgui.components.GuiPattern;
 import com.mattmx.ktgui.components.button.ButtonClickedEvent;
 import com.mattmx.ktgui.components.button.GuiButton;
 import com.mattmx.ktgui.components.screen.GuiScreen;
 import com.mattmx.ktgui.components.signal.Signal;
+import com.mattmx.ktgui.event.PreGuiBuildEvent;
+import com.mattmx.ktgui.scheduling.TaskTracker;
+import com.mattmx.ktgui.scoreboards.ScoreboardBuilder;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import static com.mattmx.ktgui.dsl.EventKt.javaEvent;
 
 public class JavaUpdateExample implements Example {
     @Override
@@ -44,10 +53,11 @@ public class JavaUpdateExample implements Example {
         pattern.apply(gui);
 
         // Test Signals
-        Signal<String> signalExample = gui.createSignal("mattmx");
+        Signal<String> signalExample = gui.createSignal("foo");
 
         gui.effectBlock(() -> new GuiButton(Material.DIAMOND)
                 .named(Component.text(signalExample.get()))
+                .click(ClickType.LEFT, (event) -> signalExample.setTo(signalExample.get().equals("foo") ? "bar" : "foo"))
                 .slot(5)
                 .childOf(gui)
         );
@@ -62,5 +72,47 @@ public class JavaUpdateExample implements Example {
         });
 
         gui.open(player);
+    }
+
+    public void eventsTest(JavaPlugin plugin) {
+        javaEvent(plugin, PlayerJoinEvent.class, (event) -> {
+            event.getPlayer().sendMessage(Component.text("welcome!"));
+            return null;
+        });
+    }
+
+    public void scoreboard(Player player) {
+        ScoreboardBuilder builder = new ScoreboardBuilder(Component.text("Scoreboard test"))
+                .addLine(Component.text("Test"))
+                .addLine(Component.text("two"));
+
+        Bukkit.getScheduler().runTaskLater(GuiManager.owningPlugin, () -> {
+            builder.set(0, Component.text("5 seconds have passed"));
+        }, 20 * 5L);
+
+        builder.showFor(player);
+    }
+
+    public void hookTest(PreGuiBuildEvent event) {
+        if (!(event.getGui() instanceof GuiScreen)) return;
+        GuiScreen gui = (GuiScreen) event.getGui();
+        if (!gui.getId().equals("ktgui.example.hook")) return;
+
+        // todo add stuff
+    }
+
+    public void testTaskTracker() {
+        TaskTracker tracker = new TaskTracker();
+
+        tracker.runAsyncLater(20L, (task) -> {
+            System.out.println("1 second passed");
+            tracker.cancelAll();
+            return null;
+        });
+
+        tracker.runAsyncLater(40L, (task) -> {
+            System.out.println("Will not execute.");
+            return null;
+        });
     }
 }

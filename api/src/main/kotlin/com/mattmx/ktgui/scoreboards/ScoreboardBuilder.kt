@@ -1,7 +1,9 @@
 package com.mattmx.ktgui.scoreboards
 
+import com.mattmx.ktgui.extensions.removeScoreboard
 import com.mattmx.ktgui.utils.legacyColor
 import com.mattmx.ktgui.scheduling.not
+import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.not
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -22,6 +24,8 @@ open class ScoreboardBuilder(
             field = value
         }
 
+    constructor(title: Component) : this(title, UUID.randomUUID().toString().replace("-", ""))
+
     // Holds the lines of text, we are able to remove them because of this
     private val scoreboardLines = arrayListOf<String>()
 
@@ -34,6 +38,18 @@ open class ScoreboardBuilder(
      * Shorthand operator for [add] function.
      */
     operator fun Component.unaryPlus() = add(this)
+
+    /**
+     * Adds a line and returns itself, to be used as a builder for
+     * java compatibility.
+     *
+     * @param line line of text to add.
+     * @return this
+     */
+    @JavaCompatibility
+    fun addLine(line: Component) = apply {
+        add(line)
+    }
 
     /**
      * Append a new line to the scoreboard.
@@ -96,6 +112,9 @@ open class ScoreboardBuilder(
     fun isShownFor(player: Player) = player.scoreboard == scoreboard
     fun showFor(player: Player) {
         player.scoreboard = scoreboard
+    }
+    fun removeFor(player: Player) {
+        player.removeScoreboard()
     }
 }
 

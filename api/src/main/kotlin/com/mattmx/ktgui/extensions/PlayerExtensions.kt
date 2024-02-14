@@ -2,6 +2,7 @@ package com.mattmx.ktgui.extensions
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.utils.JavaCompatibility
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
