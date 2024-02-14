@@ -128,6 +128,7 @@ object GuiManager : Listener {
         gui?.let {
             gui.destroy()
             players.remove(player)
+            player.openInventory.close()
         }
     }
 
