@@ -10,7 +10,9 @@ class ArgumentContext<T>(
 
     fun isEmpty() = value.isEmpty
 
-    fun getOrNull() = value.orElse(null)
+    fun getOrNull(): T? = value.orElse(null)
+
+    fun optional() = value
 
     override fun toString() = getOrNull().toString()
 }

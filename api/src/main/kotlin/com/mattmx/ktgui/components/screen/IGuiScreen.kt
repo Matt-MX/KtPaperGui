@@ -24,7 +24,7 @@ interface IGuiScreen {
 
     fun destroy() {}
 
-    fun addChild(child: IGuiButton<*>)
+    fun addChild(child: IGuiButton<*>) : IGuiScreen
 
     /**
      * Will be called if a player with this gui
