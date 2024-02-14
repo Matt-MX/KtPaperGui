@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-    - "refactor"
+    - "dev"
 
 jobs:
   test-build-gradle-project:
