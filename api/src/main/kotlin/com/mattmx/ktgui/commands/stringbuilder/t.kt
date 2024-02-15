@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.commands.stringbuilder
 
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
+import com.mattmx.ktgui.utils.StopWatch
 import org.bukkit.command.CommandSender
 
 fun main() {

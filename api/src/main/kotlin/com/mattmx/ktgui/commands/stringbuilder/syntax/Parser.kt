@@ -1,5 +1,8 @@
 package com.mattmx.ktgui.commands.stringbuilder.syntax
 
+import com.google.common.base.Stopwatch
+import com.mattmx.ktgui.utils.StopWatch
+
 class Parser(
     val source: String
 ) {
