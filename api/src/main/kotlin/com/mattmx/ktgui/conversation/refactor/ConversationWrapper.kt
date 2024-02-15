@@ -9,15 +9,20 @@ import org.bukkit.conversations.Conversable
 import org.bukkit.conversations.Conversation
 import org.bukkit.conversations.ConversationAbandonedEvent
 import org.bukkit.conversations.ConversationAbandonedListener
+import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.ConversationFactory
+import org.bukkit.conversations.ConversationPrefix
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.time.Duration
 import java.util.*
 
 class ConversationWrapper<T : Conversable>(
     plugin: JavaPlugin
 ) {
-    private val factory = ConversationFactory(plugin)
+    val factory = ConversationFactory(plugin)
+        .withModality(true)
+        .withLocalEcho(false)
     private val steps = arrayListOf<Step>()
     private var exit = Optional.empty<(ConversationAbandonedEvent) -> Unit>()
     private var start = Optional.empty<(T) -> Unit>()
@@ -33,7 +38,24 @@ class ConversationWrapper<T : Conversable>(
         this.exit = Optional.of(block)
         factory.addConversationAbandonedListener {
             block(it)
+            ongoingConversations.remove(it.context)
         }
+    }
+
+    infix fun timeout(duration: Duration) = apply {
+        factory.withTimeout(duration.toSeconds().toInt())
+    }
+
+    infix fun timeout(seconds: Int) = apply {
+        factory.withTimeout(seconds)
+    }
+
+    infix fun prefix(prefix: ConversationPrefix) = apply {
+        factory.withPrefix(prefix)
+    }
+
+    infix fun initialSessionData(data: Map<Any, Any>) = apply {
+        factory.withInitialSessionData(data)
     }
 
     infix fun start(block: T.() -> Unit) = apply {
@@ -69,6 +91,15 @@ class ConversationWrapper<T : Conversable>(
 
         start.ifPresent { it.invoke(conversable) }
 
+        ongoingConversations[conversation.context] = conversation
+
         return conversation
+    }
+
+    companion object {
+        // todo need to remove on any sort of ending!
+        private val ongoingConversations = hashMapOf<ConversationContext, Conversation>()
+
+        fun getConversation(context: ConversationContext) = ongoingConversations[context]
     }
 }

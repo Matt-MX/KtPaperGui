@@ -4,6 +4,7 @@ import com.mattmx.ktgui.conversation.refactor.steps.EnumConversationStep
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.time.Duration
 
 fun main() {
     conversation {
@@ -64,5 +65,5 @@ fun main() {
                 println(result.get() * 2)
             }
         }
-    }
+    } timeout 30
 }

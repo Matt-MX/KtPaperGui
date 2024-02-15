@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.conversation.refactor.steps
 
+import com.mattmx.ktgui.conversation.refactor.ConversationWrapper
 import com.mattmx.ktgui.conversation.refactor.result.ConversationResult
 import com.mattmx.ktgui.utils.legacy
 import net.kyori.adventure.text.Component
@@ -50,7 +51,11 @@ open class RawConversationStep<T : Any, C : Conversable> : StringPrompt(), Step 
 
     override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
         val validated = validate(input)
-        val result = ConversationResult(context, context.forWhom as C, validated)
+
+        val conversation = ConversationWrapper.getConversation(context)
+            ?: error("Unknown conversation, please report this bug to the developer, or read the documentation.")
+
+        val result = ConversationResult(context, conversation, context.forWhom as C, validated)
 
         val isValid = validated.isPresent && check.isPresent && check.get().invoke(result)
 
