@@ -81,7 +81,7 @@ class ConversationWrapper<T : Conversable>(
         }
     }
 
-    fun begin(conversable: T): Conversation {
+    infix fun begin(conversable: T): Conversation {
         build()
         val conversation = factory.buildConversation(conversable).apply { begin() }
 

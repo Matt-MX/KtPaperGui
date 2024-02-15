@@ -4,7 +4,6 @@ import com.mattmx.ktgui.conversation.refactor.steps.EnumConversationStep
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.time.Duration
 
 fun main() {
     conversation {
