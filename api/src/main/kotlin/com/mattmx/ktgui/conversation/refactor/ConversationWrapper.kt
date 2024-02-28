@@ -1,10 +1,12 @@
 package com.mattmx.ktgui.conversation.refactor
 
 import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.conversation.refactor.result.ConversationEnd
 import com.mattmx.ktgui.conversation.refactor.steps.Step
 import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.extensions.setOpenGui
+import com.mattmx.ktgui.scheduling.sync
 import org.bukkit.conversations.Conversable
 import org.bukkit.conversations.Conversation
 import org.bukkit.conversations.ConversationAbandonedEvent
@@ -26,7 +28,15 @@ class ConversationWrapper<T : Conversable>(
     private val steps = arrayListOf<Step>()
     private var exit = Optional.empty<(ConversationAbandonedEvent) -> Unit>()
     private var start = Optional.empty<(T) -> Unit>()
+
+    /**
+     * More than often, the conversation is created as the result of a button
+     * click in a gui. This means that we can skip boilerplate by initially
+     * closing the gui, and re-opening it.
+     */
+    private var startingGui = Optional.empty<IGuiScreen>()
     var closeGuiOnStart = true
+    var openGuiOnEnd = true
 
     var exitOn: String
         get() = ""
@@ -39,6 +49,19 @@ class ConversationWrapper<T : Conversable>(
         factory.addConversationAbandonedListener {
             block(it)
             ongoingConversations.remove(it.context)
+
+            // Next tick, in-case developer opened another
+            sync {
+                // Open previous gui if set and enabled
+                if (openGuiOnEnd && startingGui.isPresent && it.context.forWhom is Player) {
+                    val player = it.context.forWhom as Player
+
+                    // If not already has one open, open the old one by default.
+                    if (player.getOpenGui() == null) {
+                        startingGui.get().open(player)
+                    }
+                }
+            }
         }
     }
 
@@ -85,8 +108,13 @@ class ConversationWrapper<T : Conversable>(
         build()
         val conversation = factory.buildConversation(conversable).apply { begin() }
 
-        if (closeGuiOnStart && conversable is Player) {
-            GuiManager.forceClose(conversable)
+        if (conversable is Player) {
+            if (closeGuiOnStart) {
+                GuiManager.forceClose(conversable)
+            }
+            if (openGuiOnEnd) {
+                startingGui = Optional.ofNullable(conversable.getOpenGui())
+            }
         }
 
         start.ifPresent { it.invoke(conversable) }

@@ -31,10 +31,10 @@ open class GuiInfiniteScreen(
 
         if (firePreBuildEvent(player)) return
 
-        items2D.forEach { (coord, item) ->
-            if (coord.first >= x && coord.first <= x + 9
-                && coord.second >= y && coord.second <= y + rows) {
-                val normalSlot = (coord.second - y) * 9 + (coord.first - x)
+        items2D.forEach { (pos, item) ->
+            if (pos.first >= x && pos.first <= x + 9
+                && pos.second >= y && pos.second <= y + rows) {
+                val normalSlot = (pos.second - y) * 9 + (pos.first - x)
                 if (normalSlot >= 0 && normalSlot <= last()) {
                     inv.setItem(normalSlot, item.formatIntoItemStack(player))
                 }
