@@ -107,7 +107,9 @@ object GuiManager : Listener {
         val gui = e.player.getOpenGui()
         gui?.let {
             gui.quit(e)
-            gui.destroy()
+            if (getPlayers(gui).isEmpty()) {
+                gui.destroy()
+            }
             players.remove(e.player)
         }
     }
@@ -127,7 +129,9 @@ object GuiManager : Listener {
     fun forceClose(player: Player) {
         val gui = player.getOpenGui()
         gui?.let {
-            gui.destroy()
+            if (getPlayers(gui).isEmpty()) {
+                gui.destroy()
+            }
             players.remove(player)
             player.openInventory.close()
         }

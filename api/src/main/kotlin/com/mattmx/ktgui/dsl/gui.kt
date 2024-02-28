@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.dsl
 
 import com.mattmx.ktgui.components.EffectBlock
+import com.mattmx.ktgui.components.RefreshBlock
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.button.SignalButton
@@ -34,3 +35,5 @@ fun IGuiScreen.signalButton(material: Material, block: SignalButton.() -> Unit) 
 
 fun GuiScreen.effect(block: GuiScreen.() -> Unit) =
     EffectBlock(this, block).apply { this@effect.addEffect(this) }
+fun GuiScreen.refresh(repeat: Long, block: GuiScreen.() -> Unit) =
+    RefreshBlock(repeat, this, block).apply { this@refresh.addRefreshBlock(this) }

@@ -3,6 +3,7 @@ package com.mattmx.ktgui.components.screen
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.EffectBlock
+import com.mattmx.ktgui.components.RefreshBlock
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
@@ -11,6 +12,7 @@ import com.mattmx.ktgui.components.signal.Signal
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
+import com.mattmx.ktgui.scheduling.TaskTracker
 import com.mattmx.ktgui.scheduling.isAsync
 import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.legacy
@@ -29,14 +31,12 @@ import java.lang.Integer.max
 import java.lang.Integer.min
 import java.util.*
 import java.util.concurrent.Future
-import kotlin.collections.HashMap
 
 open class GuiScreen(
     title: Component = Component.empty(),
     var rows: Int = 1,
     var type: InventoryType? = null
 ) : IGuiScreen, GuiSignalOwner<EffectBlock<GuiScreen>> {
-
     constructor(title: Component, rows: Int) : this(title, rows, null)
     constructor(title: Component, type: InventoryType) : this(title, 0, type)
 
@@ -51,6 +51,7 @@ open class GuiScreen(
     // Can be used to identify dsl guis
     var id: String = UUID.randomUUID().toString()
     var items = hashMapOf<Int, GuiButton<*>>()
+    private val taskTracker = TaskTracker()
     override var currentlyProcessing: EffectBlock<GuiScreen>? = null
 
     var click = ClickCallback<IGuiButton<*>>()
@@ -246,6 +247,14 @@ open class GuiScreen(
         return 0
     }
 
+    fun addRefreshBlock(block: RefreshBlock<GuiScreen>) {
+        this.taskTracker.runAsyncRepeat(block.repeat, block.repeat) {
+            // todo only change slots modified!
+            block.block.invoke(this@GuiScreen)
+            refresh()
+        }
+    }
+
     @JavaCompatibility
     infix fun <S> createSignal(initial: S) = Signal(initial, this)
 
@@ -267,5 +276,9 @@ open class GuiScreen(
     override fun move(e: PlayerMoveEvent) {
         if (::moveCallback.isInitialized)
             moveCallback(e)
+    }
+
+    override fun destroy() {
+        taskTracker.cancelAll()
     }
 }

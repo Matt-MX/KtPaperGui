@@ -37,7 +37,8 @@ class KotlinGui : JavaPlugin() {
             "signals-list" to { SignalsListExample() },
             "hook" to { GuiHookExample() },
             "java-simple" to { JavaGuiExample() },
-            "java-new" to { JavaUpdateExample() }
+            "java-new" to { JavaUpdateExample() },
+            "refresh" to { RefreshBlockExample() }
         )
         GuiHookExample.registerListener(this)
 
