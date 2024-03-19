@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.7.10"
 }
 
-val version = "2.2"
+val version = "2.3"
 
 rootProject.version = version
 

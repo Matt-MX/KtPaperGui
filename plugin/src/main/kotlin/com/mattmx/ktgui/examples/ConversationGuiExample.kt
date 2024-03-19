@@ -25,15 +25,15 @@ class ConversationGuiExample() : GuiScreen(!"Conversation API", 1), Example {
             .click {
                 ClickType.LEFT {
                     // Create a new conversation
-                    player.showTitle(Title.title(!"&6&lConversation Started", !"&eUse the chat!"))
-
                     conversation<Player> {
                         /**
                          * The way you specify what you want to do is in order.
                          * We'll start with asking what their favorite fruit is.
                          */
                         getString {
-                            message = !"&6&lWhat's your fave fruit"
+                            title = !"&6&lWhat's your fave fruit"
+                            subtitle = !"&7Type in chat."
+
                             runs {
                                 if (result.orElse(null) == "oranges") {
                                     /**
@@ -59,14 +59,6 @@ class ConversationGuiExample() : GuiScreen(!"Conversation API", 1), Example {
                             } invalid {
                                 conversable.sendMessage(!"&cYou must be eating 5-10 fruit per day, go and fix that and come back.")
                             }
-                        }
-                        /**
-                         * Finally let's add a custom finish statement.
-                         * If you don't call this then KtGui will add one automatically.
-                         */
-                        finish("&cNice talking to you!".legacyColor()) {
-                            // Open the GUI again
-                            open(player)
                         }
 
                         exitOn = "cancel"

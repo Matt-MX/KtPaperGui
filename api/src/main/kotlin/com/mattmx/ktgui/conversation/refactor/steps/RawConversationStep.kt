@@ -18,12 +18,12 @@ open class RawConversationStep<T : Any, C : Conversable> : StringPrompt(), Step 
         private set
 
     var message: Component = Component.empty()
-    var messageCallback: Optional<(ConversationContext) -> Component> = Optional.empty()
+    private var messageCallback: Optional<(ConversationContext) -> Component> = Optional.empty()
     var title: Component = Component.empty()
     var subtitle: Component = Component.empty()
-    var callback: Optional<(ConversationResult<T, C>) -> Unit> = Optional.empty()
-    var check: Optional<(ConversationResult<T, C>) -> Boolean> = Optional.empty()
-    var invalid: Optional<(ConversationResult<T, C>) -> Unit> = Optional.empty()
+    private var callback: Optional<(ConversationResult<T, C>) -> Unit> = Optional.empty()
+    private var check: Optional<(ConversationResult<T, C>) -> Boolean> = Optional.empty()
+    private var invalid: Optional<(ConversationResult<T, C>) -> Unit> = Optional.empty()
     var repeatIfInvalid = true
 
     override fun getPromptText(context: ConversationContext): String {
