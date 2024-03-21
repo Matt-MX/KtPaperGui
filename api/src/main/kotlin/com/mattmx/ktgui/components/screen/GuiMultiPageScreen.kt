@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.components.screen
 
 import com.mattmx.ktgui.components.button.GuiButton
-import com.mattmx.ktgui.components.button.IGuiButton
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
@@ -80,7 +79,7 @@ open class GuiMultiPageScreen(
         screen.itemList = itemList.map { it.copy(screen) }.toMutableList() as ArrayList<GuiButton<*>>
         screen.type = type
         screen.rows = rows
-        screen.clickCallback = clickCallback
+        screen.click = click
         screen.moveCallback = moveCallback
         screen.closeCallback = closeCallback
         screen.quitCallback = quitCallback

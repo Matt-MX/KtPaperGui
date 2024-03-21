@@ -5,18 +5,27 @@ import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.extensions.setEnchantments
 import com.mattmx.ktgui.item.DslIBuilder
+import com.mattmx.ktgui.utils.JavaCompatibility
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
+import java.lang.StringBuilder
+import java.util.StringJoiner
+import java.util.function.Consumer
 
-open class GuiButton<T : GuiButton<T>>(
+open class GuiButton<T: GuiButton<T>>(
     material: Material = Material.STONE,
     var item: ItemStack? = ItemStack(material)
 ) : IGuiButton<T> {
+
+    constructor(material: Material) : this(material, null)
+    constructor(item: ItemStack) : this(item.type, item)
+
     lateinit var parent: IGuiScreen
         protected set
 
@@ -38,12 +47,18 @@ open class GuiButton<T : GuiButton<T>>(
         if (item == null) item = ItemStack(material)
     }
 
-    open fun lore(lore: MutableList<Component>.() -> Unit) : T {
-        item?.itemMeta?.let {
-            val newLore = mutableListOf<Component>()
-            lore.invoke(newLore)
+    open fun lore(block: MutableList<Component>.() -> Unit) : T {
+        item?.editMeta {
+            val newLore = mutableListOf<Component>().apply(block)
             it.lore(newLore.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
-            item?.itemMeta = it
+        }
+        return this as T
+    }
+
+    @JavaCompatibility
+    fun lore(vararg lines: Component) : T {
+        item?.editMeta {
+            it.lore(lines.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
         }
         return this as T
     }
@@ -140,17 +155,27 @@ open class GuiButton<T : GuiButton<T>>(
         return item
     }
 
-    inline fun click(block: ClickCallback<T>.() -> Unit) : T {
+    @JavaCompatibility
+    fun click(type: ClickType, block: Consumer<ButtonClickedEvent<T>>) : T {
+        click.handleClicks({ block.accept(this) }, type)
+        return this as T
+    }
+
+    fun test(b: Consumer<StringBuilder>) {
+
+    }
+
+    inline infix fun click(block: ClickCallback<T>.() -> Unit) : T {
         block.invoke(click)
         return this as T
     }
 
-    fun drag(cb: InventoryDragEvent.() -> Unit) : T {
+    infix fun drag(cb: InventoryDragEvent.() -> Unit) : T {
         dragCallback = cb
         return this as T
     }
 
-    inline fun enchant(ce: MutableMap<Enchantment, Int>.() -> Unit) : T {
+    inline infix fun enchant(ce: MutableMap<Enchantment, Int>.() -> Unit) : T {
         val enchantments = item?.itemMeta?.enchants?.toMutableMap() ?: mutableMapOf()
         ce.invoke(enchantments)
         val itemMeta = item?.itemMeta
@@ -180,7 +205,7 @@ open class GuiButton<T : GuiButton<T>>(
         return slots?.toMutableList() ?: parent.getSlots(this)
     }
 
-    fun update(player: Player) : T {
+    infix fun update(player: Player) : T {
         val itemStack = formatIntoItemStack(player)
         // get all slots that this item exists in
         // update every slot to this new [ItemStack]

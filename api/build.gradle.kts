@@ -1,12 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `maven-publish`
+    kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    `maven-publish`
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
     compileOnly(kotlin("reflect"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
 }
 
 tasks.test {
@@ -24,6 +30,13 @@ tasks.withType<KotlinCompile> {
 tasks {
     build {
         dependsOn(shadowJar)
+    }
+    shadowJar {
+        mergeServiceFiles()
+//        exclude {
+////            it.path.startsWith("kotlin") && !it.path.contains("reactive")
+//            it.name.startsWith("kotlin")
+//        }
     }
 }
 

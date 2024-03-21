@@ -3,14 +3,18 @@ package com.mattmx.ktgui.components.screen
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.EffectBlock
+import com.mattmx.ktgui.components.RefreshBlock
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.signal.GuiSignalOwner
+import com.mattmx.ktgui.components.signal.Signal
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
+import com.mattmx.ktgui.scheduling.TaskTracker
 import com.mattmx.ktgui.scheduling.isAsync
+import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.legacy
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -25,7 +29,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.lang.Integer.max
 import java.lang.Integer.min
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.Future
 
 open class GuiScreen(
@@ -33,6 +37,9 @@ open class GuiScreen(
     var rows: Int = 1,
     var type: InventoryType? = null
 ) : IGuiScreen, GuiSignalOwner<EffectBlock<GuiScreen>> {
+    constructor(title: Component, rows: Int) : this(title, rows, null)
+    constructor(title: Component, type: InventoryType) : this(title, 0, type)
+
     var title: Component = title
         set(value) {
             field = value
@@ -44,9 +51,11 @@ open class GuiScreen(
     // Can be used to identify dsl guis
     var id: String = UUID.randomUUID().toString()
     var items = hashMapOf<Int, GuiButton<*>>()
+    private val taskTracker = TaskTracker()
     override var currentlyProcessing: EffectBlock<GuiScreen>? = null
 
-    protected lateinit var clickCallback: ClickCallback<*>
+    var click = ClickCallback<IGuiButton<*>>()
+        protected set
     protected lateinit var closeCallback: (InventoryCloseEvent) -> Unit
     protected lateinit var quitCallback: (PlayerQuitEvent) -> Unit
     protected lateinit var moveCallback: (PlayerMoveEvent) -> Unit
@@ -173,7 +182,7 @@ open class GuiScreen(
         screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, GuiButton<*>>
         screen.type = type
         screen.rows = rows
-        screen.clickCallback = clickCallback
+        screen.click = click
         screen.closeCallback = closeCallback
         screen.moveCallback = moveCallback
         screen.quitCallback = quitCallback
@@ -190,7 +199,7 @@ open class GuiScreen(
     fun open(openCallback: (Player) -> Unit) = apply { this.openCallback = openCallback }
 
     infix fun click(clickCallbackBuilder: (ClickCallback<*>) -> Unit) = apply {
-        this.clickCallback = ClickCallback<IGuiButton<*>>().apply(clickCallbackBuilder)
+        this.click.apply(clickCallbackBuilder)
     }
 
     fun addEffect(effect: EffectBlock<GuiScreen>) {
@@ -199,7 +208,7 @@ open class GuiScreen(
         currentlyProcessing = null
     }
 
-    override fun addChild(child: IGuiButton<*>) {
+    override fun addChild(child: IGuiButton<*>) = apply {
         child.slots()?.forEach {
             items[it] = child as GuiButton<*>
         }
@@ -211,10 +220,12 @@ open class GuiScreen(
         val event = ButtonClickedEvent<IGuiButton<*>>(e.whoClicked as Player, e)
         if (button != null)
             event.button = button
-        if (::clickCallback.isInitialized) {
-            clickCallback.run(event)
+
+        click.run(event)
+
+        if (event.shouldContinueCallback()) {
+            button?.onButtonClick(event)
         }
-        button?.onButtonClick(event)
     }
 
     override fun drag(e: InventoryDragEvent) {
@@ -236,6 +247,22 @@ open class GuiScreen(
         return 0
     }
 
+    fun addRefreshBlock(block: RefreshBlock<GuiScreen>) {
+        this.taskTracker.runAsyncRepeat(block.repeat, block.repeat) {
+            // todo only change slots modified!
+            block.block.invoke(this@GuiScreen)
+            refresh()
+        }
+    }
+
+    @JavaCompatibility
+    infix fun <S> createSignal(initial: S) = Signal(initial, this)
+
+    @JavaCompatibility
+    infix fun effectBlock(block: Runnable) = apply {
+        EffectBlock(this) { block.run() }.apply { addEffect(this) }
+    }
+
     override fun close(e: InventoryCloseEvent) {
         if (::closeCallback.isInitialized)
             closeCallback(e)
@@ -249,5 +276,9 @@ open class GuiScreen(
     override fun move(e: PlayerMoveEvent) {
         if (::moveCallback.isInitialized)
             moveCallback(e)
+    }
+
+    override fun destroy() {
+        taskTracker.cancelAll()
     }
 }

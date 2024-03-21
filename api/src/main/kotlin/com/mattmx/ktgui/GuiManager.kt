@@ -18,13 +18,14 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.annotations.ApiStatus
+import java.util.Collections
 
 /**
  * Handles all GUI click events, as well
  * as events we might need to know while in a GUI.
  */
 object GuiManager : Listener {
-    private val players = hashMapOf<Player, IGuiScreen>()
+    private val players = Collections.synchronizedMap(hashMapOf<Player, IGuiScreen>())
     private var initialized = false
     private val defaultConfiguration = Configuration()
     private val configurations = hashMapOf<JavaPlugin, Configuration>()
@@ -106,7 +107,9 @@ object GuiManager : Listener {
         val gui = e.player.getOpenGui()
         gui?.let {
             gui.quit(e)
-            gui.destroy()
+            if (getPlayers(gui).isEmpty()) {
+                gui.destroy()
+            }
             players.remove(e.player)
         }
     }
@@ -126,8 +129,11 @@ object GuiManager : Listener {
     fun forceClose(player: Player) {
         val gui = player.getOpenGui()
         gui?.let {
-            gui.destroy()
+            if (getPlayers(gui).isEmpty()) {
+                gui.destroy()
+            }
             players.remove(player)
+            player.openInventory.close()
         }
     }
 

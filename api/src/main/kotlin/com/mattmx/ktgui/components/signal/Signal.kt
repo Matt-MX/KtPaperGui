@@ -19,14 +19,14 @@ import kotlin.reflect.KProperty
  * @param initial value of the [Signal]
  * @param owner owner object of this [Signal]
  */
-class Signal<T, V>(initial: V, private val owner: SignalOwner) : ReadWriteProperty<T, V> {
+class Signal<V>(initial: V, private val owner: SignalOwner) : ReadWriteProperty<Nothing?, V> {
     private var value: V = initial
     private val listeners = arrayListOf<SignalListener<V>>()
 
     /**
      * Returns current value of [value], will also call [GuiSignalOwner.addDependency].
      */
-    override fun getValue(thisRef: T, property: KProperty<*>): V {
+    override fun getValue(thisRef: Nothing?, property: KProperty<*>): V {
         owner.addDependency(this)
         return this.value
     }
@@ -34,7 +34,7 @@ class Signal<T, V>(initial: V, private val owner: SignalOwner) : ReadWriteProper
     /**
      * Sets the value of [value]
      */
-    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+    override fun setValue(thisRef: Nothing?, property: KProperty<*>, value: V) {
         this.value = value
         invokeListeners()
     }
@@ -47,6 +47,8 @@ class Signal<T, V>(initial: V, private val owner: SignalOwner) : ReadWriteProper
     operator fun invoke() = value.apply {
         owner.addDependency(this@Signal)
     }
+
+    fun get() = invoke()
 
     /**
      * Set the value of [value].

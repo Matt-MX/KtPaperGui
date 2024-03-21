@@ -4,12 +4,16 @@ import com.mattmx.ktgui.components.button.GuiButton;
 import com.mattmx.ktgui.components.button.GuiToggleButton;
 import com.mattmx.ktgui.components.screen.GuiScreen;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.mattmx.ktgui.item.ItemBuilderDslKt.itemBuilder;
 import static com.mattmx.ktgui.utils.ColorKt.component;
 
-public class JavaGuiExample extends GuiScreen {
+public class JavaGuiExample extends GuiScreen implements Example {
+
+    @SuppressWarnings({"rawtypes"})
     public JavaGuiExample() {
         super(component("&#7f52ffJava Example GUI"), 3, null);
         new GuiButton()
@@ -30,5 +34,11 @@ public class JavaGuiExample extends GuiScreen {
                     );
                     return null;
                 }).slot(22).childOf(this);
+    }
+
+
+    @Override
+    public void run(@NotNull Player player) {
+        open(player);
     }
 }

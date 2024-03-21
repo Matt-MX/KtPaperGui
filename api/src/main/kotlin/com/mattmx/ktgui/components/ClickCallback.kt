@@ -71,7 +71,7 @@ class ClickCallback<T : IGuiButton<*>> {
      * @param clickType click types to handle
      * @param callback callback for when clicked
      */
-    fun handleClicks(vararg clickType: ClickType, callback: ButtonClickedEvent<T>.() -> Unit) {
+    fun handleClicks(callback: ButtonClickedEvent<T>.() -> Unit, vararg clickType: ClickType, ) {
         callbacks[clickType.asList().toTypedArray()] = callback
     }
 

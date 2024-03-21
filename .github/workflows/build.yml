@@ -2,9 +2,11 @@ name: Build Gradle project
 
 on:
   push:
+    branches:
+    - "main"
 
 jobs:
-  build-gradle-project:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

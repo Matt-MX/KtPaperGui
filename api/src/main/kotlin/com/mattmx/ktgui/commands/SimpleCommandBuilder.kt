@@ -32,6 +32,9 @@ open class SimpleCommandBuilder(
     var noPermissions: (CommandInvocation.() -> Unit)? = null
         private set
 
+    constructor(name: String) : this(name, null)
+    constructor(name: String, vararg alias: String) : this(name, null, *alias)
+
     infix fun permission(permission: String) : SimpleCommandBuilder {
         this.permission = permission
         return this

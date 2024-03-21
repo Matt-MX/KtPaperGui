@@ -3,6 +3,9 @@ package com.mattmx.ktgui.examples
 import com.mattmx.ktgui.KotlinGui
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.conversation.refactor.conversation
+import com.mattmx.ktgui.conversation.refactor.getInteger
+import com.mattmx.ktgui.conversation.refactor.getString
 import com.mattmx.ktgui.dsl.conversation
 import com.mattmx.ktgui.utils.legacyColor
 import com.mattmx.ktgui.scheduling.not
@@ -21,64 +24,65 @@ class ConversationGuiExample() : GuiScreen(!"Conversation API", 1), Example {
         GuiButton()
             .click {
                 ClickType.LEFT {
-                    // Make sure to close the GUI, so they can type in chat
-                    forceClose(player)
                     // Create a new conversation
-                    player.showTitle(Title.title(!"&6&lConversation Started", !"&eUse the chat!"))
-                    conversation(KotlinGui.plugin!!) {
+                    conversation<Player> {
                         /**
                          * The way you specify what you want to do is in order.
                          * We'll start with asking what their favorite fruit is.
                          */
-                        stringPrompt("&6&lWhat's your fave fruit".legacyColor()) { c, i ->
-                            if (i == "oranges") {
-                                /**
-                                 * If the input is "oranges" then reply with something else
-                                 * KtGui blocks other messages to the client to not "clog" chat.
-                                 * This means you should use "c.fromWhom.sendRawMessage" to send messages.
-                                 */
-                                c.forWhom.sendRawMessage("&eI love oranges".legacyColor())
-                            } else c.forWhom.sendRawMessage("&eEwwww".legacyColor())
+                        getString {
+                            title = !"&6&lWhat's your fave fruit"
+                            subtitle = !"&7Type in chat."
+
+                            runs {
+                                if (result.orElse(null) == "oranges") {
+                                    /**
+                                     * If the input is "oranges" then reply with something else
+                                     * KtGui blocks other messages to the client to not "clog" chat.
+                                     * This means you should use "c.fromWhom.sendRawMessage" to send messages.
+                                     */
+                                    conversable.sendMessage("&eI love oranges".legacyColor())
+                                } else conversable.sendMessage("&eEwwww".legacyColor())
+                                context.setSessionData("fruit", result)
+                            }
                         }
                         /**
                          * We can also get numeric inputs, and specify a range of valid responses.
                          * We are going to ask how many fruit they eat.
                          * If the response isn't between 5-10 inclusive then we should tell them off.
                          */
-                        numberPrompt(
-                            "&6&lHow many fruit do you eat a day?".legacyColor(),
-                            "&cYou should be eating 5, go fix that".legacyColor(),
-                            (5..10).toList()) { c, i ->
-                            c.forWhom.sendRawMessage("&eYou inputted $i".legacyColor())
+                        getInteger {
+                            range = (5..10)
+                            runs {
+                                val fruit = context.getSessionData("fruit") ?: "fruit"
+                                conversable.sendMessage(!"&cYou ate $result ${fruit}s today.")
+                            } invalid {
+                                conversable.sendMessage(!"&cYou must be eating 5-10 fruit per day, go and fix that and come back.")
+                            }
                         }
-                        /**
-                         * Finally let's add a custom finish statement.
-                         * If you don't call this then KtGui will add one automatically.
-                         */
-                        finish("&cNice talking to you!".legacyColor()) {
-                            // Open the GUI again
-                            open(player)
+
+                        exitOn = "cancel"
+                        exit {
+                            player.sendMessage(!"&bExited Conversation")
                         }
-                    }.abandon {
-                        open(player)
-                        player.sendMessage("&cExited Conversation".legacyColor())
-                    }.exitOn("exit") // If the player types "exit" the conversation is ended.
-                        .build(player).begin() // Build and begin the conversation.
+                    } begin player
                 }
                 ClickType.RIGHT {
-                    forceClose(player)
-                    conversation(KotlinGui.plugin!!) {
+                    conversation<Player> {
                         /**
                          * If the player right clicks then they can rename the current GUI title.
                          * They can type "exit" to cancel.
                          */
-                        stringPrompt("&6&lEnter a GUI name".legacyColor()) { c, i ->
-                            i?.let { title(!i) }
+                        getString {
+                            message = !"&6&lEnter a new GUI name"
+                            runs {
+                                title = !result.get()
+                            }
                         }
-                        abandon {
-                            openAndFormat(player)
+                        exit {
+                            open(player)
                         }
-                    }.exitOn("exit").build(player).begin()
+                    } begin player
                 }
             }.lore {
                 add(!"&eLeft &7for fruit questions")
