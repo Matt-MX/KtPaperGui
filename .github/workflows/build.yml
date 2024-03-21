@@ -1,9 +1,7 @@
 name: Build Gradle project
 
 on:
-  push:
-    branches:
-    - "main"
+  push: [main]
 
 jobs:
   build-and-release:
