@@ -263,6 +263,11 @@ open class GuiScreen(
         EffectBlock(this) { block.run() }.apply { addEffect(this) }
     }
 
+    @JavaCompatibility
+    fun refreshBlock(repeat: Long, block: Runnable) = apply {
+        RefreshBlock(repeat, this) { block.run() }.apply { addRefreshBlock(this) }
+    }
+
     override fun close(e: InventoryCloseEvent) {
         if (::closeCallback.isInitialized)
             closeCallback(e)

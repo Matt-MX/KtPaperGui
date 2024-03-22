@@ -5,8 +5,10 @@ import com.mattmx.ktgui.commands.stringbuilder.arg.ArgumentContext
 import com.mattmx.ktgui.commands.stringbuilder.syntax.*
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import com.mattmx.ktgui.configuration.Configuration
+import com.mattmx.ktgui.utils.JavaCompatibility
 import org.bukkit.command.CommandSender
 import java.util.Optional
+import java.util.function.Consumer
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -53,6 +55,13 @@ class StringCommand<T : CommandSender>(
 
     infix fun runs(block: RunnableCommandContext<T>.() -> Unit) = apply {
         this.runs = Optional.of(block)
+    }
+
+    @JavaCompatibility
+    fun runs(block: Consumer<RunnableCommandContext<T>>) = apply {
+        this.runs = Optional.of {
+            block.accept(it)
+        }
     }
 
     infix fun args(block: ArgumentOptions<T>.() -> Unit) = apply {
