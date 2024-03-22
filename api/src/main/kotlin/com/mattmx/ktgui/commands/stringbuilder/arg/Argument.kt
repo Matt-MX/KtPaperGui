@@ -2,6 +2,8 @@ package com.mattmx.ktgui.commands.stringbuilder.arg
 
 import com.mattmx.ktgui.commands.stringbuilder.RawCommandContext
 import com.mattmx.ktgui.commands.stringbuilder.syntax.VariableType
+import com.mattmx.ktgui.commands.suggestions.CommandSuggestionRegistry
+import com.mattmx.ktgui.commands.suggestions.SuggestionInvocation
 import org.bukkit.command.CommandSender
 import java.util.*
 
@@ -27,13 +29,25 @@ class Argument<T>(
 
     fun suggestions() = suggests.orElse(null)
 
-    fun getDefaultSuggestions() = if (suggests.isPresent) {
-        val context = RawCommandContext<CommandSender>(emptyList())
-        suggests.get().invoke(context)
-    } else listOf()
+    fun getDefaultSuggestions() : List<String>? {
+        return if (suggests.isPresent) {
+            val context = RawCommandContext<CommandSender>(emptyList())
+            suggests.get().invoke(context)
+        } else {
+            val suggestion = CommandSuggestionRegistry.get(type.typeName)
+            val context = SuggestionInvocation(emptyList(), Optional.empty())
+            if (suggestion.isPresent) suggestion.get().getSuggestion(context) else null
+        }
+    }
 
     enum class Type {
         SINGLE,
         GREEDY
     }
+
+    operator fun invoke(block: Argument<T>) {}
+
+    operator fun invoke() = ""
+
+    override fun toString() = "<$name${if (type.isOptional) "?" else ""}:${type.typeName}${if (type.isVararg) "..." else ""}>"
 }

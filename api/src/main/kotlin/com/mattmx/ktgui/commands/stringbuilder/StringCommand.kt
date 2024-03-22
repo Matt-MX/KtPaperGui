@@ -2,14 +2,13 @@ package com.mattmx.ktgui.commands.stringbuilder
 
 import com.mattmx.ktgui.commands.stringbuilder.arg.Argument
 import com.mattmx.ktgui.commands.stringbuilder.arg.ArgumentContext
-import com.mattmx.ktgui.commands.stringbuilder.syntax.CommandDeclarationSyntax
-import com.mattmx.ktgui.commands.stringbuilder.syntax.Parser
-import com.mattmx.ktgui.commands.stringbuilder.syntax.SubCommandDeclarationSyntax
-import com.mattmx.ktgui.commands.stringbuilder.syntax.VariableDeclarationSyntax
+import com.mattmx.ktgui.commands.stringbuilder.syntax.*
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import com.mattmx.ktgui.configuration.Configuration
 import org.bukkit.command.CommandSender
 import java.util.Optional
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 class StringCommand<T : CommandSender>(
     source: String
@@ -171,3 +170,7 @@ class StringCommand<T : CommandSender>(
 
 inline operator fun <T : CommandSender> String.invoke(block: StringCommand<T>.() -> Unit) =
     StringCommand<T>(this).apply(block)
+
+fun <T> argument(type: String, isVarArg: Boolean = false) = ReadOnlyProperty { ref: Nothing?, property: KProperty<*> ->
+    Argument<T>(property.name, VariableType(type, isVarArg, false))
+}
