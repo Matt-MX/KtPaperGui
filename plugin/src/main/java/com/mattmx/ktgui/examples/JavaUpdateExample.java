@@ -18,7 +18,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+<<<<<<< Updated upstream
 import static com.mattmx.ktgui.dsl.EventKt.javaEvent;
+=======
+import static com.mattmx.ktgui.dsl.EventKt.event;
+import static com.mattmx.ktgui.dsl.EventKt.event;
+import static com.mattmx.ktgui.scheduling.SchedulingKt.sync;
+import static com.mattmx.ktgui.utils.ColorKt.component;
+>>>>>>> Stashed changes
 
 public class JavaUpdateExample implements Example {
     @Override

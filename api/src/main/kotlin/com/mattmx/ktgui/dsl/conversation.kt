@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.dsl
 
+import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.conversation.ConversationBuilder
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.plugin.java.JavaPlugin
@@ -12,8 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin
  *
  * @return the conversation created
  */
-inline fun conversation(plugin: JavaPlugin, block: ConversationBuilder.() -> Unit) : ConversationBuilder {
-    val conversationFactory = ConversationFactory(plugin)
+inline fun <T> T.conversation(block: ConversationBuilder.() -> Unit) : ConversationBuilder {
+    val conversationFactory = ConversationFactory(GuiManager.getPlugin(this!!::class.java))
         .withLocalEcho(false)
         .withModality(true)
     val conversationBuilder = ConversationBuilder(conversationFactory)

@@ -14,6 +14,7 @@ import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
 import com.mattmx.ktgui.scheduling.TaskTracker
 import com.mattmx.ktgui.scheduling.isAsync
+import com.mattmx.ktgui.scheduling.taskTracker
 import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.legacy
 import net.kyori.adventure.text.Component
@@ -51,7 +52,7 @@ open class GuiScreen(
     // Can be used to identify dsl guis
     var id: String = UUID.randomUUID().toString()
     var items = hashMapOf<Int, GuiButton<*>>()
-    private val taskTracker = TaskTracker()
+    private val taskTracker = taskTracker()
     override var currentlyProcessing: EffectBlock<GuiScreen>? = null
 
     var click = ClickCallback<IGuiButton<*>>()
@@ -150,7 +151,7 @@ open class GuiScreen(
     }
 
     private fun firePreBuildEventAsync(player: Player): Future<Boolean> {
-        return Bukkit.getScheduler().callSyncMethod(GuiManager.owningPlugin) {
+        return Bukkit.getScheduler().callSyncMethod(GuiManager.getAnyPlugin()) {
             firePreBuildEventSync(player)
         }
     }
@@ -158,7 +159,7 @@ open class GuiScreen(
     fun openIfNotCancelled(player: Player, inventory: Inventory) {
         if (!firePreGuiOpenEvent(player)) {
             if (isAsync()) {
-                Bukkit.getScheduler().runTask(GuiManager.owningPlugin) { ->
+                Bukkit.getScheduler().runTask(GuiManager.getAnyPlugin()) { ->
                     player.openInventory(inventory)
                     player.setOpenGui(this)
                     openCallback?.invoke(player)

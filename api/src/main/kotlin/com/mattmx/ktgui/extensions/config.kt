@@ -62,14 +62,14 @@ fun <T : GuiButton<T>> String.translatableButton(config: FileConfiguration, butt
         val enchants = arrayListOf<Pair<Enchantment, Int>>()
         for (enchantmentLine in section.getStringList("enchantments")) {
             if (!enchantmentLine.matches(ENCHANT_LINE_REGEX)) {
-                GuiManager.owningPlugin.logger.info("Translatable button (${this}) for config '${config.name}': Enchantment '$enchantmentLine' is invalid.")
+                GuiManager.getAnyPlugin().logger.info("Translatable button (${this}) for config '${config.name}': Enchantment '$enchantmentLine' is invalid.")
                 continue
             }
 
             val split = enchantmentLine.split(":")
             val enchantment = Enchantment.getByKey(NamespacedKey.fromString(split.getOrNull(0) ?: enchantmentLine))
             if (enchantment == null) {
-                GuiManager.owningPlugin.logger.info("Translatable button (${this}) for config '${config.name}': Enchantment '${split[0]}' is not recognized.")
+                GuiManager.getAnyPlugin().logger.info("Translatable button (${this}) for config '${config.name}': Enchantment '${split[0]}' is not recognized.")
                 continue
             }
             val level = split.getOrNull(1)?.toIntOrNull() ?: 1

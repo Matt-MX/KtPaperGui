@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.scheduling
 
+import com.mattmx.ktgui.GuiManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
@@ -8,23 +9,11 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 /**
- * Dummy object to store the plugin instance in, so we don't have to provide it for
- * every single method call.
- *
- * You must initialize this before calling any other methods
- *
- * @author MattMX
- */
-object Scheduling {
-    lateinit var plugin: JavaPlugin
-}
-
-/**
  * Forces code to run in an async context.
  *
  * @param block to run
  */
-fun forceAsync(block: () -> Unit) {
+fun <T> T.forceAsync(block: () -> Unit) {
     if (!isAsync()) async { block() }
     else block()
 }
@@ -34,7 +23,7 @@ fun forceAsync(block: () -> Unit) {
  *
  * @param block to run
  */
-fun forceMainThread(block: () -> Unit) {
+fun <T> T.forceMainThread(block: () -> Unit) {
     if (isAsync()) sync { block() }
     else block()
 }
@@ -53,9 +42,9 @@ fun isAsync() = !Bukkit.isPrimaryThread()
  * @author MattMX
  * @param task to execute
  */
-fun sync(task: BukkitTask.() -> Unit): BukkitTask {
+fun <T> T.sync(task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTask(Scheduling.plugin) { -> task(delayedInit!!) }
+    delayedInit = Bukkit.getScheduler().runTask(GuiManager.getPlugin(this!!::class.java)) { -> task(delayedInit!!) }
     return delayedInit
 }
 
@@ -69,9 +58,9 @@ fun sync(task: BukkitTask.() -> Unit): BukkitTask {
  * @param maxIterations how many times we want to do this before cancelling automatically
  * @param task to execute
  */
-fun syncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): BukkitTask {
+fun <T> T.syncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskTimer(Scheduling.plugin, {-> task(delayedInit!!) }, delay, period)
+    delayedInit = Bukkit.getScheduler().runTaskTimer(GuiManager.getPlugin(this!!::class.java), {-> task(delayedInit!!) }, delay, period)
     return delayedInit
 }
 
@@ -82,9 +71,9 @@ fun syncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): Bukk
  * @param delay the delay of when this will execute, must be +ve (in ticks)
  * @param task to execute
  */
-fun syncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
+fun <T> T.syncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskLater(Scheduling.plugin, {-> task(delayedInit!!) }, delay)
+    delayedInit = Bukkit.getScheduler().runTaskLater(GuiManager.getPlugin(this!!::class.java), {-> task(delayedInit!!) }, delay)
     return delayedInit
 }
 
@@ -94,9 +83,9 @@ fun syncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
  * @author MattMX
  * @param task to execute asynchronously
  */
-fun async(task: BukkitTask.() -> Unit): BukkitTask {
+fun <T> T.async(task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskAsynchronously(Scheduling.plugin) { -> task(delayedInit!!) }
+    delayedInit = Bukkit.getScheduler().runTaskAsynchronously(GuiManager.getPlugin(this!!::class.java)) { -> task(delayedInit!!) }
     return delayedInit
 }
 
@@ -110,9 +99,9 @@ fun async(task: BukkitTask.() -> Unit): BukkitTask {
  * @param maxIterations how many times we want to do this before cancelling automatically
  * @param task to execute
  */
-fun asyncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): BukkitTask {
+fun <T> T.asyncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskTimerAsynchronously(Scheduling.plugin, {-> task(delayedInit!!) }, delay, period)
+    delayedInit = Bukkit.getScheduler().runTaskTimerAsynchronously(GuiManager.getPlugin(this!!::class.java), {-> task(delayedInit!!) }, delay, period)
     return delayedInit
 }
 
@@ -123,9 +112,9 @@ fun asyncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): Buk
  * @param delay the delay of when this will execute, must be +ve (in ticks)
  * @param task to execute
  */
-fun asyncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
+fun <T> T.asyncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskLaterAsynchronously(Scheduling.plugin, {-> task(delayedInit!!) }, delay)
+    delayedInit = Bukkit.getScheduler().runTaskLaterAsynchronously(GuiManager.getPlugin(this!!::class.java), {-> task(delayedInit!!) }, delay)
     return delayedInit
 }
 
@@ -136,7 +125,7 @@ fun asyncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
  * @author MattMX
  * @param block that returns our value
  */
-fun <T> future(block: () -> T) : CompletableFuture<T> {
+fun <T, V> V.future(block: () -> T) : CompletableFuture<T> {
     val future = CompletableFuture<T>()
     async {
         val result = block()
@@ -152,8 +141,8 @@ fun <T> future(block: () -> T) : CompletableFuture<T> {
  * @author MattMX
  * @param block that returns our value
  */
-fun <T> call(block: () -> T) : Future<T> {
-    return Bukkit.getScheduler().callSyncMethod(Scheduling.plugin, block)
+inline fun <T, reified V> V.call(noinline block: () -> T) : Future<T> {
+    return Bukkit.getScheduler().callSyncMethod(GuiManager.getPlugin(V::class.java), block)
 }
 
 /**
