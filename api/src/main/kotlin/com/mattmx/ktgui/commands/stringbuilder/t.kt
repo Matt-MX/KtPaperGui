@@ -1,59 +1,45 @@
 package com.mattmx.ktgui.commands.stringbuilder
 
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
-import com.mattmx.ktgui.utils.StopWatch
 import org.bukkit.command.CommandSender
 
 fun main() {
-    val player by argument<String>("player")
-    val msg by argument<String>("msg", true)
+    val player by argument<FakePlayer>("string")
+    val msg by argument<String>("string", true)
 
     val testCmd =
-        "/test $player $msg"<CommandSender> {
+        "/msg $player $msg"<CommandSender> {
             runs {
-                val msg by argument()
-
-                println("[${player()}]: ${msg()}")
+                println("[${player()?.name}]: ${msg()}")
             }
         } missing {
             println("Missing argument '${missingArgument.name()}'")
-        } args {
-            "player" {
-                description = "The username of the player you wish to message. "
-            }
-            "msg" {
-                description = "The message to send to the player. "
+        } invalid {
+            player {
+                println("That user is not online!")
             }
         }
 
-//    "/hello"<CommandSender> {
-//        runs {
-//            println("hello")
-//        }
-//    } + "world"<CommandSender> {
-//        runs {
-//            println("hello world")
-//        }
-//    } + "<msg:string...?>"<CommandSender> {
-//        runs {
-//            val msg by argument()
-//            println("hello world ($msg)")
-//        }
-//    }
+    println(testCmd.source)
 
-    testCmd.invoke(RawCommandContext(listOf("mattmx", "hello", "world")))
-    testCmd.invoke(RawCommandContext(listOf("1etho", "foo", "bar")))
+    val splitArgs = { s: String -> s.split(" ")  }
+
+    testCmd.invoke(RawCommandContext(splitArgs("MattMX hello world")))
+    testCmd.invoke(RawCommandContext(splitArgs("1etho foo bar")))
     // Empty command invocation
+    testCmd.invoke(RawCommandContext(listOf("GabbySimon")))
     testCmd.invoke(RawCommandContext(listOf()))
 
-    println(testCmd.getUsage(CommandUsageOptions().invoke {
-        arguments {
-            prefix = "<"
-            suffix = " />"
-            showDescriptions = true
-            descriptionsPrefix = "[ ] "
-        }
-    }))
+    println(
+        testCmd.getUsage(
+            CommandUsageOptions {
+                arguments {
+                    showDescriptions = true
+                    descriptionsPrefix = "[] "
+                }
+            }
+        )
+    )
 
     val foo = +
     "/foo"<CommandSender> {

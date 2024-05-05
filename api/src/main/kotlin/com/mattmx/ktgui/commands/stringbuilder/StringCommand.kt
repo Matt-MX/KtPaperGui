@@ -3,6 +3,7 @@ package com.mattmx.ktgui.commands.stringbuilder
 import com.mattmx.ktgui.commands.stringbuilder.arg.Argument
 import com.mattmx.ktgui.commands.stringbuilder.arg.ArgumentContext
 import com.mattmx.ktgui.commands.stringbuilder.syntax.*
+import com.mattmx.ktgui.commands.suggestions.SuggestionInvocation
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import com.mattmx.ktgui.configuration.Configuration
 import com.mattmx.ktgui.utils.JavaCompatibility
@@ -13,7 +14,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 class StringCommand<T : CommandSender>(
-    source: String
+    val source: String
 ) {
     lateinit var name: String
     var aliases = arrayOf<String>()
@@ -22,6 +23,7 @@ class StringCommand<T : CommandSender>(
     private var permission: Optional<(RunnableCommandContext<T>) -> Boolean> = Optional.empty()
     private var runs: Optional<(RunnableCommandContext<T>) -> Unit> = Optional.empty()
     private var missing: Optional<(MissingArgContext<T>) -> Unit> = Optional.empty()
+    private var invalid: Optional<(InvalidArgContext<T>) -> Unit> = Optional.empty()
 
     init {
         val parsed = Parser(source).parse()
@@ -53,6 +55,10 @@ class StringCommand<T : CommandSender>(
         this.missing = Optional.of(block)
     }
 
+    infix fun invalid(block: InvalidArgContext<T>.() -> Unit) = apply {
+        this.invalid = Optional.of(block)
+    }
+
     infix fun runs(block: RunnableCommandContext<T>.() -> Unit) = apply {
         this.runs = Optional.of(block)
     }
@@ -80,13 +86,6 @@ class StringCommand<T : CommandSender>(
             // todo could also have parameters
             subcommands += it
         }
-
-    fun getSuggestions(context: RawCommandContext<T>): List<String> {
-        val currentArgument = getCurrentArgument(context)
-        val suggestions = currentArgument?.suggestions()?.invoke(context) ?: return emptyList()
-        val lastArgument = context.rawArgs.lastOrNull() ?: ""
-        return suggestions.filter { suggestion -> suggestion.startsWith(lastArgument, true) }.toList()
-    }
 
     /**
      * Used to find the current argument, presuming we are on the current sub-command
@@ -131,7 +130,17 @@ class StringCommand<T : CommandSender>(
                 missing.ifPresent { it.invoke(missingArgContext) }
                 return
             } else {
-                argumentValues[arg.name()] = ArgumentContext(Optional.ofNullable(value), arg as Argument<String>)
+                val actualValue = if (arg.suggests.isPresent) {
+                    arg.suggests.get().getValue(value.toString())
+                } else value
+
+                if (actualValue == null) {
+                    val invalidArgumentContext = InvalidArgContext<T>(arg, context.rawArgs)
+                    invalid.ifPresent { it.invoke(invalidArgumentContext) }
+                    return
+                }
+
+                argumentValues[arg.name()] = arg.createContext(value, actualValue)
             }
         }
 
@@ -159,8 +168,8 @@ class StringCommand<T : CommandSender>(
                         if (!suggestions.isNullOrEmpty()) {
                             val opt = options.arguments
                             "${opt.suggestionsChar}${opt.suggestionsPrefix}${suggestions.joinToString(opt.suggestionsDivider)}${opt.suggestionsSuffix}"
-                        } else "${options.arguments.typeChar}${arg.type().typeName}"
-                    } else "${options.arguments.typeChar}${arg.type().typeName}"
+                        } else "${options.arguments.typeChar}${arg.type().typeName}${if (arg.type().isVararg) "..." else ""}"
+                    } else "${options.arguments.typeChar}${arg.type().typeName}${if (arg.type().isVararg) "..." else ""}"
 
                 // Apply descriptions
                 if (options.arguments.showDescriptions) {
@@ -180,6 +189,6 @@ class StringCommand<T : CommandSender>(
 inline operator fun <T : CommandSender> String.invoke(block: StringCommand<T>.() -> Unit) =
     StringCommand<T>(this).apply(block)
 
-fun <T> argument(type: String, isVarArg: Boolean = false) = ReadOnlyProperty { ref: Nothing?, property: KProperty<*> ->
+fun <T : Any> argument(type: String, isVarArg: Boolean = false) = ReadOnlyProperty { ref: Nothing?, property: KProperty<*> ->
     Argument<T>(property.name, VariableType(type, isVarArg, false))
 }

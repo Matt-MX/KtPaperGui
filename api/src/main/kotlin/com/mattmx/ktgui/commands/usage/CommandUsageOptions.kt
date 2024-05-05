@@ -41,4 +41,8 @@ class CommandUsageOptions {
     }
 
     inline operator fun invoke(block: CommandUsageOptions.() -> Unit) = apply(block)
+
+    companion object {
+        inline operator fun invoke(block: CommandUsageOptions.() -> Unit) = CommandUsageOptions().apply(block)
+    }
 }
