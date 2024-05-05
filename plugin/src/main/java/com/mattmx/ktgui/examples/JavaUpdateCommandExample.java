@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.examples;
 
 import com.mattmx.ktgui.commands.SimpleCommandBuilder;
-import com.mattmx.ktgui.commands.stringbuilder.RunnableCommandContext;
 import com.mattmx.ktgui.commands.stringbuilder.StringCommand;
 import com.mattmx.ktgui.commands.stringbuilder.arg.ArgumentContext;
 import net.kyori.adventure.text.Component;
@@ -26,7 +25,7 @@ public class JavaUpdateCommandExample {
 
         new StringCommand<CommandSender>("/hello <arg:string>")
                 .runs((context) -> {
-                    ArgumentContext<String> arg = context.getArgument("arg");
+                    ArgumentContext<String> arg = context.getArgumentContext("arg");
 
                     if (arg == null) {
                         System.out.println("arg was null");
