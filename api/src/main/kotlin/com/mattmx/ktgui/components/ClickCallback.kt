@@ -2,11 +2,20 @@ package com.mattmx.ktgui.components
 
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.event.ContinuousEventCallback
 import org.bukkit.event.inventory.ClickType
 
 class ClickCallback<T : IGuiButton<*>> {
-    private var callbacks = mutableMapOf<Array<ClickType>, ButtonClickedEvent<T>.() -> Unit>()
-    private lateinit var anyCallback: (ButtonClickedEvent<T>.() -> Unit)
+    private var callbacks = arrayListOf<Pair<ClickType, ContinuousEventCallback<ButtonClickedEvent<T>>>>()
+    private var any = ContinuousEventCallback<ButtonClickedEvent<T>>()
+
+    private fun getOrDefault(clickType: ClickType): ContinuousEventCallback<ButtonClickedEvent<T>> =
+        callbacks.firstOrNull { it.first == clickType }?.second
+            ?: run {
+                val cb = ContinuousEventCallback<ButtonClickedEvent<T>>()
+                callbacks.add(clickType to cb)
+                return cb
+            }
 
     /**
      * Called when a click event is received for this GUI element.
@@ -17,17 +26,16 @@ class ClickCallback<T : IGuiButton<*>> {
         if (!event.shouldContinueCallback()) return
 
         // Get relevant callbacks
-        if (callbacks.isEmpty() && ::anyCallback.isInitialized) {
-            return anyCallback(event as ButtonClickedEvent<T>)
+        if (!any.invoke(event as ButtonClickedEvent<T>)) {
+            return
         }
 
-        val relevant = callbacks.entries.filter { it.key.contains(event.event.click) }
-        if (relevant.isEmpty() && ::anyCallback.isInitialized) {
-            return anyCallback(event as ButtonClickedEvent<T>)
-        }
+        val relevant =
+            callbacks.filter { it.first == event.event.click }
+
         relevant.forEach {
-            if (!event.shouldContinueCallback()) return
-            it.value(event as ButtonClickedEvent<T>)
+            if (!(it.second.invoke(event)))
+                return@forEach
         }
     }
 
@@ -50,7 +58,7 @@ class ClickCallback<T : IGuiButton<*>> {
      * }</pre>
      */
     fun any(callback: ButtonClickedEvent<T>.() -> Unit) {
-        anyCallback = callback
+        any.invoke(callback)
     }
 
     /**
@@ -71,16 +79,19 @@ class ClickCallback<T : IGuiButton<*>> {
      * @param clickType click types to handle
      * @param callback callback for when clicked
      */
-    fun handleClicks(callback: ButtonClickedEvent<T>.() -> Unit, vararg clickType: ClickType, ) {
-        callbacks[clickType.asList().toTypedArray()] = callback
+    fun handleClicks(callback: ButtonClickedEvent<T>.() -> Unit, vararg clickType: ClickType) {
+        for (click in clickType) {
+            val cb = getOrDefault(click)
+            cb.invoke(callback)
+        }
     }
 
     operator fun ClickType.invoke(callback: ButtonClickedEvent<T>.() -> Unit) {
-        callbacks[arrayOf(this)] = callback
+        handleClicks(callback, this)
     }
 
     operator fun Array<ClickType>.invoke(callback: ButtonClickedEvent<T>.() -> Unit) {
-        callbacks[this] = callback
+        handleClicks(callback, *this)
     }
 
     operator fun ClickType.plus(clickType: ClickType) = arrayOf(this, clickType)
@@ -102,17 +113,13 @@ class ClickCallback<T : IGuiButton<*>> {
     fun unknown(callback: ButtonClickedEvent<T>.() -> Unit) = ClickType.UNKNOWN.invoke(callback)
 
     fun clear() {
-        anyCallback = {}
+        any.clear()
         callbacks.clear()
     }
 
     fun clone() = ClickCallback<T>().let { copy ->
-        if (::anyCallback.isInitialized)
-            copy.anyCallback = this.anyCallback
-        copy.callbacks = mutableMapOf()
-        for ((types, callback) in callbacks) {
-            copy.callbacks[types] = callback
-        }
+        copy.any = any.clone()
+        copy.callbacks = ArrayList(callbacks.map { it.first to it.second.clone() })
         return@let copy
     }
 }

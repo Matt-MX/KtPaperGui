@@ -170,6 +170,18 @@ open class GuiButton<T: GuiButton<T>>(
         return this as T
     }
 
+    infix fun rightClick(block: ButtonClickedEvent<T>.() -> Unit) = apply {
+        click.right(block)
+    } as T
+
+    infix fun leftClick(block: ButtonClickedEvent<T>.() -> Unit) = apply {
+        click.left(block)
+    } as T
+
+    infix fun dropClick(block: ButtonClickedEvent<T>.() -> Unit) = apply {
+        click.drop(block)
+    } as T
+
     infix fun drag(cb: InventoryDragEvent.() -> Unit) : T {
         dragCallback = cb
         return this as T
