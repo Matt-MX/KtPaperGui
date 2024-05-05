@@ -2,6 +2,7 @@ package com.mattmx.ktgui
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.configuration.Configuration
+import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.scheduling.Scheduling
 import com.mattmx.ktgui.scheduling.TaskTracker
@@ -112,6 +113,8 @@ object GuiManager : Listener {
             }
             players.remove(e.player)
         }
+
+        ActionCoolDown.removeUsers(e.player, e.player.uniqueId, e.player.name)
     }
 
     @EventHandler
