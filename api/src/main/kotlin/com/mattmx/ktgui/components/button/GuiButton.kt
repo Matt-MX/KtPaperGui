@@ -14,11 +14,14 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.potion.PotionEffect
 import java.lang.StringBuilder
 import java.util.StringJoiner
 import java.util.function.Consumer
 
-open class GuiButton<T: GuiButton<T>>(
+open class GuiButton<T : GuiButton<T>>(
     material: Material = Material.STONE,
     var item: ItemStack? = ItemStack(material)
 ) : IGuiButton<T> {
@@ -47,7 +50,7 @@ open class GuiButton<T: GuiButton<T>>(
         if (item == null) item = ItemStack(material)
     }
 
-    open fun lore(block: MutableList<Component>.() -> Unit) : T {
+    open fun lore(block: MutableList<Component>.() -> Unit): T {
         item?.editMeta {
             val newLore = mutableListOf<Component>().apply(block)
             it.lore(newLore.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
@@ -56,14 +59,14 @@ open class GuiButton<T: GuiButton<T>>(
     }
 
     @JavaCompatibility
-    fun lore(vararg lines: Component) : T {
+    fun lore(vararg lines: Component): T {
         item?.editMeta {
             it.lore(lines.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
         }
         return this as T
     }
 
-    infix fun named(name: Component?) : T {
+    infix fun named(name: Component?): T {
         val itemMeta = item?.itemMeta
         if (name != null)
             itemMeta?.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(name))
@@ -72,17 +75,17 @@ open class GuiButton<T: GuiButton<T>>(
         return this as T
     }
 
-    override infix fun slots(slots: List<Int>) : T {
+    override infix fun slots(slots: List<Int>): T {
         slots.forEach { slot(it) }
         return this as T
     }
 
-    fun slots(vararg slots: Int) : T {
+    fun slots(vararg slots: Int): T {
         slots.forEach { slot(it) }
         return this as T
     }
 
-    override infix fun slot(slot: Int) : T {
+    override infix fun slot(slot: Int): T {
         if (hasParent()) {
             if (slots == null) slots = arrayListOf()
             slots!!.add(slot)
@@ -106,14 +109,14 @@ open class GuiButton<T: GuiButton<T>>(
 
     }
 
-    fun materialOf(materialName: String?, fallback: Material) : T {
+    fun materialOf(materialName: String?, fallback: Material): T {
         val materialNameFormatted = materialName?.uppercase()?.replace(" ", "_")
         val mat = Material.values().firstOrNull { it.name == materialNameFormatted }
         mat?.also { material(it) } ?: material(fallback)
         return this as T
     }
 
-    infix fun material(material: Material) : T {
+    infix fun material(material: Material): T {
         item?.let {
             it.type = material
             return this as T
@@ -122,19 +125,19 @@ open class GuiButton<T: GuiButton<T>>(
         return this as T
     }
 
-    infix fun customModelData(model: Int) : T {
+    infix fun customModelData(model: Int): T {
         val meta = item?.itemMeta ?: return this as T
         meta.setCustomModelData(model)
         item?.itemMeta = meta
         return this as T
     }
 
-    infix fun amount(amount: Int) : T {
+    infix fun amount(amount: Int): T {
         item?.let { it.amount = amount }
         return this as T
     }
 
-    infix fun ifTexturePackActive(block: GuiButton<T>.() -> Unit) : T {
+    infix fun ifTexturePackActive(block: GuiButton<T>.() -> Unit): T {
         ifTexturePackActive = block
         return this as T
     }
@@ -146,7 +149,7 @@ open class GuiButton<T: GuiButton<T>>(
         postBuild = block
     } as T
 
-    infix fun fromItemBuilder(builder: DslIBuilder) : T {
+    infix fun fromItemBuilder(builder: DslIBuilder): T {
         item = builder.build()
         return this as T
     }
@@ -156,7 +159,7 @@ open class GuiButton<T: GuiButton<T>>(
     }
 
     @JavaCompatibility
-    fun click(type: ClickType, block: Consumer<ButtonClickedEvent<T>>) : T {
+    fun click(type: ClickType, block: Consumer<ButtonClickedEvent<T>>): T {
         click.handleClicks({ block.accept(this) }, type)
         return this as T
     }
@@ -165,7 +168,7 @@ open class GuiButton<T: GuiButton<T>>(
 
     }
 
-    inline infix fun click(block: ClickCallback<T>.() -> Unit) : T {
+    inline infix fun click(block: ClickCallback<T>.() -> Unit): T {
         block.invoke(click)
         return this as T
     }
@@ -182,12 +185,12 @@ open class GuiButton<T: GuiButton<T>>(
         click.drop(block)
     } as T
 
-    infix fun drag(cb: InventoryDragEvent.() -> Unit) : T {
+    infix fun drag(cb: InventoryDragEvent.() -> Unit): T {
         dragCallback = cb
         return this as T
     }
 
-    inline infix fun enchant(ce: MutableMap<Enchantment, Int>.() -> Unit) : T {
+    inline infix fun enchant(ce: MutableMap<Enchantment, Int>.() -> Unit): T {
         val enchantments = item?.itemMeta?.enchants?.toMutableMap() ?: mutableMapOf()
         ce.invoke(enchantments)
         val itemMeta = item?.itemMeta
@@ -195,6 +198,16 @@ open class GuiButton<T: GuiButton<T>>(
         item?.itemMeta = itemMeta
         return this as T
     }
+
+    inline infix fun effects(crossinline block: PotionMeta.() -> Unit) = apply {
+        editMeta(block)
+    } as T
+
+    inline infix fun <reified T : ItemMeta> editMeta(crossinline block: T.() -> Unit): T = apply {
+        item?.editMeta(T::class.java) {
+            block(it)
+        }
+    } as T
 
     override fun onButtonClick(e: ButtonClickedEvent<*>) {
         click.run(e)
@@ -217,7 +230,7 @@ open class GuiButton<T: GuiButton<T>>(
         return slots?.toMutableList() ?: parent.getSlots(this)
     }
 
-    infix fun update(player: Player) : T {
+    infix fun update(player: Player): T {
         val itemStack = formatIntoItemStack(player)
         // get all slots that this item exists in
         // update every slot to this new [ItemStack]
@@ -240,7 +253,7 @@ open class GuiButton<T: GuiButton<T>>(
         }
     }
 
-    override fun copy(parent: IGuiScreen) : T {
+    override fun copy(parent: IGuiScreen): T {
         val copy = GuiButton<T>()
         copy.parent = parent
         copy.item = item?.clone()
