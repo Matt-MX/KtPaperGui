@@ -66,6 +66,9 @@ open class SimpleCommandBuilder(
     }
 
     fun cooldown(duration: Duration?) = apply {
+        cooldown.ifPresent {
+            ActionCoolDown.unregister(it)
+        }
         cooldown = Optional.ofNullable(duration?.let { ActionCoolDown(duration) })
     }
 

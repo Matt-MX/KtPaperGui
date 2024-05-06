@@ -58,6 +58,10 @@ class ActionCoolDown<T>(
             registeredCoolDowns.add(coolDown)
         }
 
+        fun unregister(coolDown: ActionCoolDown<*>) {
+            registeredCoolDowns.remove(coolDown)
+        }
+
         fun removeUsers(vararg user: Any) {
             registeredCoolDowns.forEach { it.removeAnyUsers(*user) }
         }

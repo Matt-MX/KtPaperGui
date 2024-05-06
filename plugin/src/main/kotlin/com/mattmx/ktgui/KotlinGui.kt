@@ -4,6 +4,7 @@ import com.mattmx.ktgui.commands.rawCommand
 import com.mattmx.ktgui.commands.simpleCommand
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.utils.not
+import com.mattmx.ktgui.utils.pretty
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
@@ -81,7 +82,16 @@ class KotlinGui : JavaPlugin() {
                 cooldown(Duration.ofSeconds(2))
 
                 executes {
-                    player.sendMessage(!"&aNot on cool-down!")
+                    source.sendMessage(!"&aNot on cool-down!")
+
+                    if (args.isNotEmpty()) {
+                        val newCoolDown = args.first().toLongOrNull()
+                            ?: return@executes
+
+                        val dur = Duration.ofMillis(newCoolDown)
+                        source.sendMessage(!"&aNew cool-down set: ${dur.pretty()}")
+                        cooldown(dur)
+                    }
                 }
 
                 onCooldown {
