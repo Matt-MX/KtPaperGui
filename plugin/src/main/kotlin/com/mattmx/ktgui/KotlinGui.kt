@@ -2,6 +2,7 @@ package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.rawCommand
 import com.mattmx.ktgui.commands.simpleCommand
+import com.mattmx.ktgui.creator.GuiDesigner
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
@@ -96,6 +97,44 @@ class KotlinGui : JavaPlugin() {
 
                 onCooldown {
                     player.sendMessage(!"&cPlease wait before doing that again.")
+                }
+            }
+
+            val cachedDesigners = hashMapOf<String, GuiDesigner>()
+            subCommands += rawCommand("designer") {
+                permission = "ktgui.command.designer"
+                playerOnly = true
+                suggestSubCommands = true
+
+                subCommands += rawCommand("open") {
+                    permission = "ktgui.command.designer"
+                    playerOnly = true
+
+                    runs {
+                        val id = args.getOrNull(2)
+                            ?: return@runs source.sendMessage(!"&cProvide an id of the designer")
+
+                        val designer = cachedDesigners.getOrPut(id) { GuiDesigner(id) }
+                        designer.open(player)
+                    }
+
+                    suggestion { cachedDesigners.keys.filter { it.startsWith(lastArg, true) } }
+                }
+
+                subCommands += rawCommand("export") {
+                    permission = "ktgui.command.designer"
+                    playerOnly = true
+
+                    runs {
+                        val id = args.getOrNull(2)
+                            ?: return@runs source.sendMessage(!"&cProvide an id of the designer")
+
+                        val designer = cachedDesigners.getOrPut(id) { GuiDesigner(id) }
+                        val file = designer.save(this@KotlinGui)
+                        source.sendMessage(!"&aSaved to /plugins/KtGUI/designer/${file.name}")
+                    }
+
+                    suggestion { cachedDesigners.keys.filter { it.startsWith(lastArg, true) } }
                 }
             }
         }.register(false)

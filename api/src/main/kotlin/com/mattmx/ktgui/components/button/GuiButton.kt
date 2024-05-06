@@ -86,6 +86,17 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
+    fun removeSlots(vararg slot: Int) : T = apply {
+        if (hasParent()) {
+            slots?.removeAll(slot.toSet())
+            parent.clearSlot(*slot)
+        } else {
+            if (slots != null) {
+                slots?.removeAll(slot.toSet())
+            }
+        }
+    } as T
+
     override infix fun slot(slot: Int): T {
         if (hasParent()) {
             if (slots == null) slots = arrayListOf()

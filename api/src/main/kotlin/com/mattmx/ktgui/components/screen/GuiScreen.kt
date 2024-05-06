@@ -88,6 +88,12 @@ open class GuiScreen(
         return this
     }
 
+    override fun clearSlot(vararg slot: Int) {
+        for (s in slot) {
+            items.remove(s)
+        }
+    }
+
     fun slotsUsed(): List<Int> = items.map { it.key }
 
     fun findButton(id: String) = findButtons(id).firstOrNull()

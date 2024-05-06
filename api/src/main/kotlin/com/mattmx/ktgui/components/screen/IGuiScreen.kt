@@ -18,6 +18,8 @@ interface IGuiScreen {
 
     fun setSlot(button: IGuiButton<*>, slot: Int) : IGuiScreen
 
+    fun clearSlot(vararg slot: Int)
+
     fun open(player: Player)
 
     fun copy() : IGuiScreen
