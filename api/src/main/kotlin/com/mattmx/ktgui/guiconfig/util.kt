@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.inventory.InventoryType
 
 inline fun <reified T : Any> T.configGui(path: String, block: GuiConfigScreen.() -> Unit): GuiConfigScreen {
-    val config = GuiManager.guiConfigManager.getConfigFile(T::class.java)
+    val config = GuiManager.guiConfigManager.getConfigFile<T>()
     return configGui(config, path, block)
 }
 
@@ -36,7 +36,7 @@ inline fun <T : GuiButton<T>, reified V : Any> V.configButton(
     path: String,
     block: GuiButton<T>.() -> Unit
 ): T {
-    val config = GuiManager.guiConfigManager.getConfigFile(V::class.java)
+    val config = GuiManager.guiConfigManager.getConfigFile<V>()
     return configButton(config, path, block)
 }
 

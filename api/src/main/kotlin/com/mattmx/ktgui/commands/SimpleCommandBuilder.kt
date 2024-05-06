@@ -27,7 +27,7 @@ open class SimpleCommandBuilder(
     private var suggests: (CommandInvocation.() -> List<String>?)? = null
     private var execute: (CommandInvocation.() -> Unit)? = null
     private var unknown: (CommandInvocation.() -> Unit)? = null
-    private val cooldown: Optional<ActionCoolDown<CommandSender>> = Optional.empty()
+    private var cooldown: Optional<ActionCoolDown<CommandSender>> = Optional.empty()
     private var cooldownCallback: (CommandInvocation.() -> Unit)? = null
     var noPermissions: (CommandInvocation.() -> Unit)? = null
         private set
@@ -63,6 +63,10 @@ open class SimpleCommandBuilder(
     fun onCooldown(executes: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
         this.cooldownCallback = executes
         return this
+    }
+
+    fun cooldown(duration: Duration?) = apply {
+        cooldown = Optional.ofNullable(duration?.let { ActionCoolDown(duration) })
     }
 
     fun cooldownCallback(invocation: CommandInvocation) {
@@ -192,6 +196,9 @@ class CommandInvocation(
     val alias: String,
     val coolDownExpires: Date? = null
 ) {
+    val player: Player
+        get() = source as Player
+
     fun player() : Player {
         return source as Player
     }
