@@ -5,6 +5,7 @@ import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.extensions.setEnchantments
 import com.mattmx.ktgui.item.DslIBuilder
+import com.mattmx.ktgui.utils.Invokable
 import com.mattmx.ktgui.utils.JavaCompatibility
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
@@ -24,14 +25,14 @@ import java.util.function.Consumer
 open class GuiButton<T : GuiButton<T>>(
     material: Material = Material.STONE,
     var item: ItemStack? = ItemStack(material)
-) : IGuiButton<T> {
+) : IGuiButton<T>, Invokable<GuiButton<T>> {
 
     constructor(material: Material) : this(material, null)
     constructor(item: ItemStack) : this(item.type, item)
 
     lateinit var parent: IGuiScreen
         protected set
-
+    var id = "GuiButton"
     var click = ClickCallback<T>()
         protected set
     var dragCallback: ((InventoryDragEvent) -> Unit)? = null

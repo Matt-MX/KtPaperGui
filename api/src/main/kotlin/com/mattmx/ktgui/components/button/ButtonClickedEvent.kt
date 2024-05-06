@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.components.button
 
+import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.item.DslIBuilder
 import com.mattmx.ktgui.item.builder
@@ -50,4 +51,9 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
     override fun isCancelled() = shouldContinueCallback()
 
     override fun setCancelled(cancel: Boolean) = shouldContinueCallback(!cancel)
+
+    fun forceClose() {
+        GuiManager.clearGui(player)
+        player.closeInventory()
+    }
 }

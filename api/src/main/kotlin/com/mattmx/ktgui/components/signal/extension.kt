@@ -9,4 +9,4 @@ import com.mattmx.ktgui.components.screen.GuiScreen
  * @return the [Signal] object
  */
 fun <V> GuiScreen.signal(value: V) =
-    Signal<V>(value, this)
+    Signal(value, this)

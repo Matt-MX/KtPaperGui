@@ -4,6 +4,7 @@ import com.mattmx.ktgui.components.screen.IGuiScreen
 import com.mattmx.ktgui.configuration.Configuration
 import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.extensions.getOpenGui
+import com.mattmx.ktgui.guiconfig.GuiConfigManager
 import com.mattmx.ktgui.scheduling.Scheduling
 import com.mattmx.ktgui.scheduling.TaskTracker
 import com.mattmx.ktgui.scheduling.TaskTrackerTask
@@ -30,6 +31,7 @@ object GuiManager : Listener {
     private var initialized = false
     private val defaultConfiguration = Configuration()
     private val configurations = hashMapOf<JavaPlugin, Configuration>()
+    val guiConfigManager = GuiConfigManager()
     lateinit var owningPlugin: JavaPlugin
 
     fun init(plugin: JavaPlugin): Boolean {

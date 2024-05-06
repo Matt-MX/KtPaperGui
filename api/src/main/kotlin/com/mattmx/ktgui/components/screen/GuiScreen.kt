@@ -14,6 +14,7 @@ import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
 import com.mattmx.ktgui.scheduling.TaskTracker
 import com.mattmx.ktgui.scheduling.isAsync
+import com.mattmx.ktgui.utils.Invokable
 import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.legacy
 import net.kyori.adventure.text.Component
@@ -36,7 +37,7 @@ open class GuiScreen(
     title: Component = Component.empty(),
     var rows: Int = 1,
     var type: InventoryType? = null
-) : IGuiScreen, GuiSignalOwner<EffectBlock<GuiScreen>> {
+) : IGuiScreen, GuiSignalOwner<EffectBlock<GuiScreen>>, Invokable<GuiScreen> {
     constructor(title: Component, rows: Int) : this(title, rows, null)
     constructor(title: Component, type: InventoryType) : this(title, 0, type)
 
@@ -88,6 +89,14 @@ open class GuiScreen(
     }
 
     fun slotsUsed(): List<Int> = items.map { it.key }
+
+    fun findButton(id: String) = findButtons(id).firstOrNull()
+
+    fun findButtons(id: String) = items.values.filter { it.id == id }
+
+    fun <T : GuiButton<T>> findButton(id: String, block: T.() -> Unit) = (findButton(id) as T?)?.apply(block)
+
+    fun <T : GuiButton<T>> findButtons(id: String, block: T.() -> Unit) = findButtons(id).map { (it as T).apply(block) }
 
     infix fun type(type: InventoryType) = apply { this.type = type }
 

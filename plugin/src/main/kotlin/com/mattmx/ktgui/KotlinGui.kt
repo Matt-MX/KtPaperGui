@@ -16,6 +16,7 @@ class KotlinGui : JavaPlugin() {
         version = pluginMeta.version
         log = this.logger
         GuiManager.init(this)
+        saveDefaultConfig()
 
         val mainColor = "&#7F52FF"
         val subColor = "&#E24462"
@@ -38,7 +39,8 @@ class KotlinGui : JavaPlugin() {
             "hook" to { GuiHookExample() },
             "java-simple" to { JavaGuiExample() },
             "java-new" to { JavaUpdateExample() },
-            "refresh" to { RefreshBlockExample() }
+            "refresh" to { RefreshBlockExample() },
+            "config-gui" to { GuiConfigExample() }
         )
         GuiHookExample.registerListener(this)
 

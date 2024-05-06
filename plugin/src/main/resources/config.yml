@@ -1,0 +1,21 @@
+gui:
+  example:
+    title: "Config Gui"
+    type: "anvil"
+    buttons:
+      slot-specified:
+        material: "DIAMOND"
+        name: "&dSlot config"
+        lore:
+          - "&fThis item's slot was determined from the config."
+          - "&a&l[CLICK]&7 to reset to 0"
+        slot: 3
+    add:
+      material: "LIME_STAINED_GLASS_PANE"
+      name: "&aAdd"
+    dec:
+      material: "RED_STAINED_GLASS_PANE"
+      name: "&cMinus"
+    close:
+      material: "BARRIER"
+      name: "&cClose"
