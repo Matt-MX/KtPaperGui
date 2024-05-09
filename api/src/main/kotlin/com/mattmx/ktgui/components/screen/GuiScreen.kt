@@ -213,10 +213,6 @@ open class GuiScreen(
 
     fun open(openCallback: (Player) -> Unit) = apply { this.openCallback = openCallback }
 
-    infix fun click(clickCallbackBuilder: (ClickCallback<*>) -> Unit) = apply {
-        this.click.apply(clickCallbackBuilder)
-    }
-
     fun addEffect(effect: EffectBlock<GuiScreen>) {
         currentlyProcessing = effect
         effect.block.invoke(this)

@@ -6,11 +6,11 @@ import org.bukkit.inventory.ItemStack
 
 class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
 
-    val enchantPart: String
+    val enchantPart: String?
         get() {
             val start = "enchant { "
             val enchantments = getItemStack()!!.enchantments.entries
-            if (enchantments.isEmpty()) return ""
+            if (enchantments.isEmpty()) return null
 
             val middle = enchantments.joinToString("\n") { (e, l) ->
                 "   this += Enchantment.${e.name} lvl $l"
@@ -18,15 +18,15 @@ class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
             return "$start$middle\n}"
         }
 
-    val lorePart: String
+    val lorePart: String?
         get() {
             val start = "lore {"
             val lore = getItemStack()!!.lore()
-                ?: return ""
-            if (lore.isEmpty()) return ""
+                ?: return null
+            if (lore.isEmpty()) return null
 
             val middle = lore.joinToString("\n") {
-                "   add(\"${it.legacy()}\")"
+                "   add(!\"${it.legacy()}\")"
             }
             return "$start$middle\n}"
         }
@@ -34,7 +34,7 @@ class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
     val namedPart: String
         get() {
             val name = getItemStack()!!.displayName().legacy()
-            return "named(\"$name\")"
+            return "named(!\"$name\")"
         }
 
     val slotsPart: String
@@ -44,13 +44,17 @@ class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
 
     val full: String
         get() {
-            val start = "button(Material.${getItemStack()!!.type}) {"
+            val start = "button(Material.${getItemStack()!!.type}) {\n"
 
             val tab = "   "
             var middle = tab
             middle += namedPart + "\n"
-            middle += lorePart.split("\n").joinToString("\n$tab") + "\n"
-            middle += enchantPart.split("\n").joinToString("\n$tab") + "\n"
+
+            if (lorePart != null)
+             middle += lorePart!!.split("\n").joinToString("\n$tab") + "\n"
+
+            if (enchantPart != null)
+                middle += enchantPart!!.split("\n").joinToString("\n$tab") + "\n"
 
             val end = "} $slotsPart"
 

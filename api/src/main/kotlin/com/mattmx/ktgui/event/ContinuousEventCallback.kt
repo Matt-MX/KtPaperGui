@@ -15,5 +15,8 @@ class ContinuousEventCallback<T : Cancellable> : EventCallback<T>() {
         return true
     }
 
-    override fun clone() = super.clone() as ContinuousEventCallback<T>
+    override fun clone() = ContinuousEventCallback<T>()
+        .also { clone ->
+            clone.callbacks.addAll(this.callbacks.map { it })
+        }
 }

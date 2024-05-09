@@ -68,11 +68,11 @@ open class GuiButton<T : GuiButton<T>>(
     }
 
     infix fun named(name: Component?): T {
-        val itemMeta = item?.itemMeta
-        if (name != null)
-            itemMeta?.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(name))
-        else itemMeta?.displayName(null)
-        item?.itemMeta = itemMeta
+        item?.editMeta {
+            if (name != null)
+                it?.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(name))
+            else it?.displayName(null)
+        }
         return this as T
     }
 
@@ -86,7 +86,7 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
-    fun removeSlots(vararg slot: Int) : T = apply {
+    fun removeSlots(vararg slot: Int): T = apply {
         if (hasParent()) {
             slots?.removeAll(slot.toSet())
             parent.clearSlot(*slot)

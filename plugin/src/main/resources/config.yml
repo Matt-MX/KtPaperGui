@@ -1,7 +1,7 @@
 gui:
   example:
     title: "Config Gui"
-    type: "anvil"
+    type: "hopper"
     buttons:
       slot-specified:
         material: "DIAMOND"

@@ -3,9 +3,10 @@ package com.mattmx.ktgui.components
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.event.ContinuousEventCallback
+import com.mattmx.ktgui.utils.Invokable
 import org.bukkit.event.inventory.ClickType
 
-class ClickCallback<T : IGuiButton<*>> {
+class ClickCallback<T : IGuiButton<*>> : Invokable<ClickCallback<T>> {
     private var callbacks = arrayListOf<Pair<ClickType, ContinuousEventCallback<ButtonClickedEvent<T>>>>()
     private var any = ContinuousEventCallback<ButtonClickedEvent<T>>()
 

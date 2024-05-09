@@ -29,7 +29,7 @@ class GuiDesignerButtonCustomizer(
         button(Material.NAME_TAG) {
             named(!"&dName")
             lore {
-                add(!"&fCurrently: ${button.item?.displayName()?.legacy()}")
+                add(!"&fCurrently: ${button.getItemStack()?.displayName()?.legacy()}")
             }
             leftClick {
                 conversation<Player> {
@@ -38,7 +38,7 @@ class GuiDesignerButtonCustomizer(
 
                         runs {
                             result.ifPresent { result ->
-                                button.named(!result)
+                                this@GuiDesignerButtonCustomizer.button.named(!result)
                             }
                             open(player)
                         }
@@ -54,10 +54,10 @@ class GuiDesignerButtonCustomizer(
         button(Material.MOJANG_BANNER_PATTERN) {
             named(!"&dLore")
             lore {
-                val isEmpty = button.item?.lore()?.isEmpty() ?: true
+                val isEmpty = button.getItemStack()?.lore()?.isEmpty() ?: true
                 add(!"&fCurrently: ${if (isEmpty) "&7*None*" else ""}")
 
-                button.item?.lore()?.forEach { line -> add(line) }
+                button.getItemStack()?.lore()?.forEach { line -> add(line) }
             }
             leftClick {
                 conversation<Player> {
@@ -65,11 +65,12 @@ class GuiDesignerButtonCustomizer(
                         matches { result.isPresent && result.get().equals("cancel", true) }
                         invalid {
                             result.ifPresent {
-                                button.lore(!it)
+                                this@GuiDesignerButtonCustomizer.button.lore(!it)
+                                this@GuiDesignerButtonCustomizer.parent.refresh()
                             }
                             player.sendMessage(!"&fType 'cancel' to stop.")
                             player.sendMessage(!"&fCurrently:")
-                            button.item?.lore()?.forEach { line -> player.sendMessage(line) }
+                            button.getItemStack()?.lore()?.forEach { line -> player.sendMessage(line) }
                         }
                         runs {
                             open(player)
@@ -82,7 +83,7 @@ class GuiDesignerButtonCustomizer(
         button(Material.ENCHANTED_BOOK) {
             named(!"&dEnchantments")
             lore {
-                val isEmpty = button.item?.enchantments?.isEmpty() ?: true
+                val isEmpty = button.getItemStack()?.enchantments?.isEmpty() ?: true
                 add(!"&fCurrently: ${if (isEmpty) "&7*None*" else ""}")
 
                 button.item?.enchantments?.forEach { line ->
@@ -90,11 +91,6 @@ class GuiDesignerButtonCustomizer(
                 }
             }
         } slot 16
-
-        close {
-            val player = it.player as Player
-            openParent(player)
-        }
     }
 
     fun openParent(player: Player) {

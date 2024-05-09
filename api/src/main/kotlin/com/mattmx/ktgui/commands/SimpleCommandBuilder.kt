@@ -143,7 +143,7 @@ open class SimpleCommandBuilder(
             val dummyCmd = DummyCommand(this)
             cmdMap.register(GuiManager.owningPlugin.description.name.lowercase(), dummyCmd)
             val knownCommandsField = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
-            knownCommandsField.setAccessible(true)
+            knownCommandsField.isAccessible = true
             val knownCommands = knownCommandsField.get(cmdMap) as MutableMap<String?, Command?>
             var knownAliases: Set<String?>? = null
             try {

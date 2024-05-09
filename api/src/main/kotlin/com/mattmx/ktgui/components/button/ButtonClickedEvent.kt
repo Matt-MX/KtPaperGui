@@ -48,7 +48,7 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
     }
 
     fun shouldContinueCallback() = callbackShouldContinue
-    override fun isCancelled() = shouldContinueCallback()
+    override fun isCancelled() = !shouldContinueCallback()
 
     override fun setCancelled(cancel: Boolean) = shouldContinueCallback(!cancel)
 
