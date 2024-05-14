@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.commands.suggestions.impl
 
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
-import com.mattmx.ktgui.commands.suggestions.SuggestionInvocation
+import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 

@@ -21,6 +21,10 @@ class InstancePackageClassCache<V : Any> {
         return packageList[getShortPackageName(clazz)]!! as V
     }
 
+    fun <T : Any> getInstanceOrNull(clazz: Class<T>) : V? {
+        return packageList[getShortPackageName(clazz)] as V?
+    }
+
     private fun getShortPackageName(clazz: Class<*>): String {
         val split = clazz.packageName.split(".")
         val three = split.subList(0, min(3, split.size))

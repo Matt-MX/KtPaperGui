@@ -1,13 +1,15 @@
 package com.mattmx.ktgui.commands.usage
 
-class CommandUsageOptions {
+import com.mattmx.ktgui.utils.Invokable
+
+class CommandUsageOptions : Invokable<CommandUsageOptions> {
     var namePrefix = "/"
     var gap = " "
 
     val arguments = ArgumentUsageOptions()
     val subCommands = SubCommandOptions()
 
-    class ArgumentUsageOptions {
+    class ArgumentUsageOptions : Invokable<ArgumentUsageOptions> {
         var prefix = "<"
 
         var typeChar = ":"
@@ -28,19 +30,13 @@ class CommandUsageOptions {
         var descriptionDivider = " - "
         var descriptionsRequired = "(Required)"
         var descriptionsOptional = "(Optional)"
-
-        inline operator fun invoke(block: ArgumentUsageOptions.() -> Unit) = apply(block)
     }
 
-    class SubCommandOptions {
+    class SubCommandOptions : Invokable<SubCommandOptions> {
         var prefix = ""
         var divider = "|"
         var suffix = ""
-
-        inline operator fun invoke(block: SubCommandOptions.() -> Unit) = apply(block)
     }
-
-    inline operator fun invoke(block: CommandUsageOptions.() -> Unit) = apply(block)
 
     companion object {
         inline operator fun invoke(block: CommandUsageOptions.() -> Unit) = CommandUsageOptions().apply(block)

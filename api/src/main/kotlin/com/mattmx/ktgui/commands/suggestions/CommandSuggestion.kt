@@ -1,5 +1,7 @@
 package com.mattmx.ktgui.commands.suggestions
 
+import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+
 fun interface CommandSuggestion<V> {
     fun getSuggestion(invocation: SuggestionInvocation<*>): List<String>?
 

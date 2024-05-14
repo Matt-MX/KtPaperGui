@@ -1,13 +1,22 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.commands.declarative.argument
+import com.mattmx.ktgui.commands.declarative.div
+import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+import com.mattmx.ktgui.commands.declarative.invoke
 import com.mattmx.ktgui.commands.rawCommand
 import com.mattmx.ktgui.commands.simpleCommand
+import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
+import com.mattmx.ktgui.commands.suggestions.SimpleCommandSuggestion
 import com.mattmx.ktgui.creator.GuiDesigner
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.util.logging.Logger
@@ -52,6 +61,7 @@ class KotlinGui : JavaPlugin() {
         GuiHookExample.registerListener(this)
 
         sync {
+            val cachedDesigners = hashMapOf<String, GuiDesigner>()
             rawCommand("ktgui") {
                 permission = "ktgui.command"
                 playerOnly = true
@@ -101,45 +111,41 @@ class KotlinGui : JavaPlugin() {
                         player.sendMessage(!"&cPlease wait before doing that again.")
                     }
                 }
+            }.register(false)
 
-                val cachedDesigners = hashMapOf<String, GuiDesigner>()
-                subCommands += rawCommand("designer") {
-                    permission = "ktgui.command.designer"
-                    playerOnly = true
-                    suggestSubCommands = true
+            "designer"<CommandSender> {
+                buildAutomaticPermissions("ktgui.command")
 
-                    subCommands += rawCommand("open") {
-                        permission = "ktgui.command.designer"
-                        playerOnly = true
+                val typeOrRowArg by argument<String>("type_or_row")
+                val id by argument<String>("unique_id")
 
-                        runs {
-                            val id = args.getOrNull(2)
-                                ?: return@runs source.sendMessage(!"&cProvide an id of the designer")
+                typeOrRowArg suggests { InventoryType.values().map { it.name.lowercase() } }
 
-                            val designer = cachedDesigners.getOrPut(id) { GuiDesigner(id) }
-                            designer.open(player)
+                ("open" / typeOrRowArg / id)<Player> {
+                    runs {
+                        val type = runCatching {
+                            InventoryType.valueOf(typeOrRowArg().uppercase())
+                        }.getOrNull()
+                        val rows = typeOrRowArg().toIntOrNull()
+
+                        if (type == null && rows == null) {
+                            reply(!"&cYou need to provide an InventoryType or an amount of rows.")
+                            return@runs
                         }
 
-                        suggestion { cachedDesigners.keys.filter { it.startsWith(lastArg, true) } }
-                    }
-
-                    subCommands += rawCommand("export") {
-                        permission = "ktgui.command.designer"
-                        playerOnly = true
-
-                        runs {
-                            val id = args.getOrNull(2)
-                                ?: return@runs source.sendMessage(!"&cProvide an id of the designer")
-
-                            val designer = cachedDesigners.getOrPut(id) { GuiDesigner(id) }
-                            val file = designer.save(this@KotlinGui)
-                            source.sendMessage(!"&aSaved to /plugins/KtGUI/designer/${file.name}")
-                        }
-
-                        suggestion { cachedDesigners.keys.filter { it.startsWith(lastArg, true) } }
+                        val designer = cachedDesigners.getOrPut(id()) { GuiDesigner(id(), type = type, rows = rows ?: 1) }
+                        designer.open(sender)
                     }
                 }
-            }.register(false)
+
+                ("export" / id)<CommandSender> {
+                    runs {
+                        val designer = cachedDesigners.getOrPut(id()) { GuiDesigner(id()) }
+                        val file = designer.save(this@KotlinGui)
+                        reply(!"&aSaved to /plugins/KtGUI/designer/${file.name}")
+                    }
+                }
+            } register this@KotlinGui
         }
     }
 

@@ -1,8 +1,8 @@
 package com.mattmx.ktgui.examples;
 
 import com.mattmx.ktgui.commands.SimpleCommandBuilder;
-import com.mattmx.ktgui.commands.stringbuilder.StringCommand;
-import com.mattmx.ktgui.commands.stringbuilder.arg.ArgumentContext;
+import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder;
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 
@@ -23,7 +23,7 @@ public class JavaUpdateCommandExample {
                 )
                 .register(false);
 
-        new StringCommand<CommandSender>("/hello <arg:string>")
+        new DeclarativeCommandBuilder<CommandSender>("/hello <arg:string>")
                 .runs((context) -> {
                     ArgumentContext<String> arg = context.getArgumentContext("arg");
 

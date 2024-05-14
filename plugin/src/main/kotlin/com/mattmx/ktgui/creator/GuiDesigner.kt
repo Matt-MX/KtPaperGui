@@ -8,11 +8,14 @@ import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryType
 import java.io.File
 
 class GuiDesigner(
-    val name: String
-) : GuiScreen(!"Designer ($name&r)") {
+    val name: String,
+    rows: Int = 1,
+    type: InventoryType? = null
+) : GuiScreen(!"Designer ($name&r)", rows, type) {
 
     init {
         click.any {

@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.configuration
 
-import com.mattmx.ktgui.commands.declarative.KtCommandBuilder
+import com.mattmx.ktgui.commands.alpha.KtCommandBuilder
 import com.mattmx.ktgui.utils.Invokable
 
 data class Configuration(
