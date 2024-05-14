@@ -281,7 +281,13 @@ class DeclarativeCommandBuilder<T : CommandSender>(
     }
 
     companion object {
-        inline fun <reified T : CommandSender> fromString(source: String): DeclarativeCommandBuilder<T> {
+
+        inline fun <reified T : CommandSender> fromString(source: String): DeclarativeCommandBuilder<T> =
+            fromString(T::class.javaObjectType, source)
+
+        @JvmStatic
+        @JavaCompatibility
+        fun <T : CommandSender> fromString(targetSender: Class<T>, source: String): DeclarativeCommandBuilder<T> {
             var name: String? = null
             val expectedArguments = arrayListOf<Argument<*>>()
             val parsed = Parser(source).parse()
@@ -309,7 +315,7 @@ class DeclarativeCommandBuilder<T : CommandSender>(
             }
 
             if (name == null) error("Name cannot be null for a command!")
-            return DeclarativeCommandBuilder<T>(name, T::class.java)
+            return DeclarativeCommandBuilder<T>(name, targetSender)
                 .apply {
                     this.expectedArguments += expectedArguments
                 }

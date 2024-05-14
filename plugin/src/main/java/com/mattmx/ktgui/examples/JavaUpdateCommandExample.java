@@ -5,6 +5,7 @@ import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder;
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class JavaUpdateCommandExample {
     private void test() {
@@ -23,7 +24,7 @@ public class JavaUpdateCommandExample {
                 )
                 .register(false);
 
-        new DeclarativeCommandBuilder<CommandSender>("/hello <arg:string>")
+        DeclarativeCommandBuilder.fromString(Player.class, "/hello <arg:string>")
                 .runs((context) -> {
                     ArgumentContext<String> arg = context.getArgumentContext("arg");
 
