@@ -1,6 +1,5 @@
 package com.mattmx.ktgui.commands.declarative
 
-import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import org.bukkit.command.CommandSender
 
@@ -8,18 +7,13 @@ fun main() {
     val player by argument<FakePlayer>("fakePlayer")
     val msg by argument<String>("string", true)
 
-    val msgcmd =
-        ("msg" / player / msg)<CommandSender> {
-            runs {
-                println("[${player()?.name}]: ${msg()}")
-            }
-        } missing {
-            println("Missing argument '${argument.name()}'.")
-        } invalid {
-            player {
-                println("The user '$provided' is not online!")
-            }
+    val msgcmd = ("msg" / player / msg)<CommandSender> {
+        runs {
+            println("[${player().name}]: ${msg()}")
         }
+    } invalid {
+        println("Invalid argument '${argument.name()}'.")
+    }
 
     val splitArgs = { s: String -> s.split(" ") }
 
@@ -38,7 +32,7 @@ fun main() {
     }
 
 //    println(msgcmd.getUsage(myCommandUsage))
-
+    val someArg by argument<FakePlayer>("fakePlayer")
     val foo = command<CommandSender>("foo") {
 
         subcommand<CommandSender>("bar") {
@@ -47,10 +41,9 @@ fun main() {
             }
         }
 
-        val someArg by argument<FakePlayer>("fakePlayer")
         subcommand<CommandSender>("fizz" / someArg) {
             runs {
-                println("fizzzzz ${someArg()?.name}")
+                println("fizzzzz ${someArg().name}")
             }
 
             invalid {
@@ -60,6 +53,23 @@ fun main() {
             }
         }
 
+        runs {
+            println("foo!")
+        }
+    }
+
+    val foo1 = ("foo" /
+            (
+                    ("fizz" / someArg)<CommandSender> {
+                        runs {
+                            println("fizzzzz ${someArg().name}")
+                        }
+                    } + ("bar")<CommandSender> {
+                        runs {
+                            println("bar")
+                        }
+                    })
+            )<CommandSender> {
         runs {
             println("foo!")
         }

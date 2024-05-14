@@ -10,10 +10,16 @@ class InvalidArgContext<T : CommandSender>(
     val argument: Argument<*>,
     val provided: String?
 ) : StorageCommandContext<T>(sender, alias, rawArgs) {
+    var invokeCallbackOnlyOnce = true
+    private var invoked = false
 
     operator fun <V : Any> Argument<V>.invoke(block: Argument<V>.() -> Unit) {
+        if (invoked) return
+
         if (argument.name() == name()) {
             block.invoke(this)
+            if (invokeCallbackOnlyOnce)
+                invoked = true
         }
     }
 
