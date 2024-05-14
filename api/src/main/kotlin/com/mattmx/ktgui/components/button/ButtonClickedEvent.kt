@@ -1,10 +1,12 @@
 package com.mattmx.ktgui.components.button
 
+import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.item.DslIBuilder
 import com.mattmx.ktgui.item.builder
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -24,7 +26,7 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
     val player: Player,
     val event: InventoryClickEvent,
     val itemClicked: ItemStack? = event.currentItem
-) : Event() {
+) : Event(), Cancellable {
     val slot = event.rawSlot
     val currentGui = player.getOpenGui()
     private var callbackShouldContinue = true
@@ -46,4 +48,12 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
     }
 
     fun shouldContinueCallback() = callbackShouldContinue
+    override fun isCancelled() = !shouldContinueCallback()
+
+    override fun setCancelled(cancel: Boolean) = shouldContinueCallback(!cancel)
+
+    fun forceClose() {
+        GuiManager.clearGui(player)
+        player.closeInventory()
+    }
 }

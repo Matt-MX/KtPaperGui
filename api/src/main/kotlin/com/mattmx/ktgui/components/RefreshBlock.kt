@@ -9,6 +9,6 @@ class RefreshBlock<T : GuiScreen>(
 ) {
     fun refresh() {
         block.invoke(owner)
-        refresh()
+        owner.refresh()
     }
 }

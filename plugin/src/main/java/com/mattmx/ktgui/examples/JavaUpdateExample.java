@@ -4,6 +4,7 @@ import com.mattmx.ktgui.GuiManager;
 import com.mattmx.ktgui.components.GuiPattern;
 import com.mattmx.ktgui.components.button.ButtonClickedEvent;
 import com.mattmx.ktgui.components.button.GuiButton;
+import com.mattmx.ktgui.components.button.BaseGuiButton;
 import com.mattmx.ktgui.components.screen.GuiScreen;
 import com.mattmx.ktgui.components.signal.Signal;
 import com.mattmx.ktgui.event.PreGuiBuildEvent;
@@ -18,7 +19,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import static com.mattmx.ktgui.dsl.EventKt.javaEvent;
+import static com.mattmx.ktgui.dsl.EventKt.event;
+import static com.mattmx.ktgui.dsl.EventKt.event;
+import static com.mattmx.ktgui.utils.ColorKt.component;
 
 public class JavaUpdateExample implements Example {
     @Override
@@ -26,16 +29,16 @@ public class JavaUpdateExample implements Example {
     public void run(@NotNull Player player) {
         GuiScreen gui = new GuiScreen(Component.text("Title"), 3)
                 .addChild(
-                        new GuiButton(Material.DIRT)
+                        new BaseGuiButton(Material.DIRT, null)
                                 .named(Component.text("Item"))
                                 .click(ClickType.LEFT, (event) -> {
-                                    // todo find a way to reduce this cast, for some reason `event` is `Object`, Kotlin -> Java issue
-                                    ((ButtonClickedEvent) event).getPlayer().sendMessage(Component.text("clicked"));
+                                    event.getPlayer().sendMessage(Component.text("clicked"));
                                 })
                                 .lore(Component.text("Lore line one"))
                                 .lore(Component.text("Lore line two"))
                                 .slot(3)
                 );
+        gui.setId("ktgui.example.hook.java");
 
         // Test Patterns
         GuiPattern pattern = new GuiPattern("""
@@ -64,10 +67,10 @@ public class JavaUpdateExample implements Example {
 
         // Test Callbacks
         gui.open((p) -> {
-            p.sendMessage(Component.text("opened."));
+            p.sendMessage(component("opened."));
             return null;
         }).close((e) -> {
-            e.getPlayer().sendMessage(Component.text("closed."));
+            e.getPlayer().sendMessage(component("closed."));
             return null;
         });
 
@@ -75,9 +78,8 @@ public class JavaUpdateExample implements Example {
     }
 
     public void eventsTest(JavaPlugin plugin) {
-        javaEvent(plugin, PlayerJoinEvent.class, (event) -> {
+        event(plugin, PlayerJoinEvent.class, (event) -> {
             event.getPlayer().sendMessage(Component.text("welcome!"));
-            return null;
         });
     }
 
@@ -96,9 +98,10 @@ public class JavaUpdateExample implements Example {
     public void hookTest(PreGuiBuildEvent event) {
         if (!(event.getGui() instanceof GuiScreen)) return;
         GuiScreen gui = (GuiScreen) event.getGui();
-        if (!gui.getId().equals("ktgui.example.hook")) return;
+        if (!gui.getId().equals("ktgui.example.hook.java")) return;
 
         // todo add stuff
+        gui.addChild(new GuiButton(Material.STONE).slot(10));
     }
 
     public void testTaskTracker() {

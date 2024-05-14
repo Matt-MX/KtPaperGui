@@ -14,6 +14,7 @@ import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
 import com.mattmx.ktgui.scheduling.TaskTracker
 import com.mattmx.ktgui.scheduling.isAsync
+import com.mattmx.ktgui.utils.Invokable
 import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.legacy
 import net.kyori.adventure.text.Component
@@ -36,7 +37,7 @@ open class GuiScreen(
     title: Component = Component.empty(),
     var rows: Int = 1,
     var type: InventoryType? = null
-) : IGuiScreen, GuiSignalOwner<EffectBlock<GuiScreen>> {
+) : IGuiScreen, GuiSignalOwner<EffectBlock<GuiScreen>>, Invokable<GuiScreen> {
     constructor(title: Component, rows: Int) : this(title, rows, null)
     constructor(title: Component, type: InventoryType) : this(title, 0, type)
 
@@ -87,7 +88,21 @@ open class GuiScreen(
         return this
     }
 
+    override fun clearSlot(vararg slot: Int) {
+        for (s in slot) {
+            items.remove(s)
+        }
+    }
+
     fun slotsUsed(): List<Int> = items.map { it.key }
+
+    fun findButton(id: String) = findButtons(id).firstOrNull()
+
+    fun findButtons(id: String) = items.values.filter { it.id == id }
+
+    fun <T : GuiButton<T>> findButton(id: String, block: T.() -> Unit) = (findButton(id) as T?)?.apply(block)
+
+    fun <T : GuiButton<T>> findButtons(id: String, block: T.() -> Unit) = findButtons(id).map { (it as T).apply(block) }
 
     infix fun type(type: InventoryType) = apply { this.type = type }
 
@@ -198,10 +213,6 @@ open class GuiScreen(
 
     fun open(openCallback: (Player) -> Unit) = apply { this.openCallback = openCallback }
 
-    infix fun click(clickCallbackBuilder: (ClickCallback<*>) -> Unit) = apply {
-        this.click.apply(clickCallbackBuilder)
-    }
-
     fun addEffect(effect: EffectBlock<GuiScreen>) {
         currentlyProcessing = effect
         effect.block.invoke(this)
@@ -261,6 +272,11 @@ open class GuiScreen(
     @JavaCompatibility
     infix fun effectBlock(block: Runnable) = apply {
         EffectBlock(this) { block.run() }.apply { addEffect(this) }
+    }
+
+    @JavaCompatibility
+    fun refreshBlock(repeat: Long, block: Runnable) = apply {
+        RefreshBlock(repeat, this) { block.run() }.apply { addRefreshBlock(this) }
     }
 
     override fun close(e: InventoryCloseEvent) {

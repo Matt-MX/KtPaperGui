@@ -1,12 +1,17 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.commands.wrapper.CommandWrapper
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.configuration.Configuration
+import com.mattmx.ktgui.cooldown.ActionCoolDown
+import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.extensions.getOpenGui
+import com.mattmx.ktgui.guiconfig.GuiConfigManager
 import com.mattmx.ktgui.scheduling.Scheduling
-import com.mattmx.ktgui.scheduling.TaskTracker
-import com.mattmx.ktgui.scheduling.TaskTrackerTask
+import com.mattmx.ktgui.utils.InstancePackageClassCache
 import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandMap
+import org.bukkit.command.SimpleCommandMap
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -17,8 +22,7 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.plugin.java.JavaPlugin
-import org.jetbrains.annotations.ApiStatus
-import java.util.Collections
+import java.util.*
 
 /**
  * Handles all GUI click events, as well
@@ -27,12 +31,15 @@ import java.util.Collections
 object GuiManager : Listener {
     private val players = Collections.synchronizedMap(hashMapOf<Player, IGuiScreen>())
     private var initialized = false
-    private val defaultConfiguration = Configuration()
-    private val configurations = hashMapOf<JavaPlugin, Configuration>()
+    private val pluginCache = InstancePackageClassCache<JavaPlugin>()
+    val guiConfigManager = GuiConfigManager()
     lateinit var owningPlugin: JavaPlugin
 
     fun init(plugin: JavaPlugin): Boolean {
-        if (initialized) return false
+        if (initialized) {
+            pluginCache.cacheInstance(plugin::class.java, plugin)
+            return false
+        }
         initialized = true
         owningPlugin = plugin
         Scheduling.plugin = plugin
@@ -48,22 +55,60 @@ object GuiManager : Listener {
         Bukkit.getOnlinePlayers().forEach { player -> forceClose(player) }
     }
 
-    /**
-     * Each plugin can configure generic things like feedback messages,
-     * that KTBukkitGui handles under the hud.
-     *
-     * @param plugin the plugin for this configuration
-     * @param block configuration modification
-     */
-    @ApiStatus.Experimental
-    fun configure(plugin: JavaPlugin, block: Configuration.() -> Unit) {
-        val configuration = Configuration()
-        block(configuration)
-        configurations[plugin] = configuration
-    }
+    fun registerCommand(classOrPlugin: Class<*>, command: CommandWrapper) {
+        val existingCommand = Bukkit.getPluginCommand(command.name)
+        if (existingCommand != null) {
+            Bukkit.getPluginCommand(command.name)?.setExecutor(command)
+        } else {
+            if(!isInitialized()) {
+                throw RuntimeException("Unregistered commands are unsupported when GuiManager not initialised! Call GuiManager.init")
+            }
 
-    @ApiStatus.Experimental
-    fun getConfiguration(plugin: JavaPlugin) = configurations[plugin] ?: defaultConfiguration
+            var cmdPlugin = pluginCache.getInstanceOrNull(classOrPlugin)
+
+            val prefix = if (cmdPlugin == null) {
+                cmdPlugin = owningPlugin
+
+                cmdPlugin.logger.warning("Unable to find owning plugin for class ${classOrPlugin.simpleName} when registering command '${command.name}'.")
+                cmdPlugin.name.lowercase()
+            } else cmdPlugin.name.lowercase()
+
+            val cmdMapField = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
+            cmdMapField.isAccessible = true
+
+            val cmdMap = cmdMapField.get(Bukkit.getServer()) as CommandMap
+            cmdMap.register(prefix, command)
+
+            val knownCommandsField = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
+            knownCommandsField.isAccessible = true
+
+            val knownCommands = knownCommandsField.get(cmdMap) as MutableMap<String?, Command?>
+            var knownAliases: Set<String?>? = null
+
+            try {
+                val aliasesField = SimpleCommandMap::class.java.getDeclaredField("aliases")
+                aliasesField.setAccessible(true)
+                knownAliases = aliasesField.get(cmdMap) as MutableSet<String?>
+            } catch (e: NoSuchFieldException) {}
+
+            event<PluginDisableEvent>(cmdPlugin) {
+                if (this.plugin == cmdPlugin) {
+                    synchronized(cmdMap) {
+                        knownCommands.remove(command.name)
+                        knownCommands.remove("$prefix:${command.name}")
+                        knownAliases?.minus(command.aliases.toSet())
+                        for (alias in command.aliases) {
+                            knownCommands.remove(alias)
+                            knownCommands.remove("$prefix:$alias")
+                        }
+                        command.unregister(cmdMap)
+                        command.aliases = listOf()
+                    }
+                    cmdPlugin.logger.info("Unregistered ${command.name}")
+                }
+            }
+        }
+    }
 
     fun getPlayers(gui: IGuiScreen) = players.filter { it.value == gui }.keys
     fun getPlayersInGui() = players.toMutableMap()
@@ -112,6 +157,8 @@ object GuiManager : Listener {
             }
             players.remove(e.player)
         }
+
+        ActionCoolDown.removeUsers(e.player, e.player.uniqueId, e.player.name)
     }
 
     @EventHandler

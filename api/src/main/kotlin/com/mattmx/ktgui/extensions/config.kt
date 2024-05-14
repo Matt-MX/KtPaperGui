@@ -7,11 +7,15 @@ import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.item.lvl
 import com.mattmx.ktgui.utils.component
 import com.mattmx.ktgui.utils.legacy
+import com.mattmx.ktgui.utils.not
+import com.mattmx.ktgui.utils.parsePotionData
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.potion.PotionData
+import org.bukkit.potion.PotionEffect
 
 fun String.translatableList(config: FileConfiguration): List<String> {
     val list = config.getStringList(this)
@@ -55,7 +59,9 @@ fun <T : GuiButton<T>> String.translatableButton(config: FileConfiguration, butt
     return button.apply {
         materialOf(section.getString("material"), Material.AIR)
         amount(section.getInt("amount", 1))
-        named(section.getString("name")?.component ?: Component.empty())
+        section.getString("name")?.let {
+            named(!it)
+        }
         lore { addAll(section.getStringList("lore").map { it.component }) }
 
         // enchantments
@@ -76,7 +82,21 @@ fun <T : GuiButton<T>> String.translatableButton(config: FileConfiguration, butt
             enchants += enchantment lvl level
         }
         enchant { putAll(enchants) }
-        // todo potion effects
+
+        // todo this won't work for multiple potion types or anything that is not vanilla!
+        val potions = config.getStringList("effects")
+        val effects = arrayListOf<PotionData>()
+        potions.forEach { str ->
+            val data = parsePotionData(str)
+            if (data != null) {
+                effects.add(data)
+            }
+        }
+        effects {
+            effects.forEach { effect ->
+                basePotionData = effect
+            }
+        }
     } as T
 }
 

@@ -11,7 +11,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly(kotlin("reflect"))
+//    compileOnly(kotlin("reflect"))
+    implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
 }
 

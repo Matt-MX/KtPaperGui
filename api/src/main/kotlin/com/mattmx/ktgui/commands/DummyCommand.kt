@@ -6,7 +6,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class DummyCommand(
+open class DummyCommand(
     val cmd: SimpleCommandBuilder
 ) : Command(cmd.name, cmd.description ?: "", "null", cmd.aliases.toList()) {
 

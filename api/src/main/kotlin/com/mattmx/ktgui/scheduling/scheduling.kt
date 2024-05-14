@@ -6,6 +6,8 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KFunction
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Dummy object to store the plugin instance in, so we don't have to provide it for
@@ -18,6 +20,18 @@ import java.util.concurrent.TimeUnit
 object Scheduling {
     lateinit var plugin: JavaPlugin
 }
+
+val <T> KFunction<T>.asyncTask: BukkitTask
+    get() = async {
+        isAccessible = true
+        call()
+    }
+
+val <T> KFunction<T>.syncTask: BukkitTask
+    get() = sync {
+        isAccessible = true
+        call()
+    }
 
 /**
  * Forces code to run in an async context.

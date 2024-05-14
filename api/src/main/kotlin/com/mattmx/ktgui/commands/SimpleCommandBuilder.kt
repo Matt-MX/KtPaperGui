@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.commands
 
 import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.dsl.event
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -23,12 +24,11 @@ open class SimpleCommandBuilder(
     val subCommands = arrayListOf<SimpleCommandBuilder>()
     var suggestSubCommands = false
     var playerOnly = false
-    var cooldown: Duration? = null
-    var cooldownMessage: String? = null
-    private var cooldownCallback: (CommandInvocation.() -> Unit)? = null
     private var suggests: (CommandInvocation.() -> List<String>?)? = null
     private var execute: (CommandInvocation.() -> Unit)? = null
     private var unknown: (CommandInvocation.() -> Unit)? = null
+    private var cooldown: Optional<ActionCoolDown<CommandSender>> = Optional.empty()
+    private var cooldownCallback: (CommandInvocation.() -> Unit)? = null
     var noPermissions: (CommandInvocation.() -> Unit)? = null
         private set
 
@@ -65,6 +65,13 @@ open class SimpleCommandBuilder(
         return this
     }
 
+    fun cooldown(duration: Duration?) = apply {
+        cooldown.ifPresent {
+            ActionCoolDown.unregister(it)
+        }
+        cooldown = Optional.ofNullable(duration?.let { ActionCoolDown(duration) })
+    }
+
     fun cooldownCallback(invocation: CommandInvocation) {
         this.cooldownCallback?.invoke(invocation)
     }
@@ -72,6 +79,10 @@ open class SimpleCommandBuilder(
     fun executes(execute: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
         this.execute = execute
         return this
+    }
+
+    fun runs(block: CommandInvocation.() -> Unit) = apply {
+        this.execute = block
     }
 
     fun unknownSubcommand(unknown: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
@@ -87,7 +98,11 @@ open class SimpleCommandBuilder(
         execute?.let { it(CommandInvocation(executor, args, lastArg, alias)) }
     }
 
-    fun suggests(suggest: (CommandInvocation) -> List<String>?) {
+    infix fun suggests(suggest: (CommandInvocation) -> List<String>?) = apply {
+        this.suggests = suggest
+    }
+
+    infix fun suggestion(suggest: CommandInvocation.() -> List<String>?) = apply {
         this.suggests = suggest
     }
 
@@ -115,7 +130,7 @@ open class SimpleCommandBuilder(
         return this
     }
 
-    fun register(isInConfig: Boolean = false) {
+    infix fun register(isInConfig: Boolean) {
         if (isInConfig) {
             Bukkit.getPluginCommand(name)?.setExecutor(DummyCommandExecutor(this))
         } else {
@@ -128,7 +143,7 @@ open class SimpleCommandBuilder(
             val dummyCmd = DummyCommand(this)
             cmdMap.register(GuiManager.owningPlugin.description.name.lowercase(), dummyCmd)
             val knownCommandsField = SimpleCommandMap::class.java.getDeclaredField("knownCommands")
-            knownCommandsField.setAccessible(true)
+            knownCommandsField.isAccessible = true
             val knownCommands = knownCommandsField.get(cmdMap) as MutableMap<String?, Command?>
             var knownAliases: Set<String?>? = null
             try {
@@ -184,6 +199,9 @@ class CommandInvocation(
     val alias: String,
     val coolDownExpires: Date? = null
 ) {
+    val player: Player
+        get() = source as Player
+
     fun player() : Player {
         return source as Player
     }
@@ -197,8 +215,12 @@ class CommandInvocation(
     fun isEmpty() : Boolean = args.isEmpty()
 }
 
+@Deprecated("No longer considered a 'simple command'", ReplaceWith("rawCommand"))
 inline fun simpleCommand(cmd: (SimpleCommandBuilder.() -> Unit)) : SimpleCommandBuilder {
     val cmdB = SimpleCommandBuilder()
     cmd(cmdB)
     return cmdB
 }
+
+inline fun rawCommand(name: String, vararg alias: String, block: SimpleCommandBuilder.() -> Unit) =
+    SimpleCommandBuilder(name, *alias).apply(block)

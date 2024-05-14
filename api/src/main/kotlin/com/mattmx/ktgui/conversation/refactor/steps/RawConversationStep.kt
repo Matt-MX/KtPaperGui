@@ -57,7 +57,7 @@ open class RawConversationStep<T : Any, C : Conversable> : StringPrompt(), Step 
 
         val result = ConversationResult(context, conversation, context.forWhom as C, validated)
 
-        val isValid = validated.isPresent && check.isPresent && check.get().invoke(result)
+        val isValid = validated.isPresent && (check.isEmpty || check.get().invoke(result))
 
         if (isValid) {
             callback.ifPresent {

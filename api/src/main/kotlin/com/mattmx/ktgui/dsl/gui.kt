@@ -26,6 +26,8 @@ inline fun <reified T : IGuiButton<*>> button(
 ) = constructor.get().apply(block)
 
 inline fun button(material: Material, block: GuiButton<*>.() -> Unit) = GuiButton(material).apply(block)
+infix fun Int.button(material: Material) = GuiButton(material) slot this
+
 inline fun IGuiScreen.button(material: Material, block: GuiButton<*>.() -> Unit) =
     GuiButton(material).apply(block).apply { childOf(this@button) }
 

@@ -6,6 +6,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.function.Consumer
 
 class KListener : Listener
 
@@ -29,44 +30,44 @@ inline fun <reified T : Event> event(
 }
 
 @JavaCompatibility
-fun <T : Event> javaEvent(
+fun <T : Event> event(
     plugin: JavaPlugin,
     clazz: Class<T>,
-    block: T.() -> Unit
+    block: Consumer<T>
 ) {
-    javaEvent(plugin, clazz, EventPriority.NORMAL, false, block)
+    event(plugin, clazz, EventPriority.NORMAL, false, block)
 }
 
 @JavaCompatibility
-fun <T : Event> javaEvent(
+fun <T : Event> event(
     plugin: JavaPlugin,
     clazz: Class<T>,
     priority: EventPriority,
-    block: T.() -> Unit
+    block: Consumer<T>
 ) {
-    javaEvent(plugin, clazz, priority, false, block)
+    event(plugin, clazz, priority, false, block)
 }
 
 @JavaCompatibility
-fun <T : Event> javaEvent(
+fun <T : Event> event(
     plugin: JavaPlugin,
     clazz: Class<T>,
     ignoreCancelled: Boolean,
-    block: T.() -> Unit
+    block: Consumer<T>
 ) {
-    javaEvent(plugin, clazz, EventPriority.NORMAL, ignoreCancelled, block)
+    event(plugin, clazz, EventPriority.NORMAL, ignoreCancelled, block)
 }
 
 @JavaCompatibility
-fun <T : Event> javaEvent(
+fun <T : Event> event(
     plugin: JavaPlugin,
     clazz: Class<T>,
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false,
-    block: T.() -> Unit
+    block: Consumer<T>
 ) {
     val listener = KListener()
-    listener.event(plugin, clazz, priority, ignoreCancelled, block)
+    listener.event(plugin, clazz, priority, ignoreCancelled) { block.accept(this) }
 }
 
 inline fun <reified T : Event> Listener.event(
