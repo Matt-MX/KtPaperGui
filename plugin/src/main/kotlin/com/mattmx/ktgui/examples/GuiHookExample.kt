@@ -49,22 +49,24 @@ class GuiHookExample : Example {
                 if ((gui as GuiScreen).id != "kgui.example.gui-hook") return@event
 
                 var signalExampleVar by (gui as GuiScreen).signal(0)
-                gui.button(Material.PURPLE_DYE) {
-                    named(!"&d&lA button")
-                    lore {
-                        add(!"&fThis button was added after the gui was built.")
-                        add(!"&fWe can even add our own signals here and whatnot: $signalExampleVar")
-                        add(!"&a&l[CLICK]")
-                    }
-                    click {
-                        ClickType.LEFT {
-                            signalExampleVar++
+                gui.effect {
+                    button(Material.PURPLE_DYE) {
+                        named(!"&d&lA button")
+                        lore {
+                            add(!"&fThis button was added after the gui was built.")
+                            add(!"&fWe can even add our own signals here and whatnot: $signalExampleVar")
+                            add(!"&a&l[CLICK]")
                         }
-                        ClickType.RIGHT {
-                            signalExampleVar--
+                        click {
+                            ClickType.LEFT {
+                                signalExampleVar++
+                            }
+                            ClickType.RIGHT {
+                                signalExampleVar--
+                            }
                         }
-                    }
-                } slot 15
+                    } slot 15
+                }
             }
         }
     }
