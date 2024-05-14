@@ -1,20 +1,21 @@
 package com.mattmx.ktgui.commands.declarative
 
-import com.google.common.collect.Lists
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext
-import com.mattmx.ktgui.commands.declarative.invocation.*
+import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
+import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
+import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
+import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
 import com.mattmx.ktgui.commands.declarative.syntax.*
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
-import com.mattmx.ktgui.configuration.Configuration
 import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
-import java.util.Optional
+import java.util.*
 import java.util.function.Consumer
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -106,10 +107,10 @@ class DeclarativeCommandBuilder<T : CommandSender>(
         }
 
     inline fun <reified T : CommandSender> subcommand(name: String, block: DeclarativeCommandBuilder<T>.() -> Unit) =
-        command(name, block)
+        subcommand(DeclarativeCommandBuilder(name, T::class.javaObjectType).apply(block))
 
-    inline fun <reified T : CommandSender> command(name: String, block: DeclarativeCommandBuilder<T>.() -> Unit) =
-        DeclarativeCommandBuilder(name, T::class.java).apply(block).let {
+    fun <T : CommandSender> subcommand(cmd: DeclarativeCommandBuilder<T>) =
+        cmd.let {
             subcommands += it
             it
         }
@@ -134,7 +135,7 @@ class DeclarativeCommandBuilder<T : CommandSender>(
         return context to this
     }
 
-    fun getSuggestions(context: SuggestionInvocation<*>) : List<String> {
+    fun getSuggestions(context: SuggestionInvocation<*>): List<String> {
         val cmds = subcommands
             .filter { it.nameStarts(context.last) }
             .map { listOf(it.name + it.aliases) }

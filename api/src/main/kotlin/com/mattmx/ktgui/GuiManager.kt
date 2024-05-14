@@ -2,7 +2,6 @@ package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.wrapper.CommandWrapper
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.configuration.Configuration
 import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.extensions.getOpenGui
@@ -23,8 +22,7 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.PluginDisableEvent
 import org.bukkit.plugin.java.JavaPlugin
-import org.jetbrains.annotations.ApiStatus
-import java.util.Collections
+import java.util.*
 
 /**
  * Handles all GUI click events, as well
@@ -33,8 +31,6 @@ import java.util.Collections
 object GuiManager : Listener {
     private val players = Collections.synchronizedMap(hashMapOf<Player, IGuiScreen>())
     private var initialized = false
-    private val defaultConfiguration = Configuration()
-    private val configurations = hashMapOf<JavaPlugin, Configuration>()
     private val pluginCache = InstancePackageClassCache<JavaPlugin>()
     val guiConfigManager = GuiConfigManager()
     lateinit var owningPlugin: JavaPlugin
@@ -58,23 +54,6 @@ object GuiManager : Listener {
     fun shutdown() {
         Bukkit.getOnlinePlayers().forEach { player -> forceClose(player) }
     }
-
-    /**
-     * Each plugin can configure generic things like feedback messages,
-     * that KTBukkitGui handles under the hud.
-     *
-     * @param plugin the plugin for this configuration
-     * @param block configuration modification
-     */
-    @ApiStatus.Experimental
-    fun configure(plugin: JavaPlugin, block: Configuration.() -> Unit) {
-        val configuration = Configuration()
-        block(configuration)
-        configurations[plugin] = configuration
-    }
-
-    @ApiStatus.Experimental
-    fun getConfiguration(plugin: JavaPlugin) = configurations[plugin] ?: defaultConfiguration
 
     fun registerCommand(classOrPlugin: Class<*>, command: CommandWrapper) {
         val existingCommand = Bukkit.getPluginCommand(command.name)

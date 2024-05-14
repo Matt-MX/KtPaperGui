@@ -1,6 +1,5 @@
 package com.mattmx.ktgui.commands.alpha
 
-import com.mattmx.ktgui.configuration.Configuration
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
