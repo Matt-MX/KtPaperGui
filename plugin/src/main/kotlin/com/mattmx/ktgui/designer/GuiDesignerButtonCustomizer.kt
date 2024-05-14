@@ -1,4 +1,4 @@
-package com.mattmx.ktgui.creator
+package com.mattmx.ktgui.designer
 
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
@@ -40,7 +40,9 @@ class GuiDesignerButtonCustomizer(
                             result.ifPresent { result ->
                                 this@GuiDesignerButtonCustomizer.button.named(!result)
                             }
-                            open(player)
+                            sync {
+                                open(player)
+                            }
                         }
                     }
                     exitOn = "cancel"
@@ -73,7 +75,9 @@ class GuiDesignerButtonCustomizer(
                             button.getItemStack()?.lore()?.forEach { line -> player.sendMessage(line) }
                         }
                         runs {
-                            open(player)
+                            sync {
+                                open(player)
+                            }
                         }
                     }
                 } begin player

@@ -15,6 +15,8 @@ open class EventCallback<T>(
 
     fun clear() = callbacks.clear()
 
+    fun isEmpty() = callbacks.isEmpty()
+
     open fun clone() = EventCallback(arrayListOf(*callbacks.map { it }.toTypedArray()))
 
 }

@@ -1,19 +1,20 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
 import com.mattmx.ktgui.commands.declarative.argument
 import com.mattmx.ktgui.commands.declarative.div
-import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
 import com.mattmx.ktgui.commands.declarative.invoke
 import com.mattmx.ktgui.commands.rawCommand
-import com.mattmx.ktgui.commands.simpleCommand
-import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
-import com.mattmx.ktgui.commands.suggestions.SimpleCommandSuggestion
-import com.mattmx.ktgui.creator.GuiDesigner
+import com.mattmx.ktgui.commands.usage.CommandUsageOptions
+import com.mattmx.ktgui.designer.GuiDesigner
+import com.mattmx.ktgui.dsl.button
+import com.mattmx.ktgui.dsl.gui
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
@@ -115,13 +116,17 @@ class KotlinGui : JavaPlugin() {
 
             "designer"<CommandSender> {
                 buildAutomaticPermissions("ktgui.command")
+                withDefaultUsageSubCommand(defaultUsageOptions)
 
+                val typeOrRowArgMessage = !"&cYou must provide an InventoryType or an amount of rows."
                 val typeOrRowArg by argument<String>("type_or_row")
                 val id by argument<String>("unique_id")
 
-                typeOrRowArg suggests { InventoryType.values().map { it.name.lowercase() } }
+                typeOrRowArg suggestsTopLevel { InventoryType.values().map { it.name.lowercase() } }
+                typeOrRowArg invalid { reply(typeOrRowArgMessage) }
+                id missing { reply(!"&cMissing argument 'id'. Need an identifier for the designer UI.") }
 
-                ("open" / typeOrRowArg / id)<Player> {
+                val create = subcommand<Player>("create" / typeOrRowArg / id) {
                     runs {
                         val type = runCatching {
                             InventoryType.valueOf(typeOrRowArg().uppercase())
@@ -129,21 +134,77 @@ class KotlinGui : JavaPlugin() {
                         val rows = typeOrRowArg().toIntOrNull()
 
                         if (type == null && rows == null) {
-                            reply(!"&cYou need to provide an InventoryType or an amount of rows.")
+                            reply(typeOrRowArgMessage)
                             return@runs
                         }
 
-                        val designer = cachedDesigners.getOrPut(id()) { GuiDesigner(id(), type = type, rows = rows ?: 1) }
+                        if (cachedDesigners.containsKey(id())) {
+                            return@runs reply("&cThere is already a designer by that name.")
+                        }
+
+                        val designer =
+                            cachedDesigners.getOrPut(id()) { GuiDesigner(id(), type = type, rows = rows ?: 1) }
                         designer.open(sender)
                     }
                 }
 
-                ("export" / id)<CommandSender> {
+                subcommand<Player>("open" / id) {
+
+                    id suggests { cachedDesigners.keys.toList() }
+
+                    runs {
+                        val designer = cachedDesigners[id()]
+                            ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
+                        designer.open(sender)
+                    }
+                }
+
+                val newTitle by argument<String>("string")
+                subcommand<Player>("set-title" / id / newTitle) {
+
+                    id suggests { cachedDesigners.keys.toList() }
+
+                    runs {
+                        val designer = cachedDesigners[id()]
+                            ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
+                        designer.exportTitle = newTitle()
+                        reply(!"&aSet title of ${id()} to ${newTitle()}")
+                    }
+                }
+
+                subcommand<CommandSender>("export" / id) {
+
+                    id suggests { cachedDesigners.keys.toList() }
+
                     runs {
                         val designer = cachedDesigners.getOrPut(id()) { GuiDesigner(id()) }
                         val file = designer.save(this@KotlinGui)
                         reply(!"&aSaved to /plugins/KtGUI/designer/${file.name}")
                     }
+                }
+            } register this@KotlinGui
+
+            val someArg by argument<String>("string", true)
+            someArg {
+                missing { reply(!"&cMissing argument 'someArg'!") }
+            }
+            ("foo" /
+                    listOf(
+                        ("fizz" / someArg)<CommandSender> {
+                            withDefaultUsageSubCommand(defaultUsageOptions)
+                            runs {
+                                reply(!"&c${someArg().replace("l", "w")} :3")
+                            }
+                        },
+                        ("bar")<CommandSender> {
+                            runs {
+                                reply(!"&1bar")
+                            }
+                        })
+                    )<CommandSender> {
+                withDefaultUsageSubCommand(defaultUsageOptions)
+                runs {
+                    reply(!"&cfoo&f!")
                 }
             } register this@KotlinGui
         }
@@ -158,5 +219,24 @@ class KotlinGui : JavaPlugin() {
         var plugin: JavaPlugin? = null
         lateinit var version: String
         lateinit var log: Logger
+
+        val defaultUsageOptions = CommandUsageOptions {
+            namePrefix = "&7/"
+
+            arguments {
+                prefix = "&7<&f"
+                typeChar = "&7:&e"
+
+                required = "&4!"
+                optional = "&7?"
+
+                suffix = "&7>"
+            }
+
+            subCommands {
+                prefix = "&f"
+                divider = "&7|"
+            }
+        }
     }
 }

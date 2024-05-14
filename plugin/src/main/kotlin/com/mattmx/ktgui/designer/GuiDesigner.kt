@@ -1,9 +1,7 @@
-package com.mattmx.ktgui.creator
+package com.mattmx.ktgui.designer
 
 import com.mattmx.ktgui.KotlinGui
-import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
-import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
@@ -16,8 +14,15 @@ class GuiDesigner(
     rows: Int = 1,
     type: InventoryType? = null
 ) : GuiScreen(!"Designer ($name&r)", rows, type) {
+    var exportTitle = name
+        set(value) {
+            title = !exportTitle
+
+            field = value
+        }
 
     init {
+
         click.any {
             event.isCancelled = slot in 0..last()
         }
@@ -77,12 +82,12 @@ class GuiDesigner(
     }
 
     fun export(): String {
-        val start = "gui(!\"$name\") {\n"
-        val guiOption = if (type == null) "rows = $rows" else "type = InventoryType.${type!!.name}"
+        val start = "gui(!\"$exportTitle\") {\n"
+        val guiOption = if (type == null) "    rows = $rows" else "type = InventoryType.${type!!.name}"
         val middle = items.values
             .filterIsInstance<GuiDesignerButton>()
             .filter { it.getItemStack()?.type != Material.AIR }
-            .joinToString("\n") { it.full + " childOf this" }
+            .joinToString("\n    ") { it.full + " childOf this" }
         val end = "\n}"
 
         return "$start$guiOption\n$middle$end"

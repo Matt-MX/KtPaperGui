@@ -27,4 +27,10 @@ class DeclarativeCommandWrapper<T : CommandSender>(
         return outArgs?.toMutableList() ?: mutableListOf()
     }
 
+    override fun testPermission(target: CommandSender): Boolean {
+        val context = StorageCommandContext(target, name, listOf())
+
+        return builder.permission.orElse(null)?.invoke(context) ?: false
+    }
+
 }

@@ -1,6 +1,7 @@
-package com.mattmx.ktgui.creator
+package com.mattmx.ktgui.designer
 
 import com.mattmx.ktgui.components.button.GuiButton
+import com.mattmx.ktgui.extensions.stripColor
 import com.mattmx.ktgui.utils.legacy
 import org.bukkit.inventory.ItemStack
 
@@ -26,14 +27,14 @@ class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
             if (lore.isEmpty()) return null
 
             val middle = lore.joinToString("\n") {
-                "   add(!\"${it.legacy()}\")"
+                "   add(!\"${it.legacy().replace("§", "&")}\")"
             }
             return "$start$middle\n}"
         }
 
     val namedPart: String
         get() {
-            val name = getItemStack()!!.displayName().legacy()
+            val name = getItemStack()!!.displayName().legacy().replace("§", "&")
             return "named(!\"$name\")"
         }
 

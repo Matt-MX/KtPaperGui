@@ -58,22 +58,24 @@ fun main() {
         }
     }
 
-    val foo1 = ("foo" /
-            (
+    val foo1 =
+        ("foo" /
+                listOf(
                     ("fizz" / someArg)<CommandSender> {
                         runs {
                             println("fizzzzz ${someArg().name}")
                         }
-                    } + ("bar")<CommandSender> {
+                    },
+                    ("bar")<CommandSender> {
                         runs {
                             println("bar")
                         }
                     })
-            )<CommandSender> {
-        runs {
-            println("foo!")
+                )<CommandSender> {
+            runs {
+                println("foo!")
+            }
         }
-    }
 
     println(foo.getUsage(myCommandUsage))
 }

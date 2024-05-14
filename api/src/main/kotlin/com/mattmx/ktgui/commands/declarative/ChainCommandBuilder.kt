@@ -31,6 +31,7 @@ operator fun String.div(argument: Argument<*>) = ChainCommandBuilder(this).apply
     arguments.add(argument)
 }
 
+@JvmName("div1")
 operator fun String.div(argument: List<Argument<*>>) = ChainCommandBuilder(this).apply {
     arguments.addAll(argument)
 }
