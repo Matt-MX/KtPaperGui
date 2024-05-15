@@ -24,14 +24,15 @@ public class JavaUpdateCommandExample {
                 )
                 .register(false);
 
-        DeclarativeCommandBuilder.fromString(Player.class, "/hello <arg:string>")
-                .runs((context) -> {
+        DeclarativeCommandBuilder.fromString("/hello <arg:string>")
+                .runs(Player.class, (context) -> {
                     ArgumentContext<String> arg = context.getArgumentContext("arg");
 
                     if (arg == null) {
                         System.out.println("arg was null");
                     }
 
+                    assert arg != null;
                     System.out.println(arg.getOrNull());
                 });
     }
