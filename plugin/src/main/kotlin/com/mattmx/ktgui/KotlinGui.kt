@@ -114,7 +114,7 @@ class KotlinGui : JavaPlugin() {
                 }
             }.register(false)
 
-            "designer"<CommandSender> {
+            "designer" {
                 buildAutomaticPermissions("ktgui.command")
                 withDefaultUsageSubCommand(defaultUsageOptions)
 
@@ -126,8 +126,8 @@ class KotlinGui : JavaPlugin() {
                 typeOrRowArg invalid { reply(typeOrRowArgMessage) }
                 id missing { reply(!"&cMissing argument 'id'. Need an identifier for the designer UI.") }
 
-                val create = subcommand<Player>("create" / typeOrRowArg / id) {
-                    runs {
+                val create = subcommand("create" / typeOrRowArg / id) {
+                    runs<Player> {
                         val type = runCatching {
                             InventoryType.valueOf(typeOrRowArg().uppercase())
                         }.getOrNull()
@@ -148,11 +148,11 @@ class KotlinGui : JavaPlugin() {
                     }
                 }
 
-                subcommand<Player>("open" / id) {
+                subcommand("open" / id) {
 
                     id suggests { cachedDesigners.keys.toList() }
 
-                    runs {
+                    runs<Player> {
                         val designer = cachedDesigners[id()]
                             ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
                         designer.open(sender)
@@ -160,11 +160,11 @@ class KotlinGui : JavaPlugin() {
                 }
 
                 val newTitle by argument<String>("string")
-                subcommand<Player>("set-title" / id / newTitle) {
+                subcommand("set-title" / id / newTitle) {
 
                     id suggests { cachedDesigners.keys.toList() }
 
-                    runs {
+                    runs<CommandSender> {
                         val designer = cachedDesigners[id()]
                             ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
                         designer.exportTitle = newTitle()
@@ -172,11 +172,11 @@ class KotlinGui : JavaPlugin() {
                     }
                 }
 
-                subcommand<CommandSender>("export" / id) {
+                subcommand("export" / id) {
 
                     id suggests { cachedDesigners.keys.toList() }
 
-                    runs {
+                    runs<CommandSender> {
                         val designer = cachedDesigners.getOrPut(id()) { GuiDesigner(id()) }
                         val file = designer.save(this@KotlinGui)
                         reply(!"&aSaved to /plugins/KtGUI/designer/${file.name}")
@@ -188,25 +188,6 @@ class KotlinGui : JavaPlugin() {
             someArg {
                 missing { reply(!"&cMissing argument 'someArg'!") }
             }
-            ("foo" /
-                    listOf(
-                        ("fizz" / someArg)<CommandSender> {
-                            withDefaultUsageSubCommand(defaultUsageOptions)
-                            runs {
-                                reply(!"&c${someArg().replace("l", "w")} :3")
-                            }
-                        },
-                        ("bar")<CommandSender> {
-                            runs {
-                                reply(!"&1bar")
-                            }
-                        })
-                    )<CommandSender> {
-                withDefaultUsageSubCommand(defaultUsageOptions)
-                runs {
-                    reply(!"&cfoo&f!")
-                }
-            } register this@KotlinGui
         }
     }
 

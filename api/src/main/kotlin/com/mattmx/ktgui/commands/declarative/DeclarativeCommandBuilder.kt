@@ -3,10 +3,7 @@ package com.mattmx.ktgui.commands.declarative
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext
-import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
-import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
-import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
-import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+import com.mattmx.ktgui.commands.declarative.invocation.*
 import com.mattmx.ktgui.commands.declarative.syntax.*
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
@@ -21,30 +18,32 @@ import java.util.function.Consumer
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class DeclarativeCommandBuilder<T : CommandSender>(
-    val name: String,
-    val senderClass: Class<T>
+class DeclarativeCommandBuilder(
+    val name: String
 ) {
     var description = "Command '$name'"
     var aliases = arrayOf<String>()
-    var subcommands = setOf<DeclarativeCommandBuilder<*>>()
+    var subcommands = setOf<DeclarativeCommandBuilder>()
     var expectedArguments = arrayOf<Argument<*>>()
     var localArgumentSuggestions = hashMapOf<String, CommandSuggestion<*>>()
     var buildAutomaticPermissions = Optional.empty<String>()
         private set
     var permission: Optional<(StorageCommandContext<*>) -> Boolean> = Optional.empty()
         private set
-    var runs: Optional<(RunnableCommandContext<T>) -> Unit> = Optional.empty()
+
+    // todo give this T
+//    var runs: Optional<(RunnableCommandContext<*>) -> Unit> = Optional.empty()
+//        private set
+    var runs = hashMapOf<Class<*>, (RunnableCommandContext<*>) -> Unit>()
+    var missing: Optional<(InvalidArgContext<*>) -> Unit> = Optional.empty()
         private set
-    var missing: Optional<(InvalidArgContext<T>) -> Unit> = Optional.empty()
-        private set
-    var invalid: Optional<(InvalidArgContext<T>) -> Unit> = Optional.empty()
+    var invalid: Optional<(InvalidArgContext<*>) -> Unit> = Optional.empty()
         private set
     var incorrectExecutor: Optional<(StorageCommandContext<*>) -> Unit> = Optional.empty()
         private set
     var invalidPermissions: Optional<(StorageCommandContext<*>) -> Unit> = Optional.empty()
         private set
-    var unknownCommand: Optional<(StorageCommandContext<T>) -> Unit> = Optional.empty()
+    var unknownCommand: Optional<(StorageCommandContext<*>) -> Unit> = Optional.empty()
         private set
 
     infix fun permission(block: StorageCommandContext<*>.() -> Boolean) = apply {
@@ -59,7 +58,7 @@ class DeclarativeCommandBuilder<T : CommandSender>(
         this.invalidPermissions = Optional.of(block)
     }
 
-    infix fun unknownCommand(block: StorageCommandContext<T>.() -> Unit) = apply {
+    infix fun unknownCommand(block: StorageCommandContext<*>.() -> Unit) = apply {
         this.unknownCommand = Optional.of(block)
     }
 
@@ -71,31 +70,42 @@ class DeclarativeCommandBuilder<T : CommandSender>(
         this.incorrectExecutor = Optional.ofNullable(block)
     }
 
-    infix fun missing(block: InvalidArgContext<T>.() -> Unit) = apply {
+    infix fun missing(block: InvalidArgContext<*>.() -> Unit) = apply {
         this.missing = Optional.of(block)
     }
 
-    infix fun invalid(block: InvalidArgContext<T>.() -> Unit) = apply {
+    infix fun invalid(block: InvalidArgContext<*>.() -> Unit) = apply {
         this.invalid = Optional.of(block)
     }
 
-    infix fun runs(block: RunnableCommandContext<T>.() -> Unit) = apply {
-        this.runs = Optional.of(block)
+    inline infix fun <reified T : CommandSender> runs(noinline block: RunnableCommandContext<T>.() -> Unit) = apply {
+        runs(T::class.javaObjectType, block)
+    }
+
+    fun <T : CommandSender> runs(senderClass: Class<T>, block: RunnableCommandContext<T>.() -> Unit) = apply {
+        this.runs[senderClass] = block as (RunnableCommandContext<*>) -> Unit
+    }
+
+    @JavaCompatibility
+    fun <T : CommandSender> runs(senderClass: Class<T>, block: Consumer<RunnableCommandContext<T>>) = apply {
+        runs(senderClass) {
+            block.accept(this)
+        }
     }
 
     fun withDefaultUsageSubCommand(options: CommandUsageOptions = CommandUsageOptions()) = apply {
         val self = this
 
-        subcommand<CommandSender>("usage") {
+        subcommand("usage") {
             aliases += "help"
 
-            runs {
+            runs<CommandSender> {
                 reply(!self.getUsage(options))
             }
         }
     }
 
-    infix fun Argument<*>.suggests(suggest: CommandSuggestion<T>) = apply {
+    infix fun Argument<*>.suggests(suggest: CommandSuggestion<*>) = apply {
         localArgumentSuggestions[name()] = suggest
     }
 
@@ -105,55 +115,37 @@ class DeclarativeCommandBuilder<T : CommandSender>(
             ?: argument.suggests.orElse(null)
     }
 
-    @JavaCompatibility
-    fun runs(block: Consumer<RunnableCommandContext<T>>) = apply {
-        this.runs = Optional.of {
-            block.accept(it)
-        }
-    }
-
-
-    fun <S : CommandSender> checkSender(sender: S) =
-        senderClass.isAssignableFrom(sender::class.java)
-
-    inline operator fun <reified V : CommandSender> String.invoke(block: DeclarativeCommandBuilder<V>.() -> Unit) =
-        fromString<V>(this).apply(block).let {
+    inline operator fun <reified V : CommandSender> String.invoke(block: DeclarativeCommandBuilder.() -> Unit) =
+        fromString(this).apply(block).let {
             subcommands += it
             it
         }
 
-    inline fun <reified T : CommandSender> subcommand(
+    inline fun subcommand(
         chain: ChainCommandBuilder,
-        block: DeclarativeCommandBuilder<T>.() -> Unit
+        block: DeclarativeCommandBuilder.() -> Unit
     ) =
-        chain.build<T>().apply(block).let {
+        chain.build().apply(block).let {
             subcommands += it
             it
         }
 
-    inline fun <reified T : CommandSender> subcommand(name: String, block: DeclarativeCommandBuilder<T>.() -> Unit) =
-        subcommand(DeclarativeCommandBuilder(name, T::class.javaObjectType).apply(block))
+    fun subcommand(name: String, block: DeclarativeCommandBuilder.() -> Unit) =
+        subcommand(DeclarativeCommandBuilder(name).apply(block))
 
-    fun <T : CommandSender> subcommand(cmd: DeclarativeCommandBuilder<T>) =
+    fun subcommand(cmd: DeclarativeCommandBuilder) =
         cmd.let {
             subcommands += it
             it
         }
 
-    fun getCurrentCommandAnySender(context: SuggestionInvocation<*>): Pair<SuggestionInvocation<*>, DeclarativeCommandBuilder<*>?> {
-        if (context.sender.isPresent) {
-            if (!checkSender(context.sender.get())) return context to null
-        }
-        return getCurrentCommand(context as SuggestionInvocation<T>)
-    }
-
-    private fun getCurrentCommand(context: SuggestionInvocation<T>): Pair<SuggestionInvocation<*>, DeclarativeCommandBuilder<*>?> {
+    fun getCurrentCommand(context: SuggestionInvocation<*>): Pair<SuggestionInvocation<*>, DeclarativeCommandBuilder?> {
         val firstArg = context.rawArgs.firstOrNull()
             ?: return context to this
 
         for (cmd in subcommands) {
             if (cmd.nameEquals(firstArg)) {
-                return cmd.getCurrentCommandAnySender(context.clone(context.rawArgs.subList(1, context.rawArgs.size)))
+                return cmd.getCurrentCommand(context.clone(context.rawArgs.subList(1, context.rawArgs.size)))
             }
         }
 
@@ -178,7 +170,7 @@ class DeclarativeCommandBuilder<T : CommandSender>(
 
     fun nameStarts(arg: String) = name.startsWith(arg, true) || aliases.any { it.startsWith(arg, true) }
 
-    infix fun register(localObject: Any) {
+    infix fun register(localObject: Any) = apply {
         val permissionNodePrefix = buildAutomaticPermissions.orElse(null)
         if (permissionNodePrefix != null) {
             registerPermissionWithPrefixRecursively(permissionNodePrefix)
@@ -208,21 +200,7 @@ class DeclarativeCommandBuilder<T : CommandSender>(
         }
     }
 
-    fun invokeAnySender(context: StorageCommandContext<*>) {
-        val result = runCatching {
-            // todo we should find the command before invoking it
-            invoke(context as StorageCommandContext<T>)
-        }
-        if (result.isFailure) {
-            if (incorrectExecutor.isPresent) {
-                incorrectExecutor.get().invoke(context)
-            } else {
-                context.reply(!"&cThis command can only be ran by ${senderClass.simpleName}s.")
-            }
-        }
-    }
-
-    fun invoke(context: StorageCommandContext<T>) {
+    fun invoke(context: StorageCommandContext<*>) {
 
         if (permission.isPresent && !permission.get().invoke(context)) {
             if (invalidPermissions.isPresent) {
@@ -241,7 +219,7 @@ class DeclarativeCommandBuilder<T : CommandSender>(
             // todo could match multiple subcommands
             val cmd = subcommands.firstOrNull { it.nameEquals(arg) }
             if (cmd != null) {
-                return cmd.invokeAnySender(
+                return cmd.invoke(
                     context.clone(context.rawArgs.subList(1, context.rawArgs.size))
                 )
             }
@@ -332,7 +310,13 @@ class DeclarativeCommandBuilder<T : CommandSender>(
 
         val runnableContext =
             RunnableCommandContext(context.sender, context.alias, context.rawArgs, argumentValues)
-        runs.ifPresent { it.invoke(runnableContext) }
+
+        val executor =
+            runs.entries.firstOrNull { (clazz, runs) ->
+                clazz.isAssignableFrom(context.sender.javaClass)
+            } ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString(", ") { "${it.javaClass.simpleName}s" }}.")
+
+        executor.value.invoke(runnableContext)
     }
 
     /**
@@ -378,12 +362,8 @@ class DeclarativeCommandBuilder<T : CommandSender>(
 
     companion object {
 
-        inline fun <reified T : CommandSender> fromString(source: String): DeclarativeCommandBuilder<T> =
-            fromString(T::class.javaObjectType, source)
-
         @JvmStatic
-        @JavaCompatibility
-        fun <T : CommandSender> fromString(targetSender: Class<T>, source: String): DeclarativeCommandBuilder<T> {
+        fun fromString(source: String): DeclarativeCommandBuilder {
             var name: String? = null
             val expectedArguments = arrayListOf<Argument<*>>()
             val parsed = Parser(source).parse()
@@ -411,7 +391,7 @@ class DeclarativeCommandBuilder<T : CommandSender>(
             }
 
             if (name == null) error("Name cannot be null for a command!")
-            return DeclarativeCommandBuilder<T>(name, targetSender)
+            return DeclarativeCommandBuilder(name)
                 .apply {
                     this.expectedArguments += expectedArguments
                 }
@@ -419,11 +399,11 @@ class DeclarativeCommandBuilder<T : CommandSender>(
     }
 }
 
-inline operator fun <reified T : CommandSender> String.invoke(block: DeclarativeCommandBuilder<T>.() -> Unit) =
-    DeclarativeCommandBuilder.fromString<T>(this).apply(block)
+inline operator fun String.invoke(block: DeclarativeCommandBuilder.() -> Unit) =
+    DeclarativeCommandBuilder(this).apply(block)
 
-inline fun <reified T : CommandSender> command(name: String, block: DeclarativeCommandBuilder<T>.() -> Unit) =
-    DeclarativeCommandBuilder<T>(name, T::class.java).apply(block)
+inline fun command(name: String, block: DeclarativeCommandBuilder.() -> Unit) =
+    DeclarativeCommandBuilder(name).apply(block)
 
 fun <T : Any> argument(type: String, isVarArg: Boolean = false): ReadOnlyProperty<Nothing?, Argument<T>> {
     val arg = argument<T>(type, "delegated_arg", isVarArg)
