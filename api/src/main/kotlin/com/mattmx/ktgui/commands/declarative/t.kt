@@ -1,8 +1,13 @@
 package com.mattmx.ktgui.commands.declarative
 
+import com.mattmx.ktgui.commands.declarative.arg.*
+import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
+import com.mattmx.ktgui.utils.not
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import kotlin.math.pow
 
 fun main() {
     val player by argument<FakePlayer>("fakePlayer")
@@ -14,6 +19,36 @@ fun main() {
         }
     } invalid {
         println("Invalid argument '${argument.name()}'.")
+    }
+
+    val op by argument<(Double, Double) -> Double>("operation")
+
+    op suggests object : CommandSuggestion<(Double, Double) -> Double> {
+        val operations = hashMapOf<String, (Double, Double) -> Double>(
+            "+" to Double::plus,
+            "-" to Double::minus,
+            "/" to Double::div,
+            "*" to Double::times,
+            "^" to Double::pow
+        )
+
+        override fun getSuggestion(invocation: SuggestionInvocation<*>): List<String>? {
+            return operations.keys.toList()
+        }
+
+        override fun getValue(argumentString: String?): ((Double, Double) -> Double)? {
+            return operations[argumentString]
+        }
+    } missing { reply(!"&cYou must provide an operator.") }
+
+    val a by doubleArgument()
+    val b by doubleArgument()
+    val mathCommand = ("math" / a / op / b) {
+        runs<CommandSender> {
+            reply(!"$a ${op.context.stringValue()} $b = ${op()(a(), b())}")
+        }
+
+        invalid { reply(!"&cProvide a number, operator and another number.") }
     }
 
     val splitArgs = { s: String -> s.split(" ") }

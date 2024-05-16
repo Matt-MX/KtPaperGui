@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.commands.declarative
 
 import com.mattmx.ktgui.commands.declarative.arg.Argument
+import com.mattmx.ktgui.commands.declarative.arg.MultiArgument
 import com.mattmx.ktgui.utils.JavaCompatibility
 import org.bukkit.command.CommandSender
 
@@ -18,13 +19,15 @@ class ChainCommandBuilder(val name: String) {
         subcommands.addAll(command)
     }
 
-    fun build() = DeclarativeCommandBuilder(name).apply {
+    fun build() = build(DeclarativeCommandBuilder(name))
+
+    fun <T : DeclarativeCommandBuilder> build(existing: T) = existing.apply {
         this.expectedArguments += arguments
         this.subcommands += this@ChainCommandBuilder.subcommands
     }
 }
 
-operator fun ChainCommandBuilder.invoke(block: DeclarativeCommandBuilder.() -> Unit) =
+inline operator fun ChainCommandBuilder.invoke(block: DeclarativeCommandBuilder.() -> Unit) =
     build().apply(block)
 
 val ChainCommandBuilder.command
@@ -36,7 +39,7 @@ operator fun String.div(argument: Argument<*>) = ChainCommandBuilder(this).apply
 
 @JvmName("div1")
 operator fun String.div(argument: List<Argument<*>>) = ChainCommandBuilder(this).apply {
-    arguments.addAll(argument)
+    arguments.add(MultiArgument("multi-argument", *argument.toTypedArray()))
 }
 
 operator fun String.div(subs: List<DeclarativeCommandBuilder>) = ChainCommandBuilder(this).apply {

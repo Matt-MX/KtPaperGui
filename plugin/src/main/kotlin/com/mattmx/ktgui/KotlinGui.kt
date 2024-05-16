@@ -126,7 +126,7 @@ class KotlinGui : JavaPlugin() {
                 typeOrRowArg invalid { reply(typeOrRowArgMessage) }
                 id missing { reply(!"&cMissing argument 'id'. Need an identifier for the designer UI.") }
 
-                val create = subcommand("create" / typeOrRowArg / id) {
+                val create = ("create" / typeOrRowArg / id) {
                     runs<Player> {
                         val type = runCatching {
                             InventoryType.valueOf(typeOrRowArg().uppercase())
@@ -148,7 +148,7 @@ class KotlinGui : JavaPlugin() {
                     }
                 }
 
-                subcommand("open" / id) {
+                ("open" / id) {
 
                     id suggests { cachedDesigners.keys.toList() }
 
@@ -160,7 +160,7 @@ class KotlinGui : JavaPlugin() {
                 }
 
                 val newTitle by argument<String>("string")
-                subcommand("set-title" / id / newTitle) {
+                ("set-title" / id / newTitle) {
 
                     id suggests { cachedDesigners.keys.toList() }
 
@@ -202,13 +202,13 @@ class KotlinGui : JavaPlugin() {
         lateinit var log: Logger
 
         val defaultUsageOptions = CommandUsageOptions {
-            namePrefix = "&7/"
+            namePrefix = "&7/&f"
 
             arguments {
                 prefix = "&7<&f"
-                typeChar = "&7:&e"
+                typeChar = "&7:&6"
 
-                required = "&4!"
+                required = "&c!"
                 optional = "&7?"
 
                 suffix = "&7>"
@@ -216,7 +216,7 @@ class KotlinGui : JavaPlugin() {
 
             subCommands {
                 prefix = "&f"
-                divider = "&7|"
+                divider = "&7|&f"
             }
         }
     }

@@ -17,7 +17,7 @@ class ArgumentContext<T : Any>(
 
     fun stringValue() = stringValue
 
-    fun optional() = value
+    fun asOptional() = value
 
     override fun toString() = getOrNull().toString()
 }
