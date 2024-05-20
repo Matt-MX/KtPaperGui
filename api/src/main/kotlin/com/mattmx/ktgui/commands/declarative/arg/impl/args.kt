@@ -1,5 +1,6 @@
-package com.mattmx.ktgui.commands.declarative.arg
+package com.mattmx.ktgui.commands.declarative.arg.impl
 
+import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
 import kotlin.properties.ReadOnlyProperty
@@ -22,11 +23,26 @@ fun <T : Any> argument(type: String, name: String, isVarArg: Boolean) =
 fun stringArgument(type: String = "string", isVarArg: Boolean = false) =
     delegateArgument(StringArgument(DELEGATED_ARG_NAME, type, if (isVarArg) GreedyArgumentConsumer() else SingleArgumentConsumer()))
 
+fun greedyStringArgument(type: String = "string") =
+    stringArgument(type, true)
+
 fun intArgument(type: String = "int") =
     delegateArgument(IntArgument(DELEGATED_ARG_NAME, type))
+
+fun longArgument(type: String = "long") =
+    delegateArgument(LongArgument(DELEGATED_ARG_NAME, type))
 
 fun doubleArgument(type: String = "double") =
     delegateArgument(DoubleArgument(DELEGATED_ARG_NAME, type))
 
 fun relativeCoords(type: String = "coords") =
     delegateArgument(RelativeCoordinateArgument(DELEGATED_ARG_NAME, type))
+
+fun playerArgument() =
+    delegateArgument(OnlinePlayerArgument(DELEGATED_ARG_NAME))
+
+fun <T : Any> simpleArgument(type: String = "") =
+    delegateArgument(SimpleArgument<T>(DELEGATED_ARG_NAME, type, SingleArgumentConsumer()))
+
+inline fun <reified E : Enum<E>> enumArgument(type: String = E::class.java.simpleName) =
+    delegateArgument(EnumArgument(E::class.javaObjectType, DELEGATED_ARG_NAME, type))

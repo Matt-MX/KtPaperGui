@@ -4,11 +4,13 @@ import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.consumer.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
+import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
 import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestionRegistry
 import com.mattmx.ktgui.event.EventCallback
 import com.mattmx.ktgui.utils.Invokable
+import com.mattmx.ktgui.utils.JavaCompatibility
 import java.util.*
 
 open class Argument<T : Any>(
@@ -18,8 +20,10 @@ open class Argument<T : Any>(
 ) : Invokable<Argument<T>> {
     var description: String? = null
     var suggests = Optional.empty<CommandSuggestion<T>>()
-    val missingCallback = EventCallback<InvalidArgContext<*>>()
-    val invalidCallback = EventCallback<InvalidArgContext<*>>()
+    var missingCallback = EventCallback<InvalidArgContext<*>>()
+        protected set
+    var invalidCallback = EventCallback<InvalidArgContext<*>>()
+        protected set
     private var optional = false
     // todo impl default value
 
@@ -91,6 +95,12 @@ open class Argument<T : Any>(
         } else null
     }
 
+    @JavaCompatibility
+    fun getContext(context: RunnableCommandContext<*>) = context.getArgumentContext<T>(name());
+
+    @JavaCompatibility
+    fun getValue(context: RunnableCommandContext<*>) = context.getArgumentContext<T>(name())?.getOrNull()
+
     fun createContext(stringValue: String?, actualValue: Any?): ArgumentContext<T> {
         return ArgumentContext(stringValue, Optional.ofNullable(actualValue as T?), this)
     }
@@ -113,6 +123,19 @@ open class Argument<T : Any>(
 
     override fun toString() =
         "<$name${if (isOptional()) "?" else ""}:${typeName}${if (consumer.isVarArg()) "..." else ""}>"
+
+    open fun applyToClone(cloned: Argument<T>) = cloned
+
+    fun clone() : Argument<T> {
+        return Argument<T>(name, typeName, consumer)
+            .let {
+                it.invalidCallback = invalidCallback.clone()
+                it.missingCallback = missingCallback.clone()
+                it.suggests = suggests
+                it.description = description
+                applyToClone(it)
+            }
+    }
 }
 
 infix fun <T : Any> Argument<T>.suggests(suggest: CommandSuggestion<T>) = apply {

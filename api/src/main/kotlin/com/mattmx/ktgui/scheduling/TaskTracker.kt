@@ -1,9 +1,15 @@
 package com.mattmx.ktgui.scheduling
 
+import com.mattmx.ktgui.utils.Invokable
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
-class TaskTracker {
+/**
+ * Utility class used as a "Task pool".
+ *
+ * Any scheduled tasks will be added to [list].
+ */
+class TaskTracker : Invokable<TaskTracker> {
     private val list = Collections.synchronizedList(arrayListOf<BukkitTask>())
 
     fun runAsync(block: TaskTrackerTask.() -> Unit) {

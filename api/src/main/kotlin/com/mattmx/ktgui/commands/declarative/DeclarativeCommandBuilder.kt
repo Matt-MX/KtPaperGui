@@ -9,12 +9,15 @@ import com.mattmx.ktgui.commands.declarative.invocation.*
 import com.mattmx.ktgui.commands.declarative.syntax.*
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
+import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.utils.JavaCompatibility
 import com.mattmx.ktgui.utils.not
+import com.mattmx.ktgui.utils.pretty
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
+import java.time.Duration
 import java.util.*
 import java.util.function.Consumer
 
@@ -26,6 +29,10 @@ open class DeclarativeCommandBuilder(
     var subcommands = setOf<DeclarativeCommandBuilder>()
     var expectedArguments = arrayOf<Argument<*>>()
     var localArgumentSuggestions = hashMapOf<String, CommandSuggestion<*>>()
+    var coolDown = Optional.empty<ActionCoolDown<CommandSender>>()
+        private set
+    var coolDownCallback = Optional.empty<(StorageCommandContext<*>) -> Unit>()
+        private set
     var buildAutomaticPermissions = Optional.empty<String>()
         private set
     var permission: Optional<(StorageCommandContext<*>) -> Boolean> = Optional.empty()
@@ -46,6 +53,11 @@ open class DeclarativeCommandBuilder(
     var unknownCommand: Optional<(StorageCommandContext<*>) -> Unit> = Optional.empty()
         private set
 
+    fun cooldown(duration: Duration, block: (StorageCommandContext<*>.() -> Unit)? = null) = apply {
+        this.coolDown = Optional.of(ActionCoolDown(duration))
+        this.coolDownCallback = Optional.ofNullable(block)
+    }
+
     infix fun permission(block: StorageCommandContext<*>.() -> Boolean) = apply {
         this.permission = Optional.of(block)
     }
@@ -62,8 +74,8 @@ open class DeclarativeCommandBuilder(
         this.unknownCommand = Optional.of(block)
     }
 
-    infix fun buildAutomaticPermissions(root: String) = apply {
-        this.buildAutomaticPermissions = Optional.of(root)
+    infix fun buildAutomaticPermissions(root: String?) = apply {
+        this.buildAutomaticPermissions = Optional.ofNullable(root)
     }
 
     infix fun incorrectExecutor(block: (StorageCommandContext<*>.() -> Unit)?) = apply {
@@ -83,6 +95,22 @@ open class DeclarativeCommandBuilder(
     }
 
     fun <T : CommandSender> runs(senderClass: Class<T>, block: RunnableCommandContext<T>.() -> Unit) = apply {
+        this.runs[senderClass] = block as (RunnableCommandContext<*>) -> Unit
+    }
+
+    inline fun <reified T : CommandSender> runs(
+        vararg argsProvided: Argument<*>,
+        noinline block: RunnableCommandContext<T>.() -> Unit
+    ) = apply {
+        runs(T::class.javaObjectType, *argsProvided, block = block)
+    }
+
+    fun <T : CommandSender> runs(
+        senderClass: Class<T>,
+        vararg argsProvided: Argument<*>,
+        block: RunnableCommandContext<T>.() -> Unit
+    ) = apply {
+        TODO("Not yet implemented, use runs without argsProvided")
         this.runs[senderClass] = block as (RunnableCommandContext<*>) -> Unit
     }
 
@@ -167,10 +195,20 @@ open class DeclarativeCommandBuilder(
             .map { listOf(it.name) + it.aliases }
         val cmdsList = cmds.flatten()
 
+        val list = context.rawArgs.toMutableList()
+        var suggestedArgs: List<String>? = null
+        for (arg in expectedArguments) {
+            val consumed = arg.consumer.consume(list)
+            list.removeAll(consumed)
 
+            if (list.isEmpty()) {
+                // This is the last argument
+                suggestedArgs = getSuggestions(arg)?.getLastArgSuggestion(context)
+            }
+        }
 
-        val arg = expectedArguments.getOrNull(context.rawArgs.size - 1)
-        val suggestedArgs = getSuggestions(arg)?.getLastArgSuggestion(context)
+//        val arg = expectedArguments.getOrNull(context.rawArgs.size - 1)
+//        val suggestedArgs = getSuggestions(arg)?.getLastArgSuggestion(context)
 
         return if (suggestedArgs != null) {
             cmdsList + suggestedArgs
@@ -223,6 +261,17 @@ open class DeclarativeCommandBuilder(
             return
         }
 
+        if (coolDown.isPresent && !coolDown.get().test(context.sender)) {
+            coolDownCallback.ifPresentOrElse({ it.invoke(context) }) {
+                context.reply(
+                    !"&cPlease wait ${
+                        coolDown.get().timeRemaining(context.sender).pretty()
+                    } before running the command again."
+                )
+            }
+            return
+        }
+
         val argumentValues = hashMapOf<String, ArgumentContext<*>>()
         var expectedArgumentIndex = 0
         var providedArgumentIndex = 0
@@ -242,7 +291,8 @@ open class DeclarativeCommandBuilder(
             val expectedArg = expectedArguments.getOrNull(expectedArgumentIndex)
             if (expectedArg != null) {
                 // Get full argument string using consumer
-                val consumed = expectedArg.consumer.consume(context.rawArgs.subList(providedArgumentIndex, context.rawArgs.size))
+                val consumed =
+                    expectedArg.consumer.consume(context.rawArgs.subList(providedArgumentIndex, context.rawArgs.size))
                 providedArgumentIndex += consumed.size
 
                 // If the value is empty and IS required
@@ -324,7 +374,8 @@ open class DeclarativeCommandBuilder(
         val executor =
             runs.entries.firstOrNull { (clazz, _) ->
                 clazz.isAssignableFrom(context.sender.javaClass)
-            } ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString("/") { "${it.javaClass.simpleName}s" }}.")
+            }
+                ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString("/") { "${it.javaClass.simpleName}s" }}.")
 
         executor.value.invoke(runnableContext)
     }
@@ -413,3 +464,6 @@ inline operator fun String.invoke(block: DeclarativeCommandBuilder.() -> Unit) =
 
 inline fun command(name: String, block: DeclarativeCommandBuilder.() -> Unit) =
     DeclarativeCommandBuilder(name).apply(block)
+
+@JavaCompatibility
+fun command(name: String) = DeclarativeCommandBuilder(name)

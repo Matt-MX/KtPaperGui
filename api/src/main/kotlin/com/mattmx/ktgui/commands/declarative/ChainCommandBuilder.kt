@@ -1,9 +1,8 @@
 package com.mattmx.ktgui.commands.declarative
 
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.MultiArgument
+import com.mattmx.ktgui.commands.declarative.arg.impl.MultiArgument
 import com.mattmx.ktgui.utils.JavaCompatibility
-import org.bukkit.command.CommandSender
 
 class ChainCommandBuilder(val name: String) {
     val arguments = arrayListOf<Argument<*>>()

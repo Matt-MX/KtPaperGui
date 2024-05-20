@@ -47,6 +47,7 @@ class ActionCoolDown<T>(
 
         if (valid) {
             block(Duration.ofMillis(timeLeft))
+            return Unit
         }
         return null
     }

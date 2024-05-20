@@ -1,20 +1,20 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.commands.declarative.arg.impl.*
 import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
-import com.mattmx.ktgui.commands.declarative.argument
+import com.mattmx.ktgui.commands.declarative.arg.withArgs
 import com.mattmx.ktgui.commands.declarative.div
 import com.mattmx.ktgui.commands.declarative.invoke
 import com.mattmx.ktgui.commands.rawCommand
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
+import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.designer.GuiDesigner
-import com.mattmx.ktgui.dsl.button
-import com.mattmx.ktgui.dsl.gui
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
@@ -154,7 +154,14 @@ class KotlinGui : JavaPlugin() {
 
                     runs<Player> {
                         val designer = cachedDesigners[id()]
-                            ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
+                            ?: return@runs reply(
+                                !"&cInvalid id, create one using &7/&fdesigner ${
+                                    create.getUsage(
+                                        defaultUsageOptions,
+                                        false
+                                    )
+                                }"
+                            )
                         designer.open(sender)
                     }
                 }
@@ -166,7 +173,14 @@ class KotlinGui : JavaPlugin() {
 
                     runs<CommandSender> {
                         val designer = cachedDesigners[id()]
-                            ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
+                            ?: return@runs reply(
+                                !"&cInvalid id, create one using &7/&fdesigner ${
+                                    create.getUsage(
+                                        defaultUsageOptions,
+                                        false
+                                    )
+                                }"
+                            )
                         designer.exportTitle = newTitle()
                         reply(!"&aSet title of ${id()} to ${newTitle()}")
                     }
@@ -184,10 +198,146 @@ class KotlinGui : JavaPlugin() {
                 }
             } register this@KotlinGui
 
-            val someArg by argument<String>("string", true)
-            someArg {
-                missing { reply(!"&cMissing argument 'someArg'!") }
-            }
+            "ktgui-cmd-examples" {
+                buildAutomaticPermissions("ktgui.examples.command")
+
+                val coords by relativeCoords()
+
+                coords invalid { reply(!"&cInvalid coords provided") }
+
+                ("tp" / coords) {
+                    runs<Player> {
+                        reply(!"&aTeleporting to ${coords().toVector()}")
+                        sender.teleport(coords())
+                    }
+                }
+
+                val invType by enumArgument<InventoryType>()
+
+                invType stringMethod { name.lowercase() }
+                invType invalid { reply(!"&cThat is not a valid inventory type.") }
+
+                ("inventory" / invType) {
+                    runs<Player> {
+                        GuiScreen(!"", type = invType()).open(sender)
+                    }
+                }
+
+                val a by doubleArgument()
+                val b by doubleArgument()
+                ("+" / a / b) {
+                    runs<CommandSender> {
+                        reply(!"&a${a()} + ${b()} = ${a() + b()}")
+                    }
+
+                    invalid { reply(!"&cProvide two double values to add.") }
+                }
+
+                val player by playerArgument()
+                player invalid { reply(!"&cInvalid player '$provided'") }
+                ("find" / player) {
+                    runs<Player> {
+                        val target = player()
+                        reply(
+                            !"&aFound ${target.name} @ ${
+                                target.location.clone().toVector()
+                            } in world '${target.location.world.name}'."
+                        )
+                    }
+                }
+
+                val msg by greedyStringArgument()
+                msg min 1
+                msg invalid { reply(!"&cMust provide a valid msg (at least 1 char)") }
+                ("msg" / player / msg) {
+                    runs<CommandSender> {
+                        reply(!"&f[Me -> ${player().name}]: ${msg()}")
+                        reply(!"&f[${sender.name} -> Me]: ${msg()}")
+                    }
+                }
+
+                val cooldownPeriod by longArgument()
+                cooldownPeriod optional true
+                ("cooldown" / cooldownPeriod) {
+
+                    cooldown(Duration.ofSeconds(3))
+
+                    runs<CommandSender> {
+                        withArgs(cooldownPeriod) {
+                            ActionCoolDown.unregister(coolDown.get())
+
+                            val newDuration = Duration.ofMillis(cooldownPeriod())
+                            cooldown(newDuration)
+
+                            reply(!"&aSet new cooldown duration to ${newDuration.pretty()}.")
+                        } or {
+                            reply(!"&6Command ran successfully! &fProvide millis arg to set new cooldown period.")
+                        }
+                    }
+                }
+
+                "obj" {
+                    val objects = hashMapOf<String, HashMap<String, String>>()
+
+                    val objectId by stringArgument()
+                    objectId range (3..16) matches "[a-z0-9_]".toRegex()
+                    objectId invalid { reply(!"Invalid object ID") }
+
+                    ("create" / objectId) {
+                        runs<CommandSender> {
+                            objects.putIfAbsent(objectId(), hashMapOf())
+                            reply(!"&aCreated object ${objectId()}")
+                        }
+                    }
+
+                    val existingObjectId by simpleArgument<HashMap<String, String>>()
+                    existingObjectId getValue { objects[this] }
+                    existingObjectId suggests { objects.keys.toList() }
+                    existingObjectId invalid objectId.invalidCallback.first()
+
+                    val path by stringArgument()
+                    path matches "([a-z0-9_]\\.?)+".toRegex()
+                    val value by stringArgument()
+                    ("set" / existingObjectId / path / value) {
+                        runs<CommandSender> {
+                            existingObjectId().putIfAbsent(path(), value())
+                            reply(!"&aSet ${existingObjectId.context.stringValue()}:${path()} = '${value()}'")
+                        }
+                    }
+
+                    val pathOptional = path.clone()
+                    pathOptional.optional()
+                    ("get" / existingObjectId / pathOptional) {
+                        runs<CommandSender> {
+
+                            if (pathOptional.context.isEmpty()) {
+                                reply(!"&aValues in object ${existingObjectId.context.stringValue()}")
+                                for ((k, e) in existingObjectId().entries) {
+                                    reply(!"&f${k}&7 = &b'${e}'")
+                                }
+                            } else {
+                                val value = existingObjectId()[pathOptional()]
+                                if (value != null) {
+                                    reply(!"&cThere is no defined value for ${existingObjectId.context.stringValue()}:${pathOptional()}")
+                                } else {
+                                    reply(!"&a${existingObjectId.context.stringValue()}:${pathOptional()} = '${value}'")
+                                }
+                            }
+                        }
+                    }
+
+                    ("del" / existingObjectId) {
+                        runs<CommandSender> {
+                            objects.remove(existingObjectId.context.stringValue())
+                            reply(!"&cDeleted object ${existingObjectId.context.stringValue()}.")
+                        }
+                    }
+                }
+
+                runs<CommandSender> {
+                    reply(!getUsage(defaultUsageOptions))
+                }
+            } register this@KotlinGui
         }
     }
 
