@@ -83,6 +83,7 @@ open class Argument<T : Any>(
         suggests = CommandSuggestionRegistry.get(typeName) as Optional<CommandSuggestion<T>>
     }
 
+    // todo this should be called with [validate] for efficiency, as well as the consumer
     open fun getValueOfString(cmd: DeclarativeCommandBuilder, context: BaseCommandContext<*>, split: List<String>): T? {
         return getValueOfString(cmd, context, split.joinToString(" "))
     }
