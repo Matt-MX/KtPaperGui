@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.sound
 
 import com.mattmx.ktgui.scheduling.TaskTracker
+import com.mattmx.ktgui.scheduling.getAsync
 import com.mattmx.ktgui.scheduling.future
 import com.mattmx.ktgui.utils.ticks
 import net.kyori.adventure.audience.Audience
@@ -152,19 +153,17 @@ fun sound(key: Key) = ComplexSoundBuilder.SoundBuilder(key)
 fun Audience.playSound(sound: ComplexSoundBuilder) = sound.playFor(this)
 
 fun main(player: Player) {
-    val custom = soundBuilder {
+    ::soundBuilder.getAsync {
         location { player.location.clone().add(0.0, 100.0, 0.0) }
 
         play(Sound.ENTITY_ENDER_DRAGON_DEATH) volume 1f pitch 2f relative true
         wait(1.ticks)
         play(Sound.BLOCK_NOTE_BLOCK_BANJO) volume 2f pitch 0f relative true
-    }
+    }.thenAccept { player.playSound(it) }
 
     val builder = ComplexSoundBuilder()
         .relative(true)
         .thenPlay(Sound.ENTITY_ENDER_DRAGON_DEATH)
         .thenWait(100)
         .thenPlay(sound(Sound.BLOCK_NOTE_BLOCK_BANJO) volume 0.4f)
-
-    player.playSound(custom)
 }

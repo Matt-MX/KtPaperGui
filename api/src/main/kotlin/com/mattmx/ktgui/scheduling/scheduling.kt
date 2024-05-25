@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KFunction
+import kotlin.reflect.KFunction1
+import kotlin.reflect.KFunction2
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -21,11 +23,30 @@ object Scheduling {
     lateinit var plugin: JavaPlugin
 }
 
-val <T> KFunction<T>.asyncTask: BukkitTask
-    get() = async {
-        isAccessible = true
-        call()
+val <T> KFunction<T>.getAsync: CompletableFuture<T>
+    get() = future {
+        async {
+            isAccessible = true
+            val result = runCatching(::call)
+            if (result.isSuccess) complete(result.getOrThrow()) else completeExceptionally(result.exceptionOrNull())
+        }
     }
+
+infix fun <T, O> KFunction1<T, O>.getAsync(arg: T) = future {
+    async {
+        isAccessible = true
+        val result = runCatching { call(arg) }
+        if (result.isSuccess) complete(result.getOrThrow()) else completeExceptionally(result.exceptionOrNull())
+    }
+}
+
+fun <T, U, O> KFunction2<T, U, O>.getAsync(arg: T, arg1: U) = future {
+    async {
+        isAccessible = true
+        val result = runCatching { call(arg, arg1) }
+        if (result.isSuccess) complete(result.getOrThrow()) else completeExceptionally(result.exceptionOrNull())
+    }
+}
 
 val <T> KFunction<T>.syncTask: BukkitTask
     get() = sync {
