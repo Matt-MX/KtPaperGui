@@ -5,12 +5,14 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     `maven-publish`
     id("org.ajoberstar.grgit") version "4.1.0"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
 }
+
+val paper_version: String by rootProject
 
 repositories {
     mavenCentral()
     maven("https://maven.pvphub.me/releases")
-    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.dmulloy2.net/repository/public/")
 }
 
@@ -18,6 +20,8 @@ dependencies {
     shadow(implementation(project(":api"))!!)
     shadow(implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")!!)
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+
+    paperweight.paperDevBundle(paper_version)
 }
 
 tasks.test {

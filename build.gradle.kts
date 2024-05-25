@@ -18,7 +18,6 @@ subprojects {
     }
     dependencies {
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
-        compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
         compileOnly("me.clip:placeholderapi:2.11.1")
     }
 
@@ -26,4 +25,9 @@ subprojects {
         withJavadocJar()
         withSourcesJar()
     }
+
+    tasks.assemble {
+        dependsOn("reobfJar")
+    }
+
 }

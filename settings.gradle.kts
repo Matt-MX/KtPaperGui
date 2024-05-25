@@ -2,6 +2,14 @@ rootProject.name = "ktgui"
 include("api")
 include("plugin")
 
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://repo.papermc.io/repository/maven-public/")
+    }
+}
+
 plugins {
     id("com.gradle.enterprise") version("3.15")
 }

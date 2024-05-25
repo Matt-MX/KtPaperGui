@@ -4,7 +4,10 @@ plugins {
     kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     `maven-publish`
+    id("io.papermc.paperweight.userdev") version "1.7.1"
 }
+
+val paper_version: String by rootProject
 
 repositories {
     mavenCentral()
@@ -14,6 +17,8 @@ dependencies {
 //    compileOnly(kotlin("reflect"))
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
+
+    paperweight.paperDevBundle(paper_version)
 }
 
 tasks.test {

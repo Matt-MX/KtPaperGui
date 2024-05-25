@@ -150,14 +150,8 @@ fun asyncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
  * @author MattMX
  * @param block that returns our value
  */
-fun <T> future(block: () -> T) : CompletableFuture<T> {
-    val future = CompletableFuture<T>()
-    async {
-        val result = block()
-        future.complete(result)
-    }
-    return future
-}
+fun <T> future(block: CompletableFuture<T>.() -> Unit): CompletableFuture<T> =
+    CompletableFuture<T>().apply(block)
 
 /**
  * Similar to [future], will return a [Future] with the type you want.
