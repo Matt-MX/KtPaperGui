@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.function.Supplier
 
-class ComplexSoundBuilder {
+class ChainSoundBuilder {
     private var defaultEmitter = EmitterType.SELF
     private var location = Optional.empty<Supplier<Location>>()
     private var steps = arrayListOf<Step>()
@@ -143,14 +143,14 @@ class ComplexSoundBuilder {
     }
 }
 
-fun soundBuilder(block: ComplexSoundBuilder.() -> Unit) =
-    ComplexSoundBuilder().apply(block)
+fun soundBuilder(block: ChainSoundBuilder.() -> Unit) =
+    ChainSoundBuilder().apply(block)
 
 fun sound(sound: Sound) = sound(sound.key())
 
-fun sound(key: Key) = ComplexSoundBuilder.SoundBuilder(key)
+fun sound(key: Key) = ChainSoundBuilder.SoundBuilder(key)
 
-fun Audience.playSound(sound: ComplexSoundBuilder) = sound.playFor(this)
+fun Audience.playSound(sound: ChainSoundBuilder) = sound.playFor(this)
 
 fun main(player: Player) {
     ::soundBuilder.getAsync {
@@ -161,7 +161,7 @@ fun main(player: Player) {
         play(Sound.BLOCK_NOTE_BLOCK_BANJO) volume 2f pitch 0f relative true
     }.thenAccept { player.playSound(it) }
 
-    val builder = ComplexSoundBuilder()
+    val builder = ChainSoundBuilder()
         .relative(true)
         .thenPlay(Sound.ENTITY_ENDER_DRAGON_DEATH)
         .thenWait(100)
