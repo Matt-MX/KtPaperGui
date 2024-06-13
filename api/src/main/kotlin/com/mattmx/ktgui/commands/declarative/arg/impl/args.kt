@@ -3,6 +3,7 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
+import net.kyori.adventure.bossbar.BossBar.Flag
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -21,7 +22,13 @@ fun <T : Any> argument(type: String, name: String, isVarArg: Boolean) =
     Argument<T>(name, type, if (isVarArg) GreedyArgumentConsumer() else SingleArgumentConsumer())
 
 fun stringArgument(type: String = "string", isVarArg: Boolean = false) =
-    delegateArgument(StringArgument(DELEGATED_ARG_NAME, type, if (isVarArg) GreedyArgumentConsumer() else SingleArgumentConsumer()))
+    delegateArgument(
+        StringArgument(
+            DELEGATED_ARG_NAME,
+            type,
+            if (isVarArg) GreedyArgumentConsumer() else SingleArgumentConsumer()
+        )
+    )
 
 fun greedyStringArgument(type: String = "string") =
     stringArgument(type, true)
@@ -46,3 +53,8 @@ fun <T : Any> simpleArgument(type: String = "") =
 
 inline fun <reified E : Enum<E>> enumArgument(type: String = E::class.java.simpleName) =
     delegateArgument(EnumArgument(E::class.javaObjectType, DELEGATED_ARG_NAME, type))
+
+fun flag() = delegateArgument(FlagArgument(DELEGATED_ARG_NAME))
+
+inline fun <reified T : Any> optionArgument(type: String = T::class.java.simpleName) =
+    delegateArgument(OptionArgument<T>(DELEGATED_ARG_NAME, type, SingleArgumentConsumer()))
