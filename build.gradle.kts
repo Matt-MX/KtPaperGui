@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.7.10"
+    id("io.papermc.paperweight.userdev") version "1.7.1" apply false
 }
 
 val version = "2.4.0"
@@ -9,6 +10,7 @@ rootProject.version = version
 subprojects {
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "io.papermc.paperweight.userdev")
 
     repositories {
         mavenCentral()
@@ -17,7 +19,7 @@ subprojects {
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
     dependencies {
-        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
+//        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
         compileOnly("me.clip:placeholderapi:2.11.1")
     }
 

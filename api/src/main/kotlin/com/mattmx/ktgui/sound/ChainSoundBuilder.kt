@@ -42,6 +42,7 @@ class ChainSoundBuilder {
         steps.add(Step(Step.Type.SOUND, sound))
     }
 
+    @JvmName("waitTicks")
     fun wait(ticks: Long) {
         this.steps.add(Step(Step.Type.WAIT, ticks))
     }

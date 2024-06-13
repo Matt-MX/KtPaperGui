@@ -12,9 +12,13 @@ import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.designer.GuiDesigner
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.scheduling.sync
+import com.mattmx.ktgui.sound.playSound
+import com.mattmx.ktgui.sound.sound
+import com.mattmx.ktgui.sound.soundBuilder
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
@@ -201,6 +205,18 @@ class KotlinGui : JavaPlugin() {
             "ktgui-cmd-examples" {
                 buildAutomaticPermissions("ktgui.examples.command")
 
+                ("sound") {
+                    runs<Player> {
+                        val sound = soundBuilder {
+                            sound(Sound.ENTITY_ENDERMAN_DEATH)
+                            wait(1)
+                            sound(Sound.BLOCK_NOTE_BLOCK_BANJO) pitch 2f
+                        } relative true
+
+                        sender.playSound(sound)
+                    }
+                }
+
                 val coords by relativeCoords()
 
                 coords invalid { reply(!"&cInvalid coords provided") }
@@ -258,6 +274,7 @@ class KotlinGui : JavaPlugin() {
 
                 val cooldownPeriod by longArgument()
                 cooldownPeriod optional true
+                // fixme: args optional don't work
                 ("cooldown" / cooldownPeriod) {
 
                     cooldown(Duration.ofSeconds(3))
@@ -280,8 +297,8 @@ class KotlinGui : JavaPlugin() {
                     val objects = hashMapOf<String, HashMap<String, String>>()
 
                     val objectId by stringArgument()
-                    objectId range (3..16) matches "[a-z0-9_]".toRegex()
-                    objectId invalid { reply(!"Invalid object ID") }
+                    objectId range (3..16) matches "[a-z0-9_]{3,16}".toRegex()
+                    objectId invalid { reply(!"Invalid object ID $provided") }
 
                     ("create" / objectId) {
                         runs<CommandSender> {

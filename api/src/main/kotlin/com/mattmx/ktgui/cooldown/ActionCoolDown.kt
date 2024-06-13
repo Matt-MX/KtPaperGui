@@ -38,6 +38,10 @@ class ActionCoolDown<T>(
         return max(-1L, expire - (System.currentTimeMillis() - cache.getOrDefault(user, 0)))
     }
 
+    fun durationRemaining(user: T) : Duration {
+        return Duration.ofMillis(timeRemaining(user))
+    }
+
     fun test(user: T, block: (Duration) -> Unit): Unit? {
         val timeLeft = timeRemaining(user)
         val valid = timeLeft < 0

@@ -9,11 +9,11 @@ class LongArgument(
     name: String,
     typeName: String
 ) : Argument<Long>(name, typeName, SingleArgumentConsumer()) {
-    var min: Long = 0
+    var min: Long = Long.MIN_VALUE
     var max: Long = Long.MAX_VALUE
 
     override fun validate(stringValue: String?): Boolean {
-        stringValue ?: return false
+        stringValue ?: return isOptional()
 
         val intValue = stringValue.toIntOrNull() ?: return false
 

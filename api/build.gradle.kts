@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     `maven-publish`
-    id("io.papermc.paperweight.userdev") version "1.7.1"
 }
 
 val paper_version: String by rootProject
@@ -15,8 +14,8 @@ repositories {
 
 dependencies {
 //    compileOnly(kotlin("reflect"))
-    implementation(kotlin("reflect"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
+    shadow(implementation(kotlin("reflect"))!!)
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
 
     paperweight.paperDevBundle(paper_version)
 }
@@ -39,10 +38,9 @@ tasks {
     }
     shadowJar {
         mergeServiceFiles()
-//        exclude {
-////            it.path.startsWith("kotlin") && !it.path.contains("reactive")
-//            it.name.startsWith("kotlin")
-//        }
+    }
+    assemble {
+        dependsOn(reobfJar)
     }
 }
 

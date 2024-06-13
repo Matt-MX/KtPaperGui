@@ -19,7 +19,7 @@ class DeclarativeCommandWrapper(
     }
 
     override fun tabComplete(sender: CommandSender, alias: String, args: Array<out String>): MutableList<String> {
-        val context = SuggestionInvocation(Optional.of(sender), alias, args.toList())
+        val context = SuggestionInvocation(Optional.of(sender), alias, args.toList().subList(0, args.size - 1))
 
         val (newContext, finalCommand) = builder.getCurrentCommand(context)
         val outArgs = finalCommand?.getSuggestions(newContext)

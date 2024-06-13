@@ -9,11 +9,11 @@ class IntArgument(
     name: String,
     typeName: String
 ) : Argument<Int>(name, typeName, SingleArgumentConsumer()) {
-    var min: Int = 0
+    var min: Int = Int.MIN_VALUE
     var max: Int = Int.MAX_VALUE
 
     override fun validate(stringValue: String?): Boolean {
-        stringValue ?: return false
+        stringValue ?: return isOptional()
 
         val intValue = stringValue.toIntOrNull() ?: return false
 

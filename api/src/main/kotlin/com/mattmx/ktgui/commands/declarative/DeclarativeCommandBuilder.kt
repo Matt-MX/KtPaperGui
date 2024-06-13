@@ -265,7 +265,7 @@ open class DeclarativeCommandBuilder(
             coolDownCallback.ifPresentOrElse({ it.invoke(context) }) {
                 context.reply(
                     !"&cPlease wait ${
-                        coolDown.get().timeRemaining(context.sender).pretty()
+                        coolDown.get().durationRemaining(context.sender).pretty()
                     } before running the command again."
                 )
             }

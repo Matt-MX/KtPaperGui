@@ -9,11 +9,11 @@ class DoubleArgument(
     name: String,
     typeName: String
 ) : Argument<Double>(name, typeName, SingleArgumentConsumer()) {
-    var min: Double = 0.0
+    var min: Double = Double.MIN_VALUE
     var max: Double = Double.MAX_VALUE
 
     override fun validate(stringValue: String?): Boolean {
-        stringValue ?: return false
+        stringValue ?: return isOptional()
 
         val doubleValue = stringValue.toDoubleOrNull() ?: return false
 

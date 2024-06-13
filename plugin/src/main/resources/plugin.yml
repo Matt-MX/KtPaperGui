@@ -7,5 +7,8 @@ authors: [ MattMX ]
 website: https://github.com/Matt-MX/KtPaperGui
 description: Declarative GUI Library for Paper.
 
+depend:
+  - MCKotlin-Paper
+
 softdepend:
   - PlaceholderAPI
