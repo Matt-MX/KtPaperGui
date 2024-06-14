@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.commands.declarative.arg
 
+import com.google.gson.JsonParser
 import com.mattmx.ktgui.commands.declarative.arg.impl.*
 import kotlin.math.min
 
@@ -43,7 +44,7 @@ class ArgumentProcessor(
         values[argId] = next() ?: return
     }
 
-    fun takeUntilNot(argId: String, block: String.() -> Boolean) {
+    fun takeWhile(argId: String, block: String.() -> Boolean) {
         var current = next()
         val list = arrayListOf<String>()
 
@@ -61,7 +62,7 @@ class ArgumentProcessor(
     }
 
     fun takeRemaining(argId: String) {
-        takeUntilNot(argId) { pointer < args.size }
+        takeWhile(argId) { pointer < args.size }
     }
 }
 
@@ -75,8 +76,13 @@ fun main() {
 
     processor.permittedFlags.add(ping)
 
+    // We should abstract this using the `ArgumentConsumer` interface
     processor.takeOne("username")
     processor.takeRemaining("msg")
 
-    println(processor.values)
+    username consumes single()
+    msg consumes until { false }
+    msg consumes remaining()
+
+    println(processor)
 }
