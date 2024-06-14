@@ -7,15 +7,10 @@ import org.bukkit.scheduler.BukkitTask
  */
 class TaskTrackerTask(
     private val owner: TaskTracker,
-    private val task: BukkitTask
-) {
-    /**
-     * How many times the task has repeated.
-     * Do not increment yourself.
-     */
-    var iterations = 0
+    task: BukkitTask
+) : IteratingTask(task) {
 
-    fun cancel() {
+    override fun cancel() {
         owner.removeTask(task)
         task.cancel()
     }
