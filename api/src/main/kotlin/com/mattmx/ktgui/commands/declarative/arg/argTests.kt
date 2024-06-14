@@ -7,9 +7,10 @@ class ArgumentProcessor(
     val args: List<String>
 ) {
     var pointer = 0
+    // Should be added to the command context
     val values = hashMapOf<String, String>()
 
-    // Should be in the [DeclarativeCommandBuilder]
+    // Should be in the [DeclarativeCommandBuilder] class
     val permittedFlags = arrayListOf<FlagArgument>()
     val options = OptionSyntax()
 
@@ -67,8 +68,9 @@ class ArgumentProcessor(
 fun main() {
     val ping by flag()
     val option by optionArgument<String>()
+    val t by optionArgument<Int>()
 
-    val args = "msg MattMX foo bar --ping --option 'hello world'".split(" ")
+    val args = "msg MattMX foo bar --t 5 --ping --option 'hello world'".split(" ")
     val processor = ArgumentProcessor(args)
 
     processor.permittedFlags.add(ping)
