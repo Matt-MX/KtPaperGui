@@ -3,6 +3,7 @@ package com.mattmx.ktgui.commands.declarative
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.impl.MultiArgument
 import com.mattmx.ktgui.utils.JavaCompatibility
+import org.bukkit.block.data.type.Chain
 
 class ChainCommandBuilder(val name: String) {
     val arguments = arrayListOf<Argument<*>>()
@@ -39,6 +40,10 @@ operator fun String.div(argument: Argument<*>) = ChainCommandBuilder(this).apply
 @JvmName("div1")
 operator fun String.div(argument: List<Argument<*>>) = ChainCommandBuilder(this).apply {
     arguments.add(MultiArgument("multi-argument", *argument.toTypedArray()))
+}
+
+operator fun String.div(s: String) = ChainCommandBuilder(this).apply {
+    subcommands.add(DeclarativeCommandBuilder(s))
 }
 
 operator fun String.div(subs: List<DeclarativeCommandBuilder>) = ChainCommandBuilder(this).apply {

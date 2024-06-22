@@ -11,6 +11,8 @@ import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.designer.GuiDesigner
 import com.mattmx.ktgui.examples.*
+import com.mattmx.ktgui.papi.placeholder
+import com.mattmx.ktgui.papi.placeholderExpansion
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.sound.playSound
 import com.mattmx.ktgui.sound.sound
@@ -64,6 +66,16 @@ class KotlinGui : JavaPlugin() {
             "config-gui" to { GuiConfigExample() }
         )
         GuiHookExample.registerListener(this)
+
+        placeholderExpansion {
+
+            val player by playerArgument()
+
+            placeholder("ping" / player) { player().ping }
+            placeholder("ping") { requestedBy?.ping }
+            placeholder("iscool" / player) { if (player().name == author) "this player's sick" else "nah not rly" }
+
+        } id "ktgui" author "MattMX"
 
         sync {
             val cachedDesigners = hashMapOf<String, GuiDesigner>()
