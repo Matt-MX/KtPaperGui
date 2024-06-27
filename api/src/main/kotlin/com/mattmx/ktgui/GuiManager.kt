@@ -60,7 +60,7 @@ object GuiManager : Listener {
         if (existingCommand != null) {
             Bukkit.getPluginCommand(command.name)?.setExecutor(command)
         } else {
-            if(!isInitialized()) {
+            if (!isInitialized()) {
                 throw RuntimeException("Unregistered commands are unsupported when GuiManager not initialised! Call GuiManager.init")
             }
 
@@ -89,7 +89,8 @@ object GuiManager : Listener {
                 val aliasesField = SimpleCommandMap::class.java.getDeclaredField("aliases")
                 aliasesField.setAccessible(true)
                 knownAliases = aliasesField.get(cmdMap) as MutableSet<String?>
-            } catch (e: NoSuchFieldException) {}
+            } catch (e: NoSuchFieldException) {
+            }
 
             event<PluginDisableEvent>(cmdPlugin) {
                 if (this.plugin == cmdPlugin) {

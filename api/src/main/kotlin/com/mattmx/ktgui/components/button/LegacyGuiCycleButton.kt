@@ -21,41 +21,43 @@ class LegacyGuiCycleButton(
         click {
             ClickType.RIGHT {
                 nextItem(player)
-                changed?.invoke(ButtonClickedEvent<LegacyGuiCycleButton>(player, this.event).apply { button = this@LegacyGuiCycleButton })
+                changed?.invoke(ButtonClickedEvent<LegacyGuiCycleButton>(player, this.event).apply {
+                    button = this@LegacyGuiCycleButton
+                })
             }
             ClickType.LEFT {
                 prevItem(player)
-                changed?.invoke(ButtonClickedEvent<LegacyGuiCycleButton>(player, this.event).apply { button = this@LegacyGuiCycleButton })
+                changed?.invoke(ButtonClickedEvent<LegacyGuiCycleButton>(player, this.event).apply {
+                    button = this@LegacyGuiCycleButton
+                })
             }
         }
     }
 
-    fun items(items: MutableMap<String, ItemStack>.() -> Unit) : LegacyGuiCycleButton {
+    fun items(items: MutableMap<String, ItemStack>.() -> Unit): LegacyGuiCycleButton {
         items.invoke(map)
         this.item = getSelectedItem()
         return this
     }
 
-    fun getSelectedId() : String? {
+    fun getSelectedId(): String? {
         return map.keys.toMutableList().getOrNull(selected)
     }
 
-    fun getSelectedItem() : ItemStack? {
+    fun getSelectedItem(): ItemStack? {
         return map[getSelectedId()]
     }
 
     fun nextItem(player: Player) {
         selected++
-        if (selected >= map.size)
-            selected = 0
+        if (selected >= map.size) selected = 0
         this.item = getSelectedItem()
         update(player)
     }
 
     fun prevItem(player: Player) {
         selected--
-        if (selected < 0)
-            selected = map.size - 1
+        if (selected < 0) selected = map.size - 1
         this.item = getSelectedItem()
         update(player)
     }

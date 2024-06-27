@@ -6,8 +6,7 @@ import org.bukkit.inventory.ItemStack
 
 @Deprecated("No longer supported", ReplaceWith("EffectBlock"))
 class SignalButton(
-    val material: Material,
-    val builder: (SignalButton) -> Unit
+    val material: Material, val builder: (SignalButton) -> Unit
 ) : GuiButton<SignalButton>(material), SignalListener<Any> {
     override fun onChange(value: Any) {
 

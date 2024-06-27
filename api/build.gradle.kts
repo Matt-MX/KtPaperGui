@@ -1,19 +1,14 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    alias(libs.plugins.kotlinJvm) apply true
+    alias(libs.plugins.shadow) apply true
     `maven-publish`
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-//    compileOnly(kotlin("reflect"))
-    implementation(kotlin("reflect"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
+    compileOnly(libs.paper.api)
+    compileOnly(libs.placeholder.api)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlin.stdlib)
 }
 
 tasks.test {
@@ -24,8 +19,8 @@ version = rootProject.version
 
 sourceSets["main"].resources.srcDir("src/resources/")
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+kotlin {
+    jvmToolchain(JavaVersion.VERSION_17.ordinal)
 }
 
 tasks {
@@ -38,15 +33,13 @@ tasks {
 ////            it.path.startsWith("kotlin") && !it.path.contains("reactive")
 //            it.name.startsWith("kotlin")
 //        }
+        archiveBaseName.set("ktgui")
+        mergeServiceFiles()
     }
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveBaseName.set("ktgui")
-    mergeServiceFiles()
-}
-
 java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     withJavadocJar()
     withSourcesJar()
 }

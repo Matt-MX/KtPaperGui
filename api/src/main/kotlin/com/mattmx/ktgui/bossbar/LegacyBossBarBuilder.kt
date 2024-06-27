@@ -38,10 +38,11 @@ open class LegacyBossBarBuilder {
 inline fun bossBar(builder: LegacyBossBarBuilder.() -> Unit) = bossBarDsl(LegacyBossBarBuilder(), builder)
 
 @Deprecated("Simply use the BossBar class in adventure.", ReplaceWith("net.kyori.adventure.bossbar.BossBar"))
-inline fun animatedBossBar(period: Long? = null, builder: AnimatedBossBar.() -> Unit) = bossBarDsl(AnimatedBossBar(period), builder)
+inline fun animatedBossBar(period: Long? = null, builder: AnimatedBossBar.() -> Unit) =
+    bossBarDsl(AnimatedBossBar(period), builder)
 
 @Deprecated("Simply use the BossBar class in adventure.", ReplaceWith("net.kyori.adventure.bossbar.BossBar"))
-inline fun <T : LegacyBossBarBuilder> bossBarDsl(instance: T, builder: T.() -> Unit) : T {
+inline fun <T : LegacyBossBarBuilder> bossBarDsl(instance: T, builder: T.() -> Unit): T {
     builder(instance)
     instance.build()
     return instance

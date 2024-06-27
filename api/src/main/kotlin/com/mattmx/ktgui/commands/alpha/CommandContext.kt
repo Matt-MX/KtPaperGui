@@ -14,11 +14,11 @@ open class CommandContext<S : CommandSender>(
     operator fun <T, V> ReadOnlyProperty<T, V>.getValue(
         thisRef: T,
         property: KProperty<*>
-    ) : V {
+    ): V {
         return map[property.name] as V
     }
 
-    fun <T, V> getValue(argument: Argument<S, T, V>) : V? {
+    fun <T, V> getValue(argument: Argument<S, T, V>): V? {
         return if (::map.isInitialized) map[argument.id] as V? else null
     }
 

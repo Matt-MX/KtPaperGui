@@ -4,7 +4,6 @@ import com.mattmx.ktgui.commands.SimpleCommandBuilder;
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder;
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext;
 import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class JavaUpdateCommandExample {

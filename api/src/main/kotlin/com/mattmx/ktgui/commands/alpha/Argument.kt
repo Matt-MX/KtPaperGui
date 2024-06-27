@@ -21,7 +21,7 @@ open class Argument<S : CommandSender, T, V>(
 
     fun description() = description
 
-    fun getDefaultSuggestions() : List<String>? {
+    fun getDefaultSuggestions(): List<String>? {
         // todo need to invoke [suggests] with fake [CommandContext]
         return null
     }

@@ -15,6 +15,12 @@ class StopWatch(
 
     fun debug() {
         val nanos = elapsed()
-        println("  [$name] took ${nanos}ns (${nanos / 1_000_000}ms${if (nanos > 100_000_000) ", " + Duration.ofNanos(nanos).pretty() else ""})")
+        println(
+            "  [$name] took ${nanos}ns (${nanos / 1_000_000}ms${
+                if (nanos > 100_000_000) ", " + Duration.ofNanos(
+                    nanos
+                ).pretty() else ""
+            })"
+        )
     }
 }

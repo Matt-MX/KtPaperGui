@@ -8,7 +8,7 @@ open class EventCallback<T>(
         callbacks.add(block)
     }
 
-    open operator fun invoke(value: T) : Boolean {
+    open operator fun invoke(value: T): Boolean {
         callbacks.forEach { it.invoke(value) }
         return true
     }

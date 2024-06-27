@@ -2,18 +2,10 @@ package com.mattmx.ktgui.conversation.refactor
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.screen.IGuiScreen
-import com.mattmx.ktgui.conversation.refactor.result.ConversationEnd
 import com.mattmx.ktgui.conversation.refactor.steps.Step
 import com.mattmx.ktgui.extensions.getOpenGui
-import com.mattmx.ktgui.extensions.setOpenGui
 import com.mattmx.ktgui.scheduling.sync
-import org.bukkit.conversations.Conversable
-import org.bukkit.conversations.Conversation
-import org.bukkit.conversations.ConversationAbandonedEvent
-import org.bukkit.conversations.ConversationAbandonedListener
-import org.bukkit.conversations.ConversationContext
-import org.bukkit.conversations.ConversationFactory
-import org.bukkit.conversations.ConversationPrefix
+import org.bukkit.conversations.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
@@ -27,7 +19,7 @@ class ConversationWrapper<T : Conversable>(
         .withLocalEcho(false)
     private val steps = arrayListOf<Step>()
     private var exit = Optional.empty<(ConversationAbandonedEvent) -> Unit>()
-    private var start = Optional.empty<(T) -> Unit>()
+    var start = Optional.empty<(T) -> Unit>()
 
     /**
      * More than often, the conversation is created as the result of a button

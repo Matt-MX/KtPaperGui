@@ -2,20 +2,17 @@ package com.mattmx.ktgui.extensions
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.button.GuiButton
-import com.mattmx.ktgui.components.button.SignalButton
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.item.lvl
 import com.mattmx.ktgui.utils.component
 import com.mattmx.ktgui.utils.legacy
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.parsePotionData
-import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.potion.PotionData
-import org.bukkit.potion.PotionEffect
 
 fun String.translatableList(config: FileConfiguration): List<String> {
     val list = config.getStringList(this)
@@ -53,7 +50,7 @@ fun String.translatableButton(config: FileConfiguration) = this.translatableButt
  * @param button to apply the changes to
  * @return button as [T] with changes applied or null if the path is invalid
  */
-fun <T : GuiButton<T>> String.translatableButton(config: FileConfiguration, button: GuiButton<T>) : T? {
+fun <T : GuiButton<T>> String.translatableButton(config: FileConfiguration, button: GuiButton<T>): T? {
     val section = config.getConfigurationSection(this)
         ?: return null
     return button.apply {

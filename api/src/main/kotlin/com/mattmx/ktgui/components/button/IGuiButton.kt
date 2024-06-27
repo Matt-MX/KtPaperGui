@@ -9,7 +9,7 @@ interface IGuiButton<T> {
     /**
      * @return the ItemStack we want to display.
      */
-    fun getItemStack() : ItemStack?
+    fun getItemStack(): ItemStack?
 
     /**
      * Called when this button is clicked
@@ -18,17 +18,17 @@ interface IGuiButton<T> {
 
     fun onButtonDrag(e: InventoryDragEvent)
 
-    fun formatIntoItemStack(player: Player? = null) : ItemStack?
+    fun formatIntoItemStack(player: Player? = null): ItemStack?
 
-    fun copy(parent: IGuiScreen) : T
+    fun copy(parent: IGuiScreen): T
 
-    infix fun slot(slot: Int) : T
+    infix fun slot(slot: Int): T
 
-    infix fun slots(slots: List<Int>) : T
+    infix fun slots(slots: List<Int>): T
 
-    fun slots() : List<Int>?
+    fun slots(): List<Int>?
 
-    infix fun childOf(parent: IGuiScreen) : T
+    infix fun childOf(parent: IGuiScreen): T
 
     fun destroy()
 }

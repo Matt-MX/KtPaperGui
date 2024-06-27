@@ -2,9 +2,6 @@ package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.extensions.getOpenGui
-import com.mattmx.ktgui.item.DslIBuilder
-import com.mattmx.ktgui.item.builder
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event

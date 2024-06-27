@@ -2,7 +2,10 @@ package com.mattmx.ktgui.commands.alpha
 
 import kotlin.concurrent.thread
 
-fun <S : CommandSender, T> KtCommandBuilder<S>.argument(description: String? = null, suggests: (CommandContext<S>.() -> List<String>)? = null) =
+fun <S : CommandSender, T> KtCommandBuilder<S>.argument(
+    description: String? = null,
+    suggests: (CommandContext<S>.() -> List<String>)? = null
+) =
     Argument<S, T, String>(ArgumentType.REQUIRED_SINGLE, { c -> c.args[0] }, suggests).apply {
         this withDescription description
         this@argument.expectedArguments += this

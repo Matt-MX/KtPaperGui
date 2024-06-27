@@ -2,9 +2,9 @@ package com.mattmx.ktgui.commands.declarative.syntax
 
 abstract class SyntaxNode {
 
-    abstract fun kind() : SyntaxKind
+    abstract fun kind(): SyntaxKind
 
-    open fun children() : List<SyntaxNode> {
+    open fun children(): List<SyntaxNode> {
         val children = arrayListOf<SyntaxNode>()
         // default impl of children, you should override this.
         for (member in this.javaClass.declaredFields) {
