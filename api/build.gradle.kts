@@ -8,7 +8,7 @@ dependencies {
     compileOnly(libs.paper.api)
     compileOnly(libs.placeholder.api)
     implementation(libs.kotlin.reflect)
-    implementation(libs.kotlin.stdlib)
+    compileOnly(libs.kotlin.stdlib)
 }
 
 tasks.test {

@@ -7,3 +7,5 @@ authors: [ MattMX ]
 description: Declarative GUI Library for Paper.
 softdepend:
   - PlaceholderAPI
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.0.0
