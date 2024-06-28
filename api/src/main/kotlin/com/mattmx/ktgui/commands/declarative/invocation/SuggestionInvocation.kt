@@ -8,7 +8,6 @@ class SuggestionInvocation<S : CommandSender>(
     val alias: String,
     val rawArgs: List<String>
 ) {
-    lateinit var consumed: List<String>
     val last: String
         get() = rawArgs.lastOrNull() ?: ""
 

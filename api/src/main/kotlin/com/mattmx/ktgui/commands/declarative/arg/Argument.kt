@@ -1,34 +1,23 @@
 package com.mattmx.ktgui.commands.declarative.arg
 
-<<<<<<< HEAD
-=======
-import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
-import com.mattmx.ktgui.commands.declarative.arg.consumer.ArgumentConsumer
-import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
->>>>>>> fc760191aa5090e9dac6c3014739a12dc7fc5dfb
 import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
-import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
 import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+import com.mattmx.ktgui.commands.declarative.syntax.VariableType
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestionRegistry
 import com.mattmx.ktgui.event.EventCallback
 import com.mattmx.ktgui.utils.Invokable
-import com.mattmx.ktgui.utils.JavaCompatibility
 import java.util.*
 
-open class Argument<T : Any>(
+class Argument<T : Any>(
     private var name: String,
-    private val typeName: String,
-    val consumer: ArgumentConsumer
+    private val type: VariableType,
+    var description: String? = null,
+    private val required: Boolean = true
 ) : Invokable<Argument<T>> {
-    var description: String? = null
     var suggests = Optional.empty<CommandSuggestion<T>>()
-    var missingCallback = EventCallback<InvalidArgContext<*>>()
-        protected set
-    var invalidCallback = EventCallback<InvalidArgContext<*>>()
-        protected set
-    private var optional = false
-    // todo impl default value
+    val missingCallback = EventCallback<InvalidArgContext<*>>()
+    val invalidCallback = EventCallback<InvalidArgContext<*>>()
 
     init {
         withTypeSuggestions()
@@ -42,27 +31,9 @@ open class Argument<T : Any>(
 
     fun description() = description ?: ""
 
-    fun type() = typeName
+    fun type() = type
 
-    fun isRequired() = !optional
-
-    fun isOptional() = optional
-
-    fun required() = apply {
-        this.optional = false
-    }
-
-    infix fun required(value: Boolean) = apply {
-        this.optional = !value
-    }
-
-    fun optional() = apply {
-        this.optional = true
-    }
-
-    infix fun optional(value: Boolean) = apply {
-        this.optional = value
-    }
+    fun isRequired() = required
 
     infix fun missing(block: InvalidArgContext<*>.() -> Unit) = apply {
         this.missingCallback.callbacks.add(block)
@@ -83,42 +54,19 @@ open class Argument<T : Any>(
     }
 
     fun withTypeSuggestions() = apply {
-        suggests = CommandSuggestionRegistry.get(typeName) as Optional<CommandSuggestion<T>>
+        suggests = CommandSuggestionRegistry.get(type.typeName) as Optional<CommandSuggestion<T>>
     }
-
-    // todo this should be called with [validate] for efficiency, as well as the consumer
-    open fun getValueOfString(cmd: DeclarativeCommandBuilder, context: BaseCommandContext<*>, split: List<String>): T? {
-        return getValueOfString(cmd, context, split.joinToString(" "))
-    }
-
-    open fun getValueOfString(cmd: DeclarativeCommandBuilder, context: BaseCommandContext<*>, stringValue: String?): T? {
-        return if (cmd.localArgumentSuggestions.contains(name())) {
-            cmd.localArgumentSuggestions[name()]?.getValue(stringValue) as T?
-        } else if (suggests.isPresent) {
-            suggests.get().getValue(stringValue)
-        } else null
-    }
-
-    @JavaCompatibility
-    fun getContext(context: RunnableCommandContext<*>) = context.getArgumentContext<T>(name());
-
-    @JavaCompatibility
-    fun getValue(context: RunnableCommandContext<*>) = context.getArgumentContext<T>(name())?.getOrNull()
 
     fun createContext(stringValue: String?, actualValue: Any?): ArgumentContext<T> {
         return ArgumentContext(stringValue, Optional.ofNullable(actualValue as T?), this)
     }
-
-    open fun validate(split: List<String>) = validate(split.joinToString(" "))
-
-    open fun validate(stringValue: String?) = true
 
     fun getDefaultSuggestions(): List<String>? {
         val context = SuggestionInvocation(Optional.empty(), "", emptyList())
         return if (suggests.isPresent) {
             suggests.get().getSuggestion(context)
         } else {
-            val suggestion = CommandSuggestionRegistry.get(typeName)
+            val suggestion = CommandSuggestionRegistry.get(type.typeName)
             if (suggestion.isPresent) suggestion.get().getSuggestion(context) else null
         }
     }
@@ -126,20 +74,7 @@ open class Argument<T : Any>(
     infix fun nameEquals(other: Argument<*>) = name() == other.name()
 
     override fun toString() =
-        "<$name${if (isOptional()) "?" else ""}:${typeName}${if (consumer.isVarArg()) "..." else ""}>"
-
-    open fun applyToClone(cloned: Argument<T>) = cloned
-
-    fun clone() : Argument<T> {
-        return Argument<T>(name, typeName, consumer)
-            .let {
-                it.invalidCallback = invalidCallback.clone()
-                it.missingCallback = missingCallback.clone()
-                it.suggests = suggests
-                it.description = description
-                applyToClone(it)
-            }
-    }
+        "<$name${if (type.isOptional) "?" else ""}:${type.typeName}${if (type.isVararg) "..." else ""}>"
 }
 
 infix fun <T : Any> Argument<T>.suggests(suggest: CommandSuggestion<T>) = apply {
