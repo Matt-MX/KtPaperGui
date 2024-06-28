@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.commands.declarative.arg
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
-import com.mattmx.ktgui.commands.declarative.arg.consumer.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
 import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
@@ -15,10 +15,12 @@ import java.util.*
 
 open class Argument<T : Any>(
     private var name: String,
-    private val typeName: String,
-    val consumer: ArgumentConsumer
+    private val typeName: String
 ) : Invokable<Argument<T>> {
     var description: String? = null
+        protected set
+    var consumer = ArgumentConsumer.single()
+        protected set
     var suggests = Optional.empty<CommandSuggestion<T>>()
     var missingCallback = EventCallback<InvalidArgContext<*>>()
         protected set
@@ -79,11 +81,30 @@ open class Argument<T : Any>(
         return !invalidCallback.isEmpty()
     }
 
+    open fun getSuggestions() {
+        TODO()
+    }
+
+    open fun getDefaultSuggestions(): List<String>? {
+        val context = SuggestionInvocation(Optional.empty(), "", emptyList())
+        return if (suggests.isPresent) {
+            suggests.get().getSuggestion(context)
+        } else {
+            val suggestion = CommandSuggestionRegistry.get(typeName)
+            if (suggestion.isPresent) suggestion.get().getSuggestion(context) else null
+        }
+    }
+
     fun withTypeSuggestions() = apply {
         suggests = CommandSuggestionRegistry.get(typeName) as Optional<CommandSuggestion<T>>
     }
 
-    // todo this should be called with [validate] for efficiency, as well as the consumer
+    infix fun consumes(consumer: ArgumentConsumer) = apply {
+        this.consumer = consumer
+    }
+
+    open fun consume(processor: ArgumentProcessor) = this.consumer.consume(processor)
+
     open fun getValueOfString(cmd: DeclarativeCommandBuilder, context: BaseCommandContext<*>, split: List<String>): T? {
         return getValueOfString(cmd, context, split.joinToString(" "))
     }
@@ -106,30 +127,17 @@ open class Argument<T : Any>(
         return ArgumentContext(stringValue, Optional.ofNullable(actualValue as T?), this)
     }
 
-    open fun validate(split: List<String>) = validate(split.joinToString(" "))
-
-    open fun validate(stringValue: String?) = true
-
-    open fun getDefaultSuggestions(): List<String>? {
-        val context = SuggestionInvocation(Optional.empty(), "", emptyList())
-        return if (suggests.isPresent) {
-            suggests.get().getSuggestion(context)
-        } else {
-            val suggestion = CommandSuggestionRegistry.get(typeName)
-            if (suggestion.isPresent) suggestion.get().getSuggestion(context) else null
-        }
-    }
-
     infix fun nameEquals(other: Argument<*>) = name() == other.name()
 
     override fun toString() =
-        "<$name${if (isOptional()) "?" else ""}:${typeName}${if (consumer.isVarArg()) "..." else ""}>"
+        "<$name${if (isOptional()) "?" else ""}:${typeName}}>"
 
     open fun applyToClone(cloned: Argument<T>) = cloned
 
     fun clone() : Argument<T> {
-        return Argument<T>(name, typeName, consumer)
+        return Argument<T>(name, typeName)
             .let {
+                it.consumer = consumer
                 it.invalidCallback = invalidCallback.clone()
                 it.missingCallback = missingCallback.clone()
                 it.suggests = suggests

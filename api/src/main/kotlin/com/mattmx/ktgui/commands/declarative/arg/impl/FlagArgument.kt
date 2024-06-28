@@ -2,12 +2,11 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class FlagArgument(
     name: String
-) : Argument<Boolean>(name, "boolean", SingleArgumentConsumer()) {
+) : Argument<Boolean>(name, "boolean") {
 
     fun chatName() = name().replace("_", "-")
 

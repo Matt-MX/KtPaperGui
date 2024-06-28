@@ -3,8 +3,13 @@ package com.mattmx.ktgui.commands.declarative
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
 import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.impl.FlagArgument
+import com.mattmx.ktgui.commands.declarative.arg.impl.OptionArgument
+import com.mattmx.ktgui.commands.declarative.arg.impl.OptionSyntax
 import com.mattmx.ktgui.commands.declarative.invocation.*
 import com.mattmx.ktgui.commands.declarative.syntax.*
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
@@ -29,6 +34,9 @@ open class DeclarativeCommandBuilder(
     var subcommands = setOf<DeclarativeCommandBuilder>()
     var expectedArguments = arrayOf<Argument<*>>()
     var localArgumentSuggestions = hashMapOf<String, CommandSuggestion<*>>()
+    val permittedFlags = mutableSetOf<FlagArgument>()
+    val permittedOptions = mutableSetOf<OptionArgument<*>>()
+    val optionsSyntax = OptionSyntax()
     var coolDown = Optional.empty<ActionCoolDown<CommandSender>>()
         private set
     var coolDownCallback = Optional.empty<(StorageCommandContext<*>) -> Unit>()
@@ -176,6 +184,19 @@ open class DeclarativeCommandBuilder(
             it
         }
 
+    @JavaCompatibility
+    fun withFlag(flagArgument: FlagArgument) = apply {
+        this.permittedFlags.add(flagArgument)
+    }
+
+    @JavaCompatibility
+    fun <T : Any> withOption(optionArgument: OptionArgument<T>) = apply {
+        this.permittedOptions.add(optionArgument)
+    }
+
+    operator fun FlagArgument.unaryPlus() = withFlag(this)
+    operator fun <T : Any> OptionArgument<T>.unaryPlus() = withOption(this)
+
     fun getCurrentCommand(context: SuggestionInvocation<*>): Pair<SuggestionInvocation<*>, DeclarativeCommandBuilder?> {
         val firstArg = context.rawArgs.firstOrNull()
             ?: return context to this
@@ -197,14 +218,12 @@ open class DeclarativeCommandBuilder(
 
         val list = context.rawArgs.toMutableList()
         var suggestedArgs: List<String>? = null
-        for (arg in expectedArguments) {
-            val consumed = arg.consumer.consume(list)
-            list.removeAll(consumed)
 
-            if (list.isEmpty()) {
-                // This is the last argument
-                suggestedArgs = getSuggestions(arg)?.getLastArgSuggestion(context)
-            }
+        for (arg in expectedArguments) {
+            val processor = ArgumentProcessor(this, list)
+            val stringValue = arg.consume(processor) ?: continue
+
+            suggestedArgs = getSuggestions(arg)?.getLastArgSuggestion(context)
         }
 
 //        val arg = expectedArguments.getOrNull(context.rawArgs.size - 1)
@@ -273,8 +292,12 @@ open class DeclarativeCommandBuilder(
         }
 
         val argumentValues = hashMapOf<String, ArgumentContext<*>>()
+
         var expectedArgumentIndex = 0
         var providedArgumentIndex = 0
+
+        // todo rewrite arguments processing to handle new ArgumentConsumer.
+
         while (providedArgumentIndex < context.rawArgs.size) {
             val arg = context.rawArgs[providedArgumentIndex]
 
@@ -405,8 +428,8 @@ open class DeclarativeCommandBuilder(
                     if (!suggestions.isNullOrEmpty()) {
                         val opt = options.arguments
                         "${opt.suggestionsChar}${opt.suggestionsPrefix}${suggestions.joinToString(opt.suggestionsDivider)}${opt.suggestionsSuffix}"
-                    } else "${options.arguments.typeChar}${arg.type()}${if (arg.consumer.isVarArg()) "..." else ""}"
-                } else "${options.arguments.typeChar}${arg.type()}${if (arg.consumer.isVarArg()) "..." else ""}"
+                    } else "${options.arguments.typeChar}${arg.type()}}"
+                } else "${options.arguments.typeChar}${arg.type()}}"
 
             // Apply descriptions
             if (options.arguments.showDescriptions) {
@@ -434,8 +457,7 @@ open class DeclarativeCommandBuilder(
                     is VariableDeclarationSyntax -> {
                         expectedArguments += Argument<Any>(
                             syntax.getName(),
-                            syntax.getType(),
-                            if (syntax.isGreedy()) GreedyArgumentConsumer() else SingleArgumentConsumer()
+                            syntax.getType()
                         ).apply { optional(syntax.isOptional()) }
                     }
 
@@ -461,6 +483,9 @@ open class DeclarativeCommandBuilder(
 
 inline operator fun String.invoke(block: DeclarativeCommandBuilder.() -> Unit) =
     DeclarativeCommandBuilder(this).apply(block)
+
+inline fun <reified S : CommandSender> String.runs(noinline block: RunnableCommandContext<S>.() -> Unit) =
+    DeclarativeCommandBuilder(this).runs(block)
 
 inline fun command(name: String, block: DeclarativeCommandBuilder.() -> Unit) =
     DeclarativeCommandBuilder(name).apply(block)

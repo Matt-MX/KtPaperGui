@@ -284,6 +284,34 @@ class KotlinGui : JavaPlugin() {
                     }
                 }
 
+                val history = listOf(
+                    "MattMX" to "meow",
+                    "MattMX" to ":3",
+                    "GabbySimon" to "test hello world",
+                    "GabbySimon" to "hello matt",
+                    "MattMX" to "ktgui",
+                )
+
+                val maxResults by optionArgument<Int>()
+                val username by optionArgument<String>()
+                username suggests { history.map { it.first }.toSet() }
+
+                ("hist") {
+                    +maxResults
+                    +username
+
+                    runs<Player> {
+                        val results = history
+                            .subList(0, maxResults.context.orElse(history.size).coerceAtMost(history.size))
+                            .filter { it.first == username.context.orElse(it.first) }
+
+                        if (results.isEmpty())
+                            return@runs reply(!"&cNo results match your query.")
+
+                        results.forEach { r -> reply(!"&7${r.first} said '${r.second}'") }
+                    }
+                }
+
                 val cooldownPeriod by longArgument()
                 cooldownPeriod optional true
                 // fixme: args optional don't work
