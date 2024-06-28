@@ -3,7 +3,6 @@ package com.mattmx.ktgui.cooldown
 import java.time.Duration
 import java.util.*
 import kotlin.math.max
-import kotlin.math.min
 
 class ActionCoolDown<T>(
     duration: Duration
@@ -38,10 +37,6 @@ class ActionCoolDown<T>(
         return max(-1L, expire - (System.currentTimeMillis() - cache.getOrDefault(user, 0)))
     }
 
-    fun durationRemaining(user: T) : Duration {
-        return Duration.ofMillis(timeRemaining(user))
-    }
-
     fun test(user: T, block: (Duration) -> Unit): Unit? {
         val timeLeft = timeRemaining(user)
         val valid = timeLeft < 0
@@ -51,7 +46,6 @@ class ActionCoolDown<T>(
 
         if (valid) {
             block(Duration.ofMillis(timeLeft))
-            return Unit
         }
         return null
     }

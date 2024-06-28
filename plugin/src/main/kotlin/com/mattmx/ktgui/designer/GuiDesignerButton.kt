@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.designer
 
 import com.mattmx.ktgui.components.button.GuiButton
-import com.mattmx.ktgui.extensions.stripColor
 import com.mattmx.ktgui.utils.legacy
 import org.bukkit.inventory.ItemStack
 
@@ -14,7 +13,7 @@ class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
             if (enchantments.isEmpty()) return null
 
             val middle = enchantments.joinToString("\n") { (e, l) ->
-                "   this += Enchantment.${e.name} lvl $l"
+                "   this += Enchantment.${e.key} lvl $l"
             }
             return "$start$middle\n}"
         }
@@ -52,7 +51,7 @@ class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
             middle += namedPart + "\n"
 
             if (lorePart != null)
-             middle += lorePart!!.split("\n").joinToString("\n$tab") + "\n"
+                middle += lorePart!!.split("\n").joinToString("\n$tab") + "\n"
 
             if (enchantPart != null)
                 middle += enchantPart!!.split("\n").joinToString("\n$tab") + "\n"

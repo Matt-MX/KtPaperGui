@@ -6,7 +6,9 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 fun main() {
-    conversation {
+    conversation<Player> {
+        exitOn = "cancel"
+
         exit {
             println("exit")
         }
@@ -62,5 +64,5 @@ fun main() {
                 println(result.get() * 2)
             }
         }
-    } timeout 30 exitOn "cancel"
+    } timeout 30
 }

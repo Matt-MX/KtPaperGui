@@ -15,7 +15,7 @@ open class LegacyScoreboardBuilder(
     // Holds the lines of text, we are able to remove them because of this
     private val scoreboardLines = arrayListOf<String>()
 
-    private val scoreboard: Scoreboard = Bukkit.getScoreboardManager()!!.newScoreboard
+    private val scoreboard: Scoreboard = Bukkit.getScoreboardManager().newScoreboard
     private val objective: Objective = scoreboard.registerNewObjective(title, "dummy")
 
     init {
@@ -106,7 +106,7 @@ open class LegacyScoreboardBuilder(
         return this
     }
 
-    fun addRGB(line: String) : LegacyScoreboardBuilder {
+    fun addRGB(line: String): LegacyScoreboardBuilder {
         if (scoreboardLines.size > MAX_LINES) throw IndexOutOfBoundsException("You can't add more than 16 lines.")
         val name = "&r".repeat(scoreboardLines.size)
         val team = scoreboard.getTeam(name) ?: scoreboard.registerNewTeam(name)

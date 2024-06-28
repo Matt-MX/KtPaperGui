@@ -9,7 +9,7 @@ class MaterialCommandSuggestion : CommandSuggestion<Material> {
         return Material.values().map { it.key.toString() }
     }
 
-    override fun getValue(argumentString: String?): Material? {
+    override fun getValue(argumentString: String): Material? {
         return Material.values().firstOrNull { it.key.toString() == argumentString }
     }
 }

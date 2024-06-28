@@ -21,11 +21,15 @@ class NumberWidgetButton(
                 amount(min(64, max(1, item!!.amount + step)))
                 update(e.player)
             }
+
             ClickType.LEFT -> {
                 amount(min(64, max(1, item!!.amount - step)))
                 update(e.player)
             }
-            else -> { click.run(e) }
+
+            else -> {
+                click.run(e)
+            }
         }
     }
 

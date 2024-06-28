@@ -1,6 +1,5 @@
 package com.mattmx.ktgui.commands
 
-import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

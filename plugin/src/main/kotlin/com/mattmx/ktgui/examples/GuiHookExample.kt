@@ -4,11 +4,9 @@ import com.mattmx.ktgui.KotlinGui
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.components.signal.signal
 import com.mattmx.ktgui.dsl.button
-import com.mattmx.ktgui.dsl.effect
 import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.dsl.gui
 import com.mattmx.ktgui.event.PreGuiBuildEvent
-import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -50,24 +48,22 @@ class GuiHookExample : Example {
                 if ((gui as GuiScreen).id != "kgui.example.gui-hook") return@event
 
                 var signalExampleVar by (gui as GuiScreen).signal(0)
-                (gui as GuiScreen).effect {
-                    button(Material.PURPLE_DYE) {
-                        named(!"&d&lA button")
-                        lore {
-                            add(!"&fThis button was added after the gui was built.")
-                            add(!"&fWe can even add our own signals here and whatnot: $signalExampleVar")
-                            add(!"&a&l[CLICK]")
+                gui.button(Material.PURPLE_DYE) {
+                    named(!"&d&lA button")
+                    lore {
+                        add(!"&fThis button was added after the gui was built.")
+                        add(!"&fWe can even add our own signals here and whatnot: $signalExampleVar")
+                        add(!"&a&l[CLICK]")
+                    }
+                    click {
+                        ClickType.LEFT {
+                            signalExampleVar++
                         }
-                        click {
-                            ClickType.LEFT {
-                                signalExampleVar++
-                            }
-                            ClickType.RIGHT {
-                                signalExampleVar--
-                            }
+                        ClickType.RIGHT {
+                            signalExampleVar--
                         }
-                    } slot 15
-                }
+                    }
+                } slot 15
             }
         }
     }

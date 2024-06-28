@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.commands.suggestions.impl
 
-import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -13,8 +13,7 @@ class OnlinePlayersCommandSuggestion : CommandSuggestion<Player> {
             .toList()
     }
 
-    override fun getValue(argumentString: String?): Player? {
-        argumentString ?: return null
+    override fun getValue(argumentString: String): Player? {
         return Bukkit.getPlayer(argumentString)
     }
 }

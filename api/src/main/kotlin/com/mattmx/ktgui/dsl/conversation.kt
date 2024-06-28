@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin
  *
  * @return the conversation created
  */
-inline fun conversation(plugin: JavaPlugin, block: ConversationBuilder.() -> Unit) : ConversationBuilder {
+inline fun conversation(plugin: JavaPlugin, block: ConversationBuilder.() -> Unit): ConversationBuilder {
     val conversationFactory = ConversationFactory(plugin)
         .withLocalEcho(false)
         .withModality(true)

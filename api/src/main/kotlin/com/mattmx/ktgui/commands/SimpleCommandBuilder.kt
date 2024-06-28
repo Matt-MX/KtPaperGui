@@ -35,32 +35,32 @@ open class SimpleCommandBuilder(
     constructor(name: String) : this(name, null)
     constructor(name: String, vararg alias: String) : this(name, null, *alias)
 
-    infix fun permission(permission: String) : SimpleCommandBuilder {
+    infix fun permission(permission: String): SimpleCommandBuilder {
         this.permission = permission
         return this
     }
 
-    infix fun alias(alias: String) : SimpleCommandBuilder {
+    infix fun alias(alias: String): SimpleCommandBuilder {
         this.aliases.add(alias)
         return this
     }
 
-    fun noPermissions(cb: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
+    fun noPermissions(cb: CommandInvocation.() -> Unit): SimpleCommandBuilder {
         noPermissions = cb
         return this
     }
 
-    infix fun subCommand(commandBuilder: SimpleCommandBuilder) : SimpleCommandBuilder {
+    infix fun subCommand(commandBuilder: SimpleCommandBuilder): SimpleCommandBuilder {
         subCommands.add(commandBuilder)
         return this
     }
 
-    infix fun hasPermission(executor: CommandSender) : Boolean {
+    infix fun hasPermission(executor: CommandSender): Boolean {
         // todo check for subcommand permissions
         return permission == null || executor.hasPermission(permission!!)
     }
 
-    fun onCooldown(executes: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
+    fun onCooldown(executes: CommandInvocation.() -> Unit): SimpleCommandBuilder {
         this.cooldownCallback = executes
         return this
     }
@@ -76,7 +76,7 @@ open class SimpleCommandBuilder(
         this.cooldownCallback?.invoke(invocation)
     }
 
-    fun executes(execute: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
+    fun executes(execute: CommandInvocation.() -> Unit): SimpleCommandBuilder {
         this.execute = execute
         return this
     }
@@ -85,7 +85,7 @@ open class SimpleCommandBuilder(
         this.execute = block
     }
 
-    fun unknownSubcommand(unknown: CommandInvocation.() -> Unit) : SimpleCommandBuilder {
+    fun unknownSubcommand(unknown: CommandInvocation.() -> Unit): SimpleCommandBuilder {
         this.unknown = unknown
         return this
     }
@@ -106,11 +106,11 @@ open class SimpleCommandBuilder(
         this.suggests = suggest
     }
 
-    fun allAliases() : List<String> {
+    fun allAliases(): List<String> {
         return aliases.toMutableList() + name
     }
 
-    fun getSuggestions(invocation: CommandInvocation) : List<String> {
+    fun getSuggestions(invocation: CommandInvocation): List<String> {
         suggests?.also {
             return it(invocation) ?: listOf()
         } ?: run {
@@ -125,7 +125,7 @@ open class SimpleCommandBuilder(
         return listOf()
     }
 
-    infix fun suggestSubCommands(value: Boolean) : SimpleCommandBuilder {
+    infix fun suggestSubCommands(value: Boolean): SimpleCommandBuilder {
         this.suggestSubCommands = value
         return this
     }
@@ -134,7 +134,7 @@ open class SimpleCommandBuilder(
         if (isInConfig) {
             Bukkit.getPluginCommand(name)?.setExecutor(DummyCommandExecutor(this))
         } else {
-            if(!GuiManager.isInitialized()) {
+            if (!GuiManager.isInitialized()) {
                 throw RuntimeException("Unregistered commands are unsupported when GuiManager not initialised! Call GuiManager.init")
             }
             val cmdMapField = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
@@ -150,11 +150,12 @@ open class SimpleCommandBuilder(
                 val aliasesField = SimpleCommandMap::class.java.getDeclaredField("aliases")
                 aliasesField.setAccessible(true)
                 knownAliases = aliasesField.get(cmdMap) as MutableSet<String?>
-            } catch (e: NoSuchFieldException) {}
+            } catch (e: NoSuchFieldException) {
+            }
             val prefix = GuiManager.owningPlugin.name.lowercase()
 
             event<PluginDisableEvent>(plugin = GuiManager.owningPlugin) {
-                if(plugin == GuiManager.owningPlugin) {
+                if (plugin == GuiManager.owningPlugin) {
                     synchronized(cmdMap) {
                         knownCommands.remove(name)
                         knownCommands.remove("$prefix:$name")
@@ -171,15 +172,16 @@ open class SimpleCommandBuilder(
             }
         }
     }
-    fun couldBeCommand(arg: String) : Boolean {
+
+    fun couldBeCommand(arg: String): Boolean {
         return name.startsWith(arg) || aliases.any { it.startsWith(arg) }
     }
 
-    fun isCommand(arg: String) : Boolean {
+    fun isCommand(arg: String): Boolean {
         return name == arg || aliases.any { it == arg }
     }
 
-    fun getCommand(args: List<String>) : SimpleCommandBuilder? {
+    fun getCommand(args: List<String>): SimpleCommandBuilder? {
         if (args.isEmpty()) return this
         subCommands.forEach { cmd ->
             if (cmd.isCommand(args[0])) {
@@ -202,21 +204,21 @@ class CommandInvocation(
     val player: Player
         get() = source as Player
 
-    fun player() : Player {
+    fun player(): Player {
         return source as Player
     }
 
-    operator fun get(index: Int) : String? {
+    operator fun get(index: Int): String? {
         if (index >= args.size) return null
         return args[index]
     }
 
-    fun isNotEmpty() : Boolean = args.isNotEmpty()
-    fun isEmpty() : Boolean = args.isEmpty()
+    fun isNotEmpty(): Boolean = args.isNotEmpty()
+    fun isEmpty(): Boolean = args.isEmpty()
 }
 
 @Deprecated("No longer considered a 'simple command'", ReplaceWith("rawCommand"))
-inline fun simpleCommand(cmd: (SimpleCommandBuilder.() -> Unit)) : SimpleCommandBuilder {
+inline fun simpleCommand(cmd: (SimpleCommandBuilder.() -> Unit)): SimpleCommandBuilder {
     val cmdB = SimpleCommandBuilder()
     cmd(cmdB)
     return cmdB

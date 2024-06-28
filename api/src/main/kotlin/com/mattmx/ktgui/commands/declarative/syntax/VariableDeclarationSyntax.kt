@@ -13,11 +13,8 @@ class VariableDeclarationSyntax(
 
     fun getName() = varNameToken.text!!
 
-    fun getType() = typeToken.text!!
+    fun getType() = VariableType(typeToken.text!!, ellipsisToken.text != null, optional.text != null)
 
-    fun isGreedy() = ellipsisToken.text != null
-
-    fun isOptional() = optional.text != null
-
-    override fun children() = listOf(openDiamondBracesToken, varNameToken, colonToken, typeToken, closeDiamondBracesToken)
+    override fun children() =
+        listOf(openDiamondBracesToken, varNameToken, colonToken, typeToken, closeDiamondBracesToken)
 }

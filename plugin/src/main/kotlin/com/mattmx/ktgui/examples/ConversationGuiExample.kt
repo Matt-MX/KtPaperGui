@@ -1,16 +1,12 @@
 package com.mattmx.ktgui.examples
 
-import com.mattmx.ktgui.KotlinGui
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.conversation.refactor.conversation
 import com.mattmx.ktgui.conversation.refactor.getInteger
 import com.mattmx.ktgui.conversation.refactor.getString
-import com.mattmx.ktgui.dsl.conversation
 import com.mattmx.ktgui.utils.legacyColor
-import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
-import net.kyori.adventure.title.Title
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType

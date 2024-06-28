@@ -4,11 +4,8 @@ main: com.mattmx.ktgui.KotlinGui
 api-version: 1.17
 prefix: KtGUI
 authors: [ MattMX ]
-website: https://github.com/Matt-MX/KtPaperGui
 description: Declarative GUI Library for Paper.
-
-depend:
-  - MCKotlin-Paper
-
 softdepend:
   - PlaceholderAPI
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.0.0

@@ -11,6 +11,7 @@ open class GuiToggleButton(
     private var state = false
     lateinit var changedCallback: (ButtonClickedEvent<GuiToggleButton>) -> Unit
         protected set
+
     init {
         this.item = if (state) enabledItem else disabledItem
     }
@@ -31,7 +32,7 @@ open class GuiToggleButton(
         update()
     }
 
-    fun enabledOnDefault(state: Boolean) : GuiToggleButton {
+    fun enabledOnDefault(state: Boolean): GuiToggleButton {
         this.state = state
         this.item = if (this.state) enabledItem else disabledItem
         return this
@@ -42,7 +43,7 @@ open class GuiToggleButton(
         return this
     }
 
-    fun enabled() : Boolean {
+    fun enabled(): Boolean {
         return state
     }
 

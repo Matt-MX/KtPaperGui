@@ -11,15 +11,13 @@ class ArgumentContext<T : Any>(
 
     fun isEmpty() = value.isEmpty
 
-    fun isPresent() = value.isPresent
-
     fun getOrNull(): T? = value.orElse(null)
 
     fun orElse(other: T?) = value.orElse(other)
 
     fun stringValue() = stringValue
 
-    fun asOptional() = value
+    fun optional() = value
 
     override fun toString() = getOrNull().toString()
 }

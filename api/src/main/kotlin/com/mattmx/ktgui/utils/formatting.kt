@@ -46,7 +46,7 @@ fun Double.dp(decimalPlace: Int = 2): Double {
  * @param decimalPlace number of following digits.
  * @return rounded [Float]
  */
-fun Float.dp(decimalPlace: Int = 2) : Float {
+fun Float.dp(decimalPlace: Int = 2): Float {
     val df = DecimalFormat("#." + "#".repeat(decimalPlace))
     df.roundingMode = RoundingMode.CEILING
 
