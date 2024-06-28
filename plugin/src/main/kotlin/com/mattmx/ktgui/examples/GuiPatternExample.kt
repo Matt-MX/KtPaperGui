@@ -5,6 +5,7 @@ import com.mattmx.ktgui.components.applyPattern
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.gui
 import com.mattmx.ktgui.item.itemBuilderStack
+import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -16,13 +17,11 @@ import java.util.*
 class GuiPatternExample : Example {
     val gui = gui(!"Pattern Example", 3) {
 
-        val pattern = GuiPattern(
-            """
+        val pattern = GuiPattern("""
             xxxxxxxxx
             -a-b-c-d-
             xxxxxxxxx
-        """.trimIndent()
-        )
+        """.trimIndent())
 
         pattern['x'] = button(Material.BLUE_STAINED_GLASS_PANE) {
             named(!"")

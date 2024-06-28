@@ -6,7 +6,7 @@ import java.util.*
 abstract class NumberConversationStep<T : Comparable<T>, C : Conversable> : RawConversationStep<T, C>() {
     lateinit var range: ClosedRange<T>
 
-    abstract fun get(str: String): T?
+    abstract fun get(str: String) : T?
 
     override fun validate(input: String?): Optional<T> {
         if (input == null) return Optional.empty()

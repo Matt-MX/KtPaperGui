@@ -68,35 +68,35 @@ class LegacyLoreCycleButton(
         return this
     }
 
-    fun clearSpecialLore(): LegacyLoreCycleButton {
+    fun clearSpecialLore() : LegacyLoreCycleButton {
         lores.clear()
         selectableLores.clear()
         selected = 0
         return this
     }
 
-    fun getSelectedId(): String? {
+    fun getSelectedId() : String? {
         return lores().getOrNull(getSelectedNum())?.id
     }
 
-    fun getSelectedNum(): Int {
+    fun getSelectedNum() : Int {
         return selectableLores.getOrNull(selected) ?: 0
     }
 
-    fun lores(): MutableList<LoreEntry> {
+    fun lores() : MutableList<LoreEntry> {
         return lores.toMutableList()
     }
 
-    fun optionalLores(): MutableList<LoreEntry> {
+    fun optionalLores() : MutableList<LoreEntry> {
         return selectableLores.map { lores[it] }.toMutableList()
     }
 
-    override fun formatIntoItemStack(player: Player?): ItemStack? {
+    override fun formatIntoItemStack(player: Player?) : ItemStack? {
         // here we need to apply and format lores
         val loreToApply = mutableListOf<String>()
         val selected = getSelectedId()
         val i = item?.clone()
-        lores.forEach { lo ->
+        lores.forEach {lo ->
             if (lo.id != null) {
                 loreToApply.add(if (lo.id == selected) lo.lineSelected else lo.line)
             } else loreToApply.add(lo.line)
@@ -111,8 +111,7 @@ class LegacyLoreCycleButton(
     data class LoreEntry(
         var id: String?,
         var line: String,
-        var lineSelected: String
-    )
+        var lineSelected: String)
 
     override fun copy(parent: IGuiScreen): LegacyLoreCycleButton {
         val copy = LegacyLoreCycleButton(lores = lores, item = item)
@@ -125,7 +124,7 @@ class LegacyLoreCycleButton(
     }
 }
 
-inline fun MutableList<LegacyLoreCycleButton.LoreEntry>.addLore(cb: LegacyLoreCycleButton.LoreEntry.() -> Unit): MutableList<LegacyLoreCycleButton.LoreEntry> {
+inline fun MutableList<LegacyLoreCycleButton.LoreEntry>.addLore(cb: LegacyLoreCycleButton.LoreEntry.() -> Unit) : MutableList<LegacyLoreCycleButton.LoreEntry> {
     val l = LegacyLoreCycleButton.LoreEntry(null, "", "")
     cb.invoke(l)
     this.add(l)

@@ -3,6 +3,7 @@ package com.mattmx.ktgui.examples
 import com.mattmx.ktgui.components.button.*
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.item.itemBuilder
+import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -22,8 +23,7 @@ class ConfigScreenExample : GuiScreen(!"Example Config", 3), Example {
              */
             GuiToggleButton(
                 enabled.copy().lore(!"&8This is item $it").build(),
-                disabled.copy().lore(!"&8This is item $it").build()
-            )
+                disabled.copy().lore(!"&8This is item $it").build())
                 .enabledOnDefault(true)
                 .changeWithClickType(ClickType.LEFT)
                 .changed {
@@ -40,14 +40,8 @@ class ConfigScreenExample : GuiScreen(!"Example Config", 3), Example {
          */
         GuiCycleButton()
             .set("dirt", itemBuilder(Material.DIRT).name(!"&6Dirt").lore(!"&8Click to cycle").build())
-            .set(
-                "grass_block",
-                itemBuilder(Material.GRASS_BLOCK).lore(!"&8Click to cycle").name(!"&6Grass Block").build()
-            )
-            .set(
-                "diamond",
-                itemBuilder(Material.DIAMOND_BLOCK).lore(!"&8Click to cycle").name(!"&bDiamond Block").build()
-            )
+            .set("grass_block", itemBuilder(Material.GRASS_BLOCK).lore(!"&8Click to cycle").name(!"&6Grass Block").build())
+            .set("diamond", itemBuilder(Material.DIAMOND_BLOCK).lore(!"&8Click to cycle").name(!"&bDiamond Block").build())
             .withDefaultClickEvents()
             .changed {
                 player.sendMessage(!"&7You changed to ${button.selectedValue}")

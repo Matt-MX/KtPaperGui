@@ -20,7 +20,6 @@ import org.bukkit.potion.PotionEffectType
  * [KT] is an empty object used for starting the inline item builder.
  */
 object KT
-
 infix fun KT.ib(material: Material) = iBuilder(material)
 infix fun KT.itemBuilder(material: Material) = iBuilder(material)
 infix fun KT.iBuilder(material: Material): DslIBuilder {
@@ -33,9 +32,7 @@ infix fun KT.iBuilder(material: Material): DslIBuilder {
  * @param builder block for building the item
  * @return the item as a stack or a builder.
  */
-inline fun itemBuilderStack(material: Material, builder: DslIBuilder.() -> Unit): ItemStack =
-    itemBuilder(material, builder).build()
-
+inline fun itemBuilderStack(material: Material, builder: DslIBuilder.() -> Unit): ItemStack = itemBuilder(material, builder).build()
 inline fun itemBuilder(material: Material, builder: DslIBuilder.() -> Unit) = DslIBuilder(material).apply(builder)
 fun itemBuilder(material: Material) = DslIBuilder(material)
 
@@ -127,7 +124,7 @@ class DslIBuilder(var material: Material) {
         durability = d; return this
     }
 
-    infix fun modelData(d: Int): DslIBuilder {
+    infix fun modelData(d: Int) : DslIBuilder {
         customModelData = d; return this
     }
 

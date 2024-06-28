@@ -2,6 +2,7 @@ package com.mattmx.ktgui.examples
 
 import com.mattmx.ktgui.dsl.button
 import com.mattmx.ktgui.dsl.gui
+import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Material
 import org.bukkit.entity.Player

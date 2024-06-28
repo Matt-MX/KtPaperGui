@@ -112,7 +112,6 @@ open class ScoreboardBuilder(
     fun showFor(player: Player) {
         player.scoreboard = scoreboard
     }
-
     fun removeFor(player: Player) {
         player.removeScoreboard()
     }

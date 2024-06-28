@@ -19,7 +19,6 @@ inline fun <reified T : Event> JavaPlugin.event(
     val listener = KListener()
     listener.event(this, priority, ignoreCancelled, block)
 }
-
 inline fun <reified T : Event> event(
     plugin: JavaPlugin,
     priority: EventPriority = EventPriority.NORMAL,
@@ -91,7 +90,7 @@ inline fun <T : Event> Listener.event(
         type,
         this,
         priority,
-        { _, event -> if (type.isInstance(event)) callback(event as T) },
+        { _, event -> if(type.isInstance(event)) callback(event as T) },
         plugin,
         ignoreCancelled
     )

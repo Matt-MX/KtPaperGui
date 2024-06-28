@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.components.signal
 
+import kotlin.math.sign
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -107,7 +108,7 @@ class Signal<V>(initial: V, private val owner: SignalOwner) : ReadWriteProperty<
      *
      * @param signalListener the [SignalListener] to register.
      */
-    fun addDependency(signalListener: SignalListener<V>): Boolean {
+    fun addDependency(signalListener: SignalListener<V>) : Boolean {
         if (this.listeners.contains(signalListener)) return false
         this.listeners += signalListener
         return true

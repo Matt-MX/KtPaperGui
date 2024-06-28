@@ -3,6 +3,7 @@ package com.mattmx.ktgui.components
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
+import com.mattmx.ktgui.dsl.gui
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -34,7 +35,7 @@ class GuiPattern(
      * @param rows the number of rows the gui will have.
      * @return a compiled map of Buttons to their respective slots in the gui.
      */
-    fun build(rows: Int): Map<IGuiButton<*>, ArrayList<Int>> {
+    fun build(rows: Int) : Map<IGuiButton<*>, ArrayList<Int>> {
         val map = mutableMapOf<IGuiButton<*>, ArrayList<Int>>()
         val maxSlot = rows * 9
         trimPattern()
@@ -85,7 +86,7 @@ class GuiPattern(
      * @param char
      * @return gui button of a character, or null if it hasn't been set yet
      */
-    operator fun get(char: Char): IGuiButton<*>? = items[char]
+    operator fun get(char: Char) : IGuiButton<*>? = items[char]
 }
 
 /**

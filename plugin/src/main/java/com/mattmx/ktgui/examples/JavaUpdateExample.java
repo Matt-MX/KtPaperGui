@@ -2,9 +2,9 @@ package com.mattmx.ktgui.examples;
 
 import com.mattmx.ktgui.GuiManager;
 import com.mattmx.ktgui.components.GuiPattern;
-import com.mattmx.ktgui.components.button.BaseGuiButton;
 import com.mattmx.ktgui.components.button.ButtonClickedEvent;
 import com.mattmx.ktgui.components.button.GuiButton;
+import com.mattmx.ktgui.components.button.BaseGuiButton;
 import com.mattmx.ktgui.components.screen.GuiScreen;
 import com.mattmx.ktgui.components.signal.Signal;
 import com.mattmx.ktgui.event.PreGuiBuildEvent;
@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import static com.mattmx.ktgui.dsl.EventKt.event;
 import static com.mattmx.ktgui.dsl.EventKt.event;
 import static com.mattmx.ktgui.utils.ColorKt.component;
 

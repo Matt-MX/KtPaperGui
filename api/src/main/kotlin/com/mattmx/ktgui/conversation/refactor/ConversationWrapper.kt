@@ -2,10 +2,18 @@ package com.mattmx.ktgui.conversation.refactor
 
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.conversation.refactor.result.ConversationEnd
 import com.mattmx.ktgui.conversation.refactor.steps.Step
 import com.mattmx.ktgui.extensions.getOpenGui
+import com.mattmx.ktgui.extensions.setOpenGui
 import com.mattmx.ktgui.scheduling.sync
-import org.bukkit.conversations.*
+import org.bukkit.conversations.Conversable
+import org.bukkit.conversations.Conversation
+import org.bukkit.conversations.ConversationAbandonedEvent
+import org.bukkit.conversations.ConversationAbandonedListener
+import org.bukkit.conversations.ConversationContext
+import org.bukkit.conversations.ConversationFactory
+import org.bukkit.conversations.ConversationPrefix
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
@@ -19,7 +27,7 @@ class ConversationWrapper<T : Conversable>(
         .withLocalEcho(false)
     private val steps = arrayListOf<Step>()
     private var exit = Optional.empty<(ConversationAbandonedEvent) -> Unit>()
-    var start = Optional.empty<(T) -> Unit>()
+    private var start = Optional.empty<(T) -> Unit>()
 
     /**
      * More than often, the conversation is created as the result of a button
@@ -35,6 +43,10 @@ class ConversationWrapper<T : Conversable>(
         set(value) {
             factory.withEscapeSequence(value)
         }
+
+    infix fun exitOn(name: String) = apply {
+        this.exitOn = name
+    }
 
     infix fun exit(block: ConversationAbandonedEvent.() -> Unit) = apply {
         this.exit = Optional.of(block)

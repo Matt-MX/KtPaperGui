@@ -27,19 +27,13 @@ open class GuiInfiniteScreen(
     operator fun set(x: Int, y: Int, button: IGuiButton<*>) = setSlot(x, y, button)
 
     override fun open(player: Player) {
-        val inv: Inventory =
-            if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(
-                player,
-                totalSlots(),
-                title
-            )
+        val inv: Inventory = if (type != null) Bukkit.createInventory(player, type!!, title) else Bukkit.createInventory(player, totalSlots(), title)
 
         if (firePreBuildEvent(player)) return
 
         items2D.forEach { (pos, item) ->
             if (pos.first >= x && pos.first <= x + 9
-                && pos.second >= y && pos.second <= y + rows
-            ) {
+                && pos.second >= y && pos.second <= y + rows) {
                 val normalSlot = (pos.second - y) * 9 + (pos.first - x)
                 if (normalSlot >= 0 && normalSlot <= last()) {
                     inv.setItem(normalSlot, item.formatIntoItemStack(player))

@@ -1,38 +1,25 @@
 rootProject.name = "ktgui"
+include("api")
+include("plugin")
 
 pluginManagement {
     repositories {
-        google()
-        gradlePluginPortal()
         mavenCentral()
+        gradlePluginPortal()
+        maven("https://repo.papermc.io/repository/maven-public/")
     }
 }
 
 plugins {
-    //id("com.gradle.develocity") version("3.17.5")
+    id("com.gradle.enterprise") version("3.15")
 }
 
-dependencyResolutionManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://maven.pvphub.me/releases")
-        maven("https://repo.dmulloy2.net/repository/public/")
-        maven("https://jitpack.io")
-        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+gradleEnterprise {
+    if (System.getenv("CI") != null) {
+        buildScan {
+            publishAlways()
+            termsOfServiceUrl = "https://gradle.com/terms-of-service"
+            termsOfServiceAgree = "yes"
+        }
     }
 }
-
-include("api")
-include("plugin")
-
-//gradleEnterprise {
-//    if (System.getenv("CI") != null) {
-//        buildScan {
-//            publishAlways()
-//            termsOfServiceUrl = "https://gradle.com/terms-of-service"
-//            termsOfServiceAgree = "yes"
-//        }
-//    }
-//}

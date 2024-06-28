@@ -17,6 +17,9 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.potion.PotionEffect
+import java.lang.StringBuilder
+import java.util.StringJoiner
 import java.util.function.Consumer
 
 open class GuiButton<T : GuiButton<T>>(

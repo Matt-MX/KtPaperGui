@@ -67,15 +67,7 @@ class Parser(
         val optional = matchToken(SyntaxKind.QUESTION)
         val closeDiamondBraces = matchToken(SyntaxKind.CLOSE_DIAMOND)
 
-        return VariableDeclarationSyntax(
-            openDiamondBraces,
-            varName,
-            colon,
-            type,
-            ellipsis,
-            optional,
-            closeDiamondBraces
-        )
+        return VariableDeclarationSyntax(openDiamondBraces, varName, colon, type, ellipsis, optional, closeDiamondBraces)
     }
 
     private fun parseCommand(): CommandDeclarationSyntax {

@@ -20,7 +20,7 @@ open class AnimatedScoreboardBuilder(
      *
      * @param plugin the plugin instance
      */
-    fun begin(plugin: JavaPlugin): AnimatedScoreboardBuilder {
+    fun begin(plugin: JavaPlugin) : AnimatedScoreboardBuilder {
         started = System.currentTimeMillis()
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, { it ->
             if (!cancel) update?.invoke(this)
@@ -28,21 +28,21 @@ open class AnimatedScoreboardBuilder(
                 it.cancel()
             }
             iterations++
-        }, 0, updateEvery)
+        } ,0, updateEvery)
         return this
     }
 
     /**
      * @return the number of iterations we have been through.
      */
-    fun getIterations(): Long {
+    fun getIterations() : Long {
         return iterations
     }
 
     /**
      * @return the time (in millis) that we have been running this scoreboard for.
      */
-    fun getTimeRunning(): Long {
+    fun getTimeRunning() : Long {
         return System.currentTimeMillis() - started
     }
 
@@ -50,7 +50,7 @@ open class AnimatedScoreboardBuilder(
      * If you want to stop animating the scoreboard, call this.
      * To begin animating again, call begin(plugin)
      */
-    fun cancel(): AnimatedScoreboardBuilder {
+    fun cancel() : AnimatedScoreboardBuilder {
         cancel = true
         return this
     }
@@ -60,7 +60,7 @@ open class AnimatedScoreboardBuilder(
      *
      * @param scoreboard the callback of how we want the scoreboard to update.
      */
-    fun update(scoreboard: AnimatedScoreboardBuilder.() -> Unit): AnimatedScoreboardBuilder {
+    fun update(scoreboard: AnimatedScoreboardBuilder.() -> Unit) : AnimatedScoreboardBuilder {
         this.update = scoreboard
         return this
     }

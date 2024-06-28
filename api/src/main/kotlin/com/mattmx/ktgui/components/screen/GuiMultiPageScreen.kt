@@ -20,7 +20,7 @@ open class GuiMultiPageScreen(
             update(p)
         }
         click {
-            any {
+             any {
                 if (slot in minSlot until maxSlot) {
                     val index = slot + (page * pageSize()) - minSlot
                     itemList.getOrNull(index)?.onButtonClick(this)
@@ -47,7 +47,7 @@ open class GuiMultiPageScreen(
         }
     }
 
-    fun getCurrentPage(): Int {
+    fun getCurrentPage() : Int {
         return page
     }
 

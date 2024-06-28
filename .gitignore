@@ -6,5 +6,3 @@
 /build/classes/kotlin/test/
 /api/build
 /plugin/build
-/api/.gradle
-/plugin/.gradle

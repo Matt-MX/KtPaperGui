@@ -4,7 +4,7 @@ import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.MessagePrompt
 import org.bukkit.conversations.Prompt
 
-class DummyEndOfConversationPrompt : MessagePrompt(), BuildablePrompt {
+class DummyEndOfConversationPrompt() : MessagePrompt(), BuildablePrompt {
 
     override fun getNextPrompt(context: ConversationContext): Prompt? {
         return Prompt.END_OF_CONVERSATION

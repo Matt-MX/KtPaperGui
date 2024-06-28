@@ -4,6 +4,7 @@ import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.GuiToggleButton
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.item.itemBuilder
+import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.not
 import org.bukkit.Bukkit
 import org.bukkit.Material
