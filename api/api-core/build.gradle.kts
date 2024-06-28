@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.reflect)
+    compileOnly(libs.kotlin.reflect)
     compileOnly(libs.paper.api) // TODO remove
     compileOnly(libs.placeholder.api)
     compileOnly(libs.kotlin.stdlib)

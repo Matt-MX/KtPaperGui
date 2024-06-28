@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(project(":api:api-core"))
     compileOnly(libs.paper.api)
+    compileOnly(libs.kotlin.stdlib)
 }
 
 version = findProperty("paperApiVersion")!!
