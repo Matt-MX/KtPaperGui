@@ -4,7 +4,6 @@ import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.impl.MultiArgument
 import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
 import com.mattmx.ktgui.utils.JavaCompatibility
-import org.bukkit.block.data.type.Chain
 import org.bukkit.command.CommandSender
 
 class ChainCommandBuilder(val name: String) {

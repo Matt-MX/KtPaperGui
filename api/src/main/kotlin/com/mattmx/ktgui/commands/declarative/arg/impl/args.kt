@@ -3,7 +3,6 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
-import net.kyori.adventure.bossbar.BossBar.Flag
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -58,3 +57,6 @@ fun flag() = delegateArgument(FlagArgument(DELEGATED_ARG_NAME))
 
 inline fun <reified T : Any> optionArgument(type: String = T::class.java.simpleName) =
     delegateArgument(OptionArgument<T>(DELEGATED_ARG_NAME, type, SingleArgumentConsumer()))
+
+fun <T : Any> multiChoiceArgument(vararg choices: Pair<String, T>) =
+    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME, hashMapOf(*choices)))
