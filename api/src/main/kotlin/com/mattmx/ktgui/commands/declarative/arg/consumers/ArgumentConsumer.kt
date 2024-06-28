@@ -10,22 +10,27 @@ fun interface ArgumentConsumer {
 
         infix fun untilFalse(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
             var current = processor.next()
-            val list = arrayListOf<String>()
+            var fullString = current ?: ""
 
-            if (current != null) {
-                list.add(current)
-            }
-
-            while (current != null && predicate(processor, current)) {
+            while (current != null) {
                 current = processor.next()
-                if (current != null) {
-                    list.add(current)
+
+                if (current == null) {
+                    return@ArgumentConsumer null
+                }
+
+                fullString += " $current"
+
+                if (!predicate(processor, fullString)) {
+                    return@ArgumentConsumer fullString
                 }
             }
-            list.joinToString(" ")
+            null
         }
 
-        infix fun until(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
+        infix fun until(predicate: (ArgumentProcessor, String) -> Boolean) = untilFalse { p, s -> !predicate(p, s) }
+
+        infix fun untilFalsePartial(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
             var current = processor.next()
             var fullString = current ?: ""
 
@@ -38,12 +43,14 @@ fun interface ArgumentConsumer {
 
                 fullString += " $current"
 
-                if (predicate(processor, fullString)) {
+                if (!predicate(processor, current)) {
                     return@ArgumentConsumer fullString
                 }
             }
             null
         }
+
+        infix fun untilPartial(predicate: (ArgumentProcessor, String) -> Boolean) = untilFalsePartial { p, s -> !predicate(p, s) }
 
         fun remaining() = untilFalse { processor, _ -> processor.pointer < processor.args.size }
 
