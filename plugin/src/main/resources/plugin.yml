@@ -9,3 +9,4 @@ softdepend:
   - PlaceholderAPI
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:2.0.0
+  - org.jetbrains.kotlin:kotlin-reflect:2.0.0

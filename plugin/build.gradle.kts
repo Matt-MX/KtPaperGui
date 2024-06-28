@@ -2,12 +2,12 @@ plugins {
     alias(libs.plugins.kotlinJvm) apply true
     alias(libs.plugins.shadow) apply true
     alias(libs.plugins.grgit) apply true
-    `maven-publish`
 }
 
 dependencies {
-    shadow(implementation(project(":api"))!!)
-    shadow(implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")!!)
+    implementation(project(":api:api-core"))
+    implementation(project(":api:api-paper"))
+    implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")
     compileOnly(libs.protocolLib)
     compileOnly(libs.kotlin.stdlib)
     compileOnly(libs.paper.api)
