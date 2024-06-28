@@ -8,7 +8,7 @@ fun interface CommandSuggestion<V> {
     fun getLastArgSuggestion(invocation: SuggestionInvocation<*>) = getSuggestion(invocation)
         ?.filter { it.startsWith((invocation.rawArgs.lastOrNull() ?: ""), true) }
 
-    fun getValue(argumentString: String) : V? {
+    fun getValue(argumentString: String): V? {
         return argumentString as V?
     }
 

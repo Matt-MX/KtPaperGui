@@ -18,7 +18,7 @@ class PlayernameConvPrompt(
         return message
     }
 
-    override fun getFailedValidationText(context: ConversationContext, invalidInput: String): String? {
+    override fun getFailedValidationText(context: ConversationContext, invalidInput: String): String {
         return fail
     }
 

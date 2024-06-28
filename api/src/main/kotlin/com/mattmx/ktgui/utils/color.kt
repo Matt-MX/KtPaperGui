@@ -5,12 +5,10 @@ import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.event.HoverEvent.ShowEntity
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -30,6 +28,7 @@ fun JsonElement.component() = gsonSerializer.deserializeFromTree(this)
 fun String.component() = serializer.deserialize(this)
 val String.component: Component
     get() = component()
+
 fun String.legacyToComponent() = legacySerializer.deserialize(this)
 fun String.placeholders(player: OfflinePlayer? = null): String {
     if (Dependencies.papi) {
@@ -37,6 +36,7 @@ fun String.placeholders(player: OfflinePlayer? = null): String {
     }
     return this
 }
+
 private val pattern: Pattern = Pattern.compile("&#[a-fA-F0-9]{6}")
 fun String.legacyColor(): String {
     var string = this
@@ -49,6 +49,7 @@ fun String.legacyColor(): String {
     }
     return ChatColor.translateAlternateColorCodes('&', string)
 }
+
 operator fun Component.plus(component: Component) = this.append(component)
 infix fun Component.clickEvent(event: ClickEvent) = clickEvent(event)
 infix fun <T> Component.hoverEvent(event: HoverEvent<T>) = hoverEvent(event)

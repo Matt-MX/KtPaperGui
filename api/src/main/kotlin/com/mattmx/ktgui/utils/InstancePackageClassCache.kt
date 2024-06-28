@@ -13,7 +13,7 @@ class InstancePackageClassCache<V : Any> {
         packageList[packagePath] = instance
     }
 
-    fun <T : Any> clearInstance(clazz: Class<T>) : V {
+    fun <T : Any> clearInstance(clazz: Class<T>): V {
         return packageList.remove(getShortPackageName(clazz)) as V
     }
 
@@ -21,7 +21,7 @@ class InstancePackageClassCache<V : Any> {
         return packageList[getShortPackageName(clazz)]!! as V
     }
 
-    fun <T : Any> getInstanceOrNull(clazz: Class<T>) : V? {
+    fun <T : Any> getInstanceOrNull(clazz: Class<T>): V? {
         return packageList[getShortPackageName(clazz)] as V?
     }
 

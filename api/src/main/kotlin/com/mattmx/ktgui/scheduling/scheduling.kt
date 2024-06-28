@@ -85,7 +85,7 @@ fun sync(task: BukkitTask.() -> Unit): BukkitTask {
  */
 fun syncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskTimer(Scheduling.plugin, {-> task(delayedInit!!) }, delay, period)
+    delayedInit = Bukkit.getScheduler().runTaskTimer(Scheduling.plugin, { -> task(delayedInit!!) }, delay, period)
     return delayedInit
 }
 
@@ -98,7 +98,7 @@ fun syncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): Bukk
  */
 fun syncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskLater(Scheduling.plugin, {-> task(delayedInit!!) }, delay)
+    delayedInit = Bukkit.getScheduler().runTaskLater(Scheduling.plugin, { -> task(delayedInit!!) }, delay)
     return delayedInit
 }
 
@@ -126,7 +126,8 @@ fun async(task: BukkitTask.() -> Unit): BukkitTask {
  */
 fun asyncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskTimerAsynchronously(Scheduling.plugin, {-> task(delayedInit!!) }, delay, period)
+    delayedInit =
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Scheduling.plugin, { -> task(delayedInit!!) }, delay, period)
     return delayedInit
 }
 
@@ -139,7 +140,7 @@ fun asyncRepeat(period: Long, delay: Long = 0, task: BukkitTask.() -> Unit): Buk
  */
 fun asyncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
     var delayedInit: BukkitTask? = null
-    delayedInit = Bukkit.getScheduler().runTaskLaterAsynchronously(Scheduling.plugin, {-> task(delayedInit!!) }, delay)
+    delayedInit = Bukkit.getScheduler().runTaskLaterAsynchronously(Scheduling.plugin, { -> task(delayedInit!!) }, delay)
     return delayedInit
 }
 
@@ -150,7 +151,7 @@ fun asyncDelayed(delay: Long, task: BukkitTask.() -> Unit): BukkitTask {
  * @author MattMX
  * @param block that returns our value
  */
-fun <T> future(block: () -> T) : CompletableFuture<T> {
+fun <T> future(block: () -> T): CompletableFuture<T> {
     val future = CompletableFuture<T>()
     async {
         val result = block()
@@ -166,7 +167,7 @@ fun <T> future(block: () -> T) : CompletableFuture<T> {
  * @author MattMX
  * @param block that returns our value
  */
-fun <T> call(block: () -> T) : Future<T> {
+fun <T> call(block: () -> T): Future<T> {
     return Bukkit.getScheduler().callSyncMethod(Scheduling.plugin, block)
 }
 
@@ -179,7 +180,7 @@ fun <T> call(block: () -> T) : Future<T> {
  *
  * @author MattMX
  */
-inline val <reified T> Future<T>.await : T
+inline val <reified T> Future<T>.await: T
     get() {
         return this.get(30, TimeUnit.SECONDS)
     }

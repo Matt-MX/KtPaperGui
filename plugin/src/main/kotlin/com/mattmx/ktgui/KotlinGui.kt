@@ -7,14 +7,11 @@ import com.mattmx.ktgui.commands.declarative.invoke
 import com.mattmx.ktgui.commands.rawCommand
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import com.mattmx.ktgui.designer.GuiDesigner
-import com.mattmx.ktgui.dsl.button
-import com.mattmx.ktgui.dsl.gui
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
@@ -40,8 +37,7 @@ class KotlinGui : JavaPlugin() {
 
         val animatedScoreboard = AnimatedScoreboardExample()
         val scoreboardExample = ScoreboardExample()
-        val examples = hashMapOf(
-            "animated-scoreboard" to { animatedScoreboard },
+        val examples = hashMapOf("animated-scoreboard" to { animatedScoreboard },
             "scoreboard" to { scoreboardExample },
             "anvil-input" to { AnvilInputGuiExample() },
             "config" to { ConfigScreenExample() },
@@ -57,8 +53,7 @@ class KotlinGui : JavaPlugin() {
             "java-simple" to { JavaGuiExample() },
             "java-new" to { JavaUpdateExample() },
             "refresh" to { RefreshBlockExample() },
-            "config-gui" to { GuiConfigExample() }
-        )
+            "config-gui" to { GuiConfigExample() })
         GuiHookExample.registerListener(this)
 
         sync {
@@ -99,8 +94,7 @@ class KotlinGui : JavaPlugin() {
                         source.sendMessage(!"&aNot on cool-down!")
 
                         if (args.isNotEmpty()) {
-                            val newCoolDown = args.first().toLongOrNull()
-                                ?: return@executes
+                            val newCoolDown = args.first().toLongOrNull() ?: return@executes
 
                             val dur = Duration.ofMillis(newCoolDown)
                             source.sendMessage(!"&aNew cool-down set: ${dur.pretty()}")
@@ -153,8 +147,13 @@ class KotlinGui : JavaPlugin() {
                     id suggests { cachedDesigners.keys.toList() }
 
                     runs {
-                        val designer = cachedDesigners[id()]
-                            ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
+                        val designer = cachedDesigners[id()] ?: return@runs reply(
+                            !"&cInvalid id, create one using &7/&fdesigner ${
+                                create.getUsage(
+                                    defaultUsageOptions, false
+                                )
+                            }"
+                        )
                         designer.open(sender)
                     }
                 }
@@ -165,8 +164,13 @@ class KotlinGui : JavaPlugin() {
                     id suggests { cachedDesigners.keys.toList() }
 
                     runs {
-                        val designer = cachedDesigners[id()]
-                            ?: return@runs reply(!"&cInvalid id, create one using &7/&fdesigner ${create.getUsage(defaultUsageOptions, false)}")
+                        val designer = cachedDesigners[id()] ?: return@runs reply(
+                            !"&cInvalid id, create one using &7/&fdesigner ${
+                                create.getUsage(
+                                    defaultUsageOptions, false
+                                )
+                            }"
+                        )
                         designer.exportTitle = newTitle()
                         reply(!"&aSet title of ${id()} to ${newTitle()}")
                     }
@@ -188,20 +192,16 @@ class KotlinGui : JavaPlugin() {
             someArg {
                 missing { reply(!"&cMissing argument 'someArg'!") }
             }
-            ("foo" /
-                    listOf(
-                        ("fizz" / someArg)<CommandSender> {
-                            withDefaultUsageSubCommand(defaultUsageOptions)
-                            runs {
-                                reply(!"&c${someArg().replace("l", "w")} :3")
-                            }
-                        },
-                        ("bar")<CommandSender> {
-                            runs {
-                                reply(!"&1bar")
-                            }
-                        })
-                    )<CommandSender> {
+            ("foo" / listOf(("fizz" / someArg)<CommandSender> {
+                withDefaultUsageSubCommand(defaultUsageOptions)
+                runs {
+                    reply(!"&c${someArg().replace("l", "w")} :3")
+                }
+            }, ("bar")<CommandSender> {
+                runs {
+                    reply(!"&1bar")
+                }
+            }))<CommandSender> {
                 withDefaultUsageSubCommand(defaultUsageOptions)
                 runs {
                     reply(!"&cfoo&f!")

@@ -9,7 +9,7 @@ class AnimatedBossBar(var updateEvery: Long? = null) : LegacyBossBarBuilder() {
     private lateinit var task: BukkitTask
     var update: ((AnimatedBossBar) -> Unit)? = null
 
-    fun update(builder: AnimatedBossBar.() -> Unit) : AnimatedBossBar {
+    fun update(builder: AnimatedBossBar.() -> Unit): AnimatedBossBar {
         this.update = builder
         return this
     }

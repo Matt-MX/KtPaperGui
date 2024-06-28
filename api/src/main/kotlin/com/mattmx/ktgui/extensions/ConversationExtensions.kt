@@ -5,6 +5,6 @@ import org.bukkit.entity.Player
 
 fun ConversationContext.player() = getPlayer()
 
-fun ConversationContext.getPlayer() : Player {
+fun ConversationContext.getPlayer(): Player {
     return this.forWhom as Player
 }

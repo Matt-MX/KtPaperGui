@@ -1,6 +1,5 @@
 package com.mattmx.ktgui.commands.declarative.arg
 
-import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
 import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
 import com.mattmx.ktgui.commands.declarative.syntax.VariableType

@@ -1,9 +1,8 @@
 package com.mattmx.ktgui.scoreboards
 
 import com.mattmx.ktgui.extensions.removeScoreboard
-import com.mattmx.ktgui.utils.legacyColor
-import com.mattmx.ktgui.scheduling.not
 import com.mattmx.ktgui.utils.JavaCompatibility
+import com.mattmx.ktgui.utils.legacyColor
 import com.mattmx.ktgui.utils.not
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -113,6 +112,7 @@ open class ScoreboardBuilder(
     fun showFor(player: Player) {
         player.scoreboard = scoreboard
     }
+
     fun removeFor(player: Player) {
         player.removeScoreboard()
     }

@@ -3,7 +3,6 @@ package com.mattmx.ktgui.cooldown
 import java.time.Duration
 import java.util.*
 import kotlin.math.max
-import kotlin.math.min
 
 class ActionCoolDown<T>(
     duration: Duration

@@ -4,7 +4,7 @@ import org.bukkit.event.Cancellable
 
 class ContinuousEventCallback<T : Cancellable> : EventCallback<T>() {
 
-    override operator fun invoke(value: T) : Boolean {
+    override operator fun invoke(value: T): Boolean {
         for (cb in callbacks) {
             cb.invoke(value)
 

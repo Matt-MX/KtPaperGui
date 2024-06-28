@@ -15,5 +15,6 @@ class VariableDeclarationSyntax(
 
     fun getType() = VariableType(typeToken.text!!, ellipsisToken.text != null, optional.text != null)
 
-    override fun children() = listOf(openDiamondBracesToken, varNameToken, colonToken, typeToken, closeDiamondBracesToken)
+    override fun children() =
+        listOf(openDiamondBracesToken, varNameToken, colonToken, typeToken, closeDiamondBracesToken)
 }
