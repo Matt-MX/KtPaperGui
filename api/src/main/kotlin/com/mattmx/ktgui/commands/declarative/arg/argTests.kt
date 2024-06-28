@@ -1,12 +1,7 @@
 package com.mattmx.ktgui.commands.declarative.arg
 
-import com.google.gson.JsonParser
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.arg.impl.*
-import com.mattmx.ktgui.commands.declarative.div
-import com.mattmx.ktgui.commands.declarative.invoke
-import com.mattmx.ktgui.utils.not
-import org.bukkit.entity.Player
-import kotlin.math.min
 
 class ArgumentProcessor(
     val args: List<String>
@@ -43,31 +38,6 @@ class ArgumentProcessor(
 
         return current()
     }
-
-    fun takeOne(argId: String) {
-        values[argId] = next() ?: return
-    }
-
-    fun takeWhile(argId: String, block: String.() -> Boolean) {
-        var current = next()
-        val list = arrayListOf<String>()
-
-        if (current != null) {
-            list.add(current)
-        }
-
-        while (current != null && block(current)) {
-            current = next()
-            if (current != null) {
-                list.add(current)
-            }
-        }
-        values[argId] = list.joinToString(" ")
-    }
-
-    fun takeRemaining(argId: String) {
-        takeWhile(argId) { pointer < args.size }
-    }
 }
 
 fun main() {
@@ -75,18 +45,18 @@ fun main() {
     val option by optionArgument<String>()
     val t by optionArgument<Int>()
 
-    val args = "msg MattMX foo bar --t 5 --ping --option 'hello world'".split(" ")
+    val args = "msg MattMX foo bar --t 5 --ping --option test".split(" ")
     val processor = ArgumentProcessor(args)
 
     processor.permittedFlags.add(ping)
 
     // We should abstract this using the `ArgumentConsumer` interface
-    processor.takeOne("username")
-    processor.takeRemaining("msg")
+    println("username" + ArgumentConsumer.single().consume(processor))
+    println("msg" + ArgumentConsumer.remaining().consume(processor))
 
-//    username consumes single()
-//    msg consumes until { false }
-//    msg consumes remaining()
+    println(processor.values)
 
-    println(processor)
+    val regexArgumentConsumer = ArgumentConsumer.until { _, s -> s.matches("\\{.+}".toRegex()) }
+    val regexProcessor = ArgumentProcessor("msg {hello world}".split(" "))
+    println(regexArgumentConsumer.consume(regexProcessor))
 }

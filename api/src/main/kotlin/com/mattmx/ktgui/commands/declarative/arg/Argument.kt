@@ -110,7 +110,7 @@ open class Argument<T : Any>(
 
     open fun validate(stringValue: String?) = true
 
-    fun getDefaultSuggestions(): List<String>? {
+    open fun getDefaultSuggestions(): List<String>? {
         val context = SuggestionInvocation(Optional.empty(), "", emptyList())
         return if (suggests.isPresent) {
             suggests.get().getSuggestion(context)
