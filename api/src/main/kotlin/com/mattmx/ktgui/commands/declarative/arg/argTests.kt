@@ -80,9 +80,9 @@ fun main() {
     processor.takeOne("username")
     processor.takeRemaining("msg")
 
-    username consumes single()
-    msg consumes until { false }
-    msg consumes remaining()
+//    username consumes single()
+//    msg consumes until { false }
+//    msg consumes remaining()
 
     println(processor)
 }

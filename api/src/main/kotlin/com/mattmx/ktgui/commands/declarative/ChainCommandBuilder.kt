@@ -2,8 +2,10 @@ package com.mattmx.ktgui.commands.declarative
 
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.impl.MultiArgument
+import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
 import com.mattmx.ktgui.utils.JavaCompatibility
 import org.bukkit.block.data.type.Chain
+import org.bukkit.command.CommandSender
 
 class ChainCommandBuilder(val name: String) {
     val arguments = arrayListOf<Argument<*>>()
@@ -18,6 +20,8 @@ class ChainCommandBuilder(val name: String) {
     fun subcommand(vararg command: DeclarativeCommandBuilder) = apply {
         subcommands.addAll(command)
     }
+
+    inline infix fun <reified S : CommandSender> runs(noinline block: RunnableCommandContext<S>.() -> Unit) = build().runs(block)
 
     fun build() = build(DeclarativeCommandBuilder(name))
 

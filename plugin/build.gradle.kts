@@ -30,7 +30,7 @@ tasks.test {
 sourceSets["main"].resources.srcDir("src/resources/")
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.jvmTarget = "21"
 }
 
 fun getCheckedOutGitCommitHash(): String = grgit.head().abbreviatedId

@@ -10,16 +10,16 @@ class PlaceholderExpansionWrapper(
     private val placeholders = arrayListOf<Placeholder>()
     var id = owner.name
         private set
-    var author = owner.pluginMeta.authors.joinToString(", ")
+    var _author = owner.pluginMeta.authors.joinToString(", ")
         private set
-    var version = owner.pluginMeta.version
+    var _version = owner.pluginMeta.version
         private set
     var splitArgs = { params: String -> params.split("_") }
         private set
 
     override fun getIdentifier() = id
-    override fun getAuthor() = author
-    override fun getVersion() = version
+    override fun getAuthor() = _author
+    override fun getVersion() = _version
     override fun getPlaceholders() = placeholders.map { it.toString() }.toMutableList()
 
     infix fun id(id: String) = apply {
@@ -27,11 +27,11 @@ class PlaceholderExpansionWrapper(
     }
 
     infix fun author(author: String) = apply {
-        this.author = author
+        this._author = author
     }
 
     infix fun version(version: String) = apply {
-        this.version = version
+        this._version = version
     }
 
     infix fun splitArgs(splitArgs: (String) -> List<String>) = apply {

@@ -5,7 +5,7 @@ import org.bukkit.scheduler.BukkitTask
 /**
  * Wrapper class for the [BukkitTask] task.
  */
-class TaskTrackerTask(
+open class TaskTrackerTask(
     private val owner: TaskTracker,
     task: BukkitTask
 ) : IteratingTask(task) {
