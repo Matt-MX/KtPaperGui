@@ -13,7 +13,8 @@ class OnlinePlayersCommandSuggestion : CommandSuggestion<Player> {
             .toList()
     }
 
-    override fun getValue(argumentString: String): Player? {
+    override fun getValue(argumentString: String?): Player? {
+        argumentString ?: return null
         return Bukkit.getPlayer(argumentString)
     }
 }

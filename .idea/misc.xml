@@ -5,7 +5,11 @@
     </list>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="zulu-17" project-jdk-type="JavaSDK">
+=======
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
+>>>>>>> fc760191aa5090e9dac6c3014739a12dc7fc5dfb
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

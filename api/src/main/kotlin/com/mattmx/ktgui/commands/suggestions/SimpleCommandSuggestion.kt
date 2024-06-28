@@ -15,7 +15,7 @@ open class SimpleCommandSuggestion<V, F>(
         return list.map { obj -> field.getter.javaMethod?.invoke(obj).toString() }
     }
 
-    override fun getValue(argumentString: String): V? {
+    override fun getValue(argumentString: String?): V? {
         val list = list()
 
         return list.firstOrNull { obj -> field.getter.javaMethod?.invoke(obj) == argumentString }

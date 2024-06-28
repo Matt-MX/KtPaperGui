@@ -27,6 +27,7 @@ dependencyResolutionManagement {
 include("api")
 include("plugin")
 
+<<<<<<< HEAD
 //gradleEnterprise {
 //    if (System.getenv("CI") != null) {
 //        buildScan {
@@ -36,3 +37,26 @@ include("plugin")
 //        }
 //    }
 //}
+=======
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://repo.papermc.io/repository/maven-public/")
+    }
+}
+
+plugins {
+    id("com.gradle.enterprise") version("3.15")
+}
+
+gradleEnterprise {
+    if (System.getenv("CI") != null) {
+        buildScan {
+            publishAlways()
+            termsOfServiceUrl = "https://gradle.com/terms-of-service"
+            termsOfServiceAgree = "yes"
+        }
+    }
+}
+>>>>>>> fc760191aa5090e9dac6c3014739a12dc7fc5dfb

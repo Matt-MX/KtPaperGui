@@ -2,13 +2,15 @@ package com.mattmx.ktgui.scheduling
 
 import org.bukkit.scheduler.BukkitTask
 
-class TaskTrackerTask(
+/**
+ * Wrapper class for the [BukkitTask] task.
+ */
+open class TaskTrackerTask(
     private val owner: TaskTracker,
-    private val task: BukkitTask
-) {
-    var iterations = 0
+    task: BukkitTask
+) : IteratingTask(task) {
 
-    fun cancel() {
+    override fun cancel() {
         owner.removeTask(task)
         task.cancel()
     }

@@ -36,6 +36,10 @@ class ConversationWrapper<T : Conversable>(
             factory.withEscapeSequence(value)
         }
 
+    infix fun exitOn(name: String) = apply {
+        this.exitOn = name
+    }
+
     infix fun exit(block: ConversationAbandonedEvent.() -> Unit) = apply {
         this.exit = Optional.of(block)
         factory.addConversationAbandonedListener {

@@ -2,6 +2,10 @@ package com.mattmx.ktgui.event
 
 import org.bukkit.event.Cancellable
 
+/**
+ * Event Callback that will exit if the [Cancellable] is
+ * marked as cancelled.
+ */
 class ContinuousEventCallback<T : Cancellable> : EventCallback<T>() {
 
     override operator fun invoke(value: T): Boolean {
