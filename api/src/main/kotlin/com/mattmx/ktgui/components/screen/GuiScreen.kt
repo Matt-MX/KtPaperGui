@@ -259,7 +259,8 @@ open class GuiScreen(
     }
 
     fun addRefreshBlock(block: RefreshBlock<GuiScreen>) {
-        this.taskTracker.runAsyncRepeat(block.repeat, block.repeat) {
+        // TODO this will not work if we open the gui later
+        this.taskTracker.runAsyncRepeat(0, block.repeat) {
             // todo only change slots modified!
             block.block.invoke(this@GuiScreen)
             refresh()

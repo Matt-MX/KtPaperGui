@@ -7,7 +7,7 @@ open class EventCallback<T>(
     val callbacks: ArrayList<T.() -> Unit> = arrayListOf()
 ) {
 
-    operator fun invoke(block: T.() -> Unit) {
+    infix operator fun invoke(block: T.() -> Unit) {
         callbacks.add(block)
     }
 
