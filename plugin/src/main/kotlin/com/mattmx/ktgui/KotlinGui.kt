@@ -220,9 +220,9 @@ class KotlinGui : JavaPlugin() {
                 ("sound") {
                     runs<Player> {
                         val sound = soundBuilder {
-                            sound(Sound.ENTITY_ENDERMAN_DEATH)
-                            wait(1)
-                            sound(Sound.BLOCK_NOTE_BLOCK_BANJO) pitch 2f
+                            play(Sound.ENTITY_ENDERMAN_DEATH)
+                            wait(10)
+                            play(Sound.BLOCK_NOTE_BLOCK_BANJO) pitch 2f
                         } relative true
 
                         sender.playSound(sound)
@@ -233,7 +233,7 @@ class KotlinGui : JavaPlugin() {
 
                 coords invalid { reply(!"&cInvalid coords provided") }
 
-                ("tp" / coords) {
+                ("tppos" / coords) {
                     runs<Player> {
                         reply(!"&aTeleporting to ${coords().toVector()}")
                         sender.teleport(coords())
@@ -242,7 +242,7 @@ class KotlinGui : JavaPlugin() {
 
                 val invType by enumArgument<InventoryType>()
 
-                invType stringMethod { name.lowercase() }
+                invType getStringValueOf { name.lowercase() }
                 invType invalid { reply(!"&cThat is not a valid inventory type.") }
 
                 ("inventory" / invType) {
@@ -253,9 +253,15 @@ class KotlinGui : JavaPlugin() {
 
                 val a by doubleArgument()
                 val b by doubleArgument()
-                ("+" / a / b) {
+                val op by multiChoiceArgument<(Double, Double) -> Double>(
+                    "+" to { a, b -> a + b },
+                    "-" to { a, b -> a - b },
+                    "*" to { a, b -> a * b },
+                    "/" to { a, b -> a / b },
+                )
+                ("math" / a / op / b) {
                     runs<CommandSender> {
-                        reply(!"&a${a()} + ${b()} = ${a() + b()}")
+                        reply(!"&f${a()} ${op.context.stringValue()} ${b()} = ${op()(a(), b())}")
                     }
 
                     invalid { reply(!"&cProvide two double values to add.") }
@@ -292,9 +298,10 @@ class KotlinGui : JavaPlugin() {
                     "MattMX" to "ktgui",
                 )
 
-                val maxResults by optionArgument<Int>()
-                val username by optionArgument<String>()
+                val username by stringArgument()
                 username suggests { history.map { it.first }.toSet() }
+                val maxResults by intArgument()
+                maxResults min 1 max 100
 
                 ("hist") {
                     +maxResults
@@ -347,7 +354,7 @@ class KotlinGui : JavaPlugin() {
                         }
                     }
 
-                    val existingObjectId by simpleArgument<HashMap<String, String>>()
+                    val existingObjectId by simpleMappedArgument<HashMap<String, String>>()
                     existingObjectId getValue { objects[this] }
                     existingObjectId suggests { objects.keys.toList() }
                     existingObjectId invalid objectId.invalidCallback.first()

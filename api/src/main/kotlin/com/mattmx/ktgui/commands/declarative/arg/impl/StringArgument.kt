@@ -2,22 +2,25 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumer.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class StringArgument(
     name: String,
-    type: String,
-    consumer: ArgumentConsumer
-) : Argument<String>(name, type, consumer) {
+    type: String
+) : Argument<String>(name, type) {
     var min: Int = 0
     var max: Int = Int.MAX_VALUE
     lateinit var regex: Regex
     val allowed = arrayListOf<Regex>()
     val disallow = arrayListOf<Regex>()
 
-    override fun validate(stringValue: String?): Boolean {
-        stringValue ?: return false
+    override fun getValueOfString(
+        cmd: DeclarativeCommandBuilder,
+        context: BaseCommandContext<*>,
+        stringValue: String?
+    ): String? {
+        stringValue ?: return null
 
         val range = (min..max)
 
@@ -25,15 +28,13 @@ class StringArgument(
         val matchesAllowed = allowed.any { it.matches(stringValue) }
         val meetsDisallowed = disallow.none { it.matches(stringValue) }
 
-        return matchesRange && matchesAllowed && meetsDisallowed
+        val all = matchesRange && matchesAllowed && meetsDisallowed
+
+        return if (all) stringValue else null
     }
 
-    override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
-        stringValue: String?
-    ): String? {
-        return stringValue
+    infix fun greedy(isGreedy: Boolean) = apply {
+        consumes(if (isGreedy) ArgumentConsumer.remaining() else ArgumentConsumer.single())
     }
 
     infix fun allow(regex: List<Regex>) = apply {

@@ -6,6 +6,7 @@ import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder;
 import com.mattmx.ktgui.commands.declarative.arg.Argument;
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext;
 import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer;
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer;
 import com.mattmx.ktgui.commands.declarative.arg.impl.OnlinePlayerArgument;
 import com.mattmx.ktgui.commands.declarative.arg.impl.StringArgument;
 import net.kyori.adventure.text.Component;
@@ -45,8 +46,9 @@ public class JavaUpdateCommandExample {
                 });
 
         Argument<Player> player = new OnlinePlayerArgument("player", "player");
-        Argument<String> msg = new StringArgument("msg", "string", new GreedyArgumentConsumer())
-                .min(1);
+        Argument<String> msg = new StringArgument("msg", "string")
+                .min(1)
+                .greedy(true);
 
         new ChainCommandBuilder("msg")
                 .argument(player)

@@ -8,8 +8,7 @@ class ArgumentProcessor(
     val args: List<String>
 ) {
     var pointer = 0
-    // Should be added to the command context
-    val optionsAndFlags = hashMapOf<String, String>()
+    var optionsAndFlagsValues = hashMapOf<String, Any>()
 
     fun peek(i: Int) = args.getOrNull(pointer + i)
     fun current() = peek(0)
@@ -20,15 +19,15 @@ class ArgumentProcessor(
             val optionOrPointerId = command.optionsSyntax.removePrefixFrom(current()!!)
 
             if (command.permittedFlags.any { it.chatName() == optionOrPointerId }) {
-                optionsAndFlags[optionOrPointerId] = true.toString()
+                optionsAndFlagsValues[optionOrPointerId] = true
                 pointer++
-            } else if (command.permittedOptions.any { it.name() == optionOrPointerId }) {
+            } else if (command.permittedOptions.any { it.chatName() == optionOrPointerId }) {
 
                 // TODO this should read the argument type args (does that make sense?)
                 // e.g '--test "hello world"' -> hello world
 
                 val value = peek(1) ?: continue
-                optionsAndFlags[optionOrPointerId] = value
+                optionsAndFlagsValues[optionOrPointerId] = value
                 pointer += 2
             } else break
         }
@@ -38,6 +37,13 @@ class ArgumentProcessor(
 
     fun reset() {
         this.pointer = 0
-        this.optionsAndFlags.clear()
+        this.optionsAndFlagsValues.clear()
     }
+
+    fun clone() = ArgumentProcessor(command, args).apply {
+        this.optionsAndFlagsValues = this@ArgumentProcessor.optionsAndFlagsValues
+        this.pointer = this@ArgumentProcessor.pointer
+    }
+
+    fun done() = pointer >= args.size
 }

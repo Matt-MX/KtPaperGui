@@ -4,7 +4,6 @@
     <bytecodeTargetLevel target="17">
       <module name="KtBukkitGui.ktgui.main" target="21" />
       <module name="ktgui.plugin.test" target="21" />
-      <module name="ktgui.test" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -196,6 +196,7 @@ open class DeclarativeCommandBuilder(
 
     operator fun FlagArgument.unaryPlus() = withFlag(this)
     operator fun <T : Any> OptionArgument<T>.unaryPlus() = withOption(this)
+    operator fun <T : Any> Argument<T>.unaryPlus() = OptionArgument(this).unaryPlus()
 
     fun getCurrentCommand(context: SuggestionInvocation<*>): Pair<SuggestionInvocation<*>, DeclarativeCommandBuilder?> {
         val firstArg = context.rawArgs.firstOrNull()
@@ -217,24 +218,27 @@ open class DeclarativeCommandBuilder(
         val cmdsList = cmds.flatten()
 
         val list = context.rawArgs.toMutableList()
-        var suggestedArgs: List<String>? = null
+        val suggestedArgs = arrayListOf(*cmdsList.toTypedArray())
 
         for (arg in expectedArguments) {
             val processor = ArgumentProcessor(this, list)
-            val stringValue = arg.consume(processor) ?: continue
+            val result = arg.consume(processor)
 
-            suggestedArgs = getSuggestions(arg)?.getLastArgSuggestion(context)
+            if (result.isEmpty() && !arg.isRequired()) continue
+
+            val thisArgSuggestions = getSuggestions(arg)?.getLastArgSuggestion(context)
+            if (thisArgSuggestions != null) {
+                suggestedArgs.addAll(thisArgSuggestions)
+            }
         }
 
 //        val arg = expectedArguments.getOrNull(context.rawArgs.size - 1)
 //        val suggestedArgs = getSuggestions(arg)?.getLastArgSuggestion(context)
 
-        return if (suggestedArgs != null) {
-            cmdsList + suggestedArgs
-        } else cmdsList
+        return suggestedArgs
     }
 
-    fun nameEquals(arg: String) = name == arg || aliases.any { it == arg }
+    fun nameEquals(arg: String?) = name == arg || aliases.any { it == arg }
 
     fun nameStarts(arg: String) = name.startsWith(arg, true) || aliases.any { it.startsWith(arg, true) }
 
@@ -291,42 +295,34 @@ open class DeclarativeCommandBuilder(
             return
         }
 
+        val firstArg = context.rawArgs.firstOrNull()
+
+        val cmd = subcommands.firstOrNull { it.nameEquals(firstArg) }
+        if (cmd != null) {
+            return cmd.invoke(
+                context.clone(context.rawArgs.subList(1, context.rawArgs.size))
+            )
+        }
+
+        // Move onto args
+
         val argumentValues = hashMapOf<String, ArgumentContext<*>>()
 
-        var expectedArgumentIndex = 0
-        var providedArgumentIndex = 0
+//        var expectedArgumentIndex = 0
+//        var providedArgumentIndex = 0
 
-        // todo rewrite arguments processing to handle new ArgumentConsumer.
+        val argumentProcessor = ArgumentProcessor(this, context.rawArgs)
+        for ((index, arg) in expectedArguments.withIndex()) {
+            if (argumentProcessor.done()) {
+                if (arg.isRequired()) {
 
-        while (providedArgumentIndex < context.rawArgs.size) {
-            val arg = context.rawArgs[providedArgumentIndex]
-
-            // Check sub-commands
-            // todo could match multiple subcommands
-            val cmd = subcommands.firstOrNull { it.nameEquals(arg) }
-            if (cmd != null) {
-                return cmd.invoke(
-                    context.clone(context.rawArgs.subList(1, context.rawArgs.size))
-                )
-            }
-
-            // Check arguments
-            val expectedArg = expectedArguments.getOrNull(expectedArgumentIndex)
-            if (expectedArg != null) {
-                // Get full argument string using consumer
-                val consumed =
-                    expectedArg.consumer.consume(context.rawArgs.subList(providedArgumentIndex, context.rawArgs.size))
-                providedArgumentIndex += consumed.size
-
-                // If the value is empty and IS required
-                if (expectedArg.isRequired() && consumed.isEmpty()) {
                     val missingArgContext =
-                        InvalidArgContext(context.sender, context.alias, context.rawArgs, expectedArg, null)
+                        InvalidArgContext(context.sender, context.alias, context.rawArgs, arg, null)
 
                     // Try and invoke this specific missing arg
-                    if (expectedArg.invokeMissing(missingArgContext)) {
+                    if (arg.invokeMissing(missingArgContext)) {
                         return
-                    } else if (expectedArg.invokeInvalid(missingArgContext)) {
+                    } else if (arg.invokeInvalid(missingArgContext)) {
                         return
                     }
 
@@ -338,55 +334,36 @@ open class DeclarativeCommandBuilder(
                     }
 
                     return
-                } else {
-                    var isValid = expectedArg.validate(consumed)
-
-                    val stringValue = consumed.joinToString(" ")
-                    val actualValue = expectedArg.getValueOfString(this, context, consumed)
-
-                    isValid = isValid && (expectedArg.isOptional() || actualValue != null)
-
-                    if (!isValid) {
-                        val invalidArgumentContext =
-                            InvalidArgContext(context.sender, context.alias, context.rawArgs, expectedArg, stringValue)
-
-                        if (expectedArg.invokeInvalid(invalidArgumentContext)) {
-                            return
-                        }
-
-                        invalid.ifPresent { it.invoke(invalidArgumentContext) }
-                        return
-                    }
-
-                    argumentValues[expectedArg.name()] = expectedArg.createContext(stringValue, actualValue)
-
-                    expectedArgumentIndex++
                 }
+                continue
+            }
+
+            val processorClone = argumentProcessor.clone()
+            val result = arg.consumer.consume(processorClone)
+            val actualValue = arg.getValueOfString(this, context, result.stringValue)
+
+            if (arg.isOptional() || (result.isEmpty() && actualValue != null)) {
+                argumentValues[arg.name()] = arg.createContext(result.stringValue, actualValue)
+                argumentProcessor.pointer = processorClone.pointer
+                argumentProcessor.optionsAndFlagsValues = processorClone.optionsAndFlagsValues
             } else {
-                if (unknownCommand.isPresent) {
-                    unknownCommand.get().invoke(context)
-                } else {
-                    context.reply(!"&cUnknown sub-command or arguments.")
+                val invalidArgumentContext =
+                    InvalidArgContext(context.sender, context.alias, context.rawArgs, arg, result.stringValue)
+
+                if (arg.invokeInvalid(invalidArgumentContext)) {
+                    return
                 }
-                return
+
+                invalid.ifPresent { it.invoke(invalidArgumentContext) }
             }
         }
 
-        val missing = expectedArguments.filter { arg ->
-            !argumentValues.containsKey(arg.name())
-        }
-
-        if (missing.isNotEmpty()) {
-            missing.forEach { arg ->
-                val missingArgContext =
-                    InvalidArgContext(context.sender, context.alias, context.rawArgs, arg, null)
-
-                // Try and invoke this specific missing arg
-                if (arg.invokeMissing(missingArgContext)) {
-                    return
-                } else if (arg.invokeInvalid(missingArgContext)) {
-                    return
-                }
+        if (!argumentProcessor.done()) {
+            // Too many args, unknown command maybe?
+            if (unknownCommand.isPresent) {
+                unknownCommand.get().invoke(context)
+            } else {
+                context.reply(!"&cUnknown sub-command or arguments.")
             }
             return
         }
@@ -394,13 +371,116 @@ open class DeclarativeCommandBuilder(
         val runnableContext =
             RunnableCommandContext(context.sender, context.alias, context.rawArgs, argumentValues)
 
-        val executor =
-            runs.entries.firstOrNull { (clazz, _) ->
-                clazz.isAssignableFrom(context.sender.javaClass)
-            }
-                ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString("/") { "${it.javaClass.simpleName}s" }}.")
+        val executor = runs.entries.firstOrNull { (clazz, _) ->
+            clazz.isAssignableFrom(context.sender.javaClass)
+        }
+            ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString("/") { "${it.javaClass.simpleName}s" }}.")
 
         executor.value.invoke(runnableContext)
+
+//        while (providedArgumentIndex < context.rawArgs.size) {
+//            val arg = context.rawArgs[providedArgumentIndex]
+//
+//            // Check sub-commands
+//            // todo could match multiple subcommands
+//            val cmd = subcommands.firstOrNull { it.nameEquals(arg) }
+//            if (cmd != null) {
+//                return cmd.invoke(
+//                    context.clone(context.rawArgs.subList(1, context.rawArgs.size))
+//                )
+//            }
+//
+//            // Check arguments
+//            val expectedArg = expectedArguments.getOrNull(expectedArgumentIndex)
+//            if (expectedArg != null) {
+//                // Get full argument string using consumer
+//                val consumed =
+//                    expectedArg.consumer.consume(context.rawArgs.subList(providedArgumentIndex, context.rawArgs.size))
+//                providedArgumentIndex += consumed.size
+//
+//                // If the value is empty and IS required
+//                if (expectedArg.isRequired() && consumed.isEmpty()) {
+//                    val missingArgContext =
+//                        InvalidArgContext(context.sender, context.alias, context.rawArgs, expectedArg, null)
+//
+//                    // Try and invoke this specific missing arg
+//                    if (expectedArg.invokeMissing(missingArgContext)) {
+//                        return
+//                    } else if (expectedArg.invokeInvalid(missingArgContext)) {
+//                        return
+//                    }
+//
+//                    // Invoke the global missing or invalid
+//                    if (missing.isPresent) {
+//                        missing.get().invoke(missingArgContext)
+//                    } else if (invalid.isPresent) {
+//                        invalid.get().invoke(missingArgContext)
+//                    }
+//
+//                    return
+//                } else {
+//                    var isValid = expectedArg.validate(consumed)
+//
+//                    val stringValue = consumed.joinToString(" ")
+//                    val actualValue = expectedArg.getValueOfString(this, context, consumed)
+//
+//                    isValid = isValid && (expectedArg.isOptional() || actualValue != null)
+//
+//                    if (!isValid) {
+//                        val invalidArgumentContext =
+//                            InvalidArgContext(context.sender, context.alias, context.rawArgs, expectedArg, stringValue)
+//
+//                        if (expectedArg.invokeInvalid(invalidArgumentContext)) {
+//                            return
+//                        }
+//
+//                        invalid.ifPresent { it.invoke(invalidArgumentContext) }
+//                        return
+//                    }
+//
+//                    argumentValues[expectedArg.name()] = expectedArg.createContext(stringValue, actualValue)
+//
+//                    expectedArgumentIndex++
+//                }
+//            } else {
+//                if (unknownCommand.isPresent) {
+//                    unknownCommand.get().invoke(context)
+//                } else {
+//                    context.reply(!"&cUnknown sub-command or arguments.")
+//                }
+//                return
+//            }
+//        }
+//
+//        val missing = expectedArguments.filter { arg ->
+//            !argumentValues.containsKey(arg.name())
+//        }
+//
+//        if (missing.isNotEmpty()) {
+//            missing.forEach { arg ->
+//                val missingArgContext =
+//                    InvalidArgContext(context.sender, context.alias, context.rawArgs, arg, null)
+//
+//                // Try and invoke this specific missing arg
+//                if (arg.invokeMissing(missingArgContext)) {
+//                    return
+//                } else if (arg.invokeInvalid(missingArgContext)) {
+//                    return
+//                }
+//            }
+//            return
+//        }
+//
+//        val runnableContext =
+//            RunnableCommandContext(context.sender, context.alias, context.rawArgs, argumentValues)
+//
+//        val executor =
+//            runs.entries.firstOrNull { (clazz, _) ->
+//                clazz.isAssignableFrom(context.sender.javaClass)
+//            }
+//                ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString("/") { "${it.javaClass.simpleName}s" }}.")
+//
+//        executor.value.invoke(runnableContext)
     }
 
     /**

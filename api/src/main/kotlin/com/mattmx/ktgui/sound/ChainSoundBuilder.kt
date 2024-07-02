@@ -51,7 +51,7 @@ class ChainSoundBuilder {
         wait(ticks)
     }
 
-    fun playFor(audience: Audience) = TaskTracker()
+    fun playFor(vararg audience: Audience) = TaskTracker()
         .apply {
             runAsync {
                 val it = steps.iterator()
@@ -65,9 +65,9 @@ class ChainSoundBuilder {
                             val sound = wrapper.build()
                             if (wrapper.emitter == EmitterType.LOCATION && wrapper.location.isPresent) {
                                 val location = wrapper.location.get().get()
-                                audience.playSound(sound, location.x, location.z, location.z)
+                                audience.forEach { it.playSound(sound, location.x, location.z, location.z) }
                             } else {
-                                audience.playSound(sound(wrapper.sound, wrapper.source, wrapper.volume, wrapper.pitch), Emitter.self())
+                                audience.forEach { it.playSound(sound(wrapper.sound, wrapper.source, wrapper.volume, wrapper.pitch), Emitter.self()) }
                             }
                         }
                         else -> {

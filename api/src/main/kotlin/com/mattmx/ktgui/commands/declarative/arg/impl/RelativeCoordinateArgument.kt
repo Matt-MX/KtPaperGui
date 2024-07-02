@@ -3,6 +3,7 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.consumer.VariableArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 import org.bukkit.Location
 import org.bukkit.entity.Entity
@@ -11,10 +12,10 @@ import org.bukkit.util.Vector
 class RelativeCoordinateArgument(
     name: String,
     typeName: String
-) : Argument<Location>(name, typeName, VariableArgumentConsumer(3)) {
+) : Argument<Location>(name, typeName) {
 
     init {
-
+        this.consumes(ArgumentConsumer.variable(3))
     }
 
     override fun getValueOfString(

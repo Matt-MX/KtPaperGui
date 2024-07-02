@@ -3,7 +3,7 @@ plugins {
     id("io.papermc.paperweight.userdev") version "1.7.1" apply false
 }
 
-val version = "2.4.0"
+val version = "2.4.1"
 
 rootProject.version = version
 

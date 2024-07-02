@@ -8,9 +8,8 @@ import java.util.*
 
 class SimpleArgument<T : Any>(
     name: String,
-    typeName: String,
-    consumer: ArgumentConsumer
-) : Argument<T>(name, typeName, consumer) {
+    typeName: String
+) : Argument<T>(name, typeName) {
     var valueFromString = Optional.empty<(String) -> T?>()
         private set
 

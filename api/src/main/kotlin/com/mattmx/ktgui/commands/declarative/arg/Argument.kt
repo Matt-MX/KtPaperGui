@@ -85,7 +85,7 @@ open class Argument<T : Any>(
         TODO()
     }
 
-    open fun getDefaultSuggestions(): List<String>? {
+    open fun getDefaultSuggestions(): Collection<String>? {
         val context = SuggestionInvocation(Optional.empty(), "", emptyList())
         return if (suggests.isPresent) {
             suggests.get().getSuggestion(context)

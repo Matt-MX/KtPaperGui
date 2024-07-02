@@ -2,22 +2,19 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class DoubleArgument(
     name: String,
     typeName: String
-) : Argument<Double>(name, typeName, SingleArgumentConsumer()) {
+) : Argument<Double>(name, typeName) {
     var min: Double = Double.MIN_VALUE
     var max: Double = Double.MAX_VALUE
 
-    override fun validate(stringValue: String?): Boolean {
-        stringValue ?: return isOptional()
-
-        val doubleValue = stringValue.toDoubleOrNull() ?: return false
-
-        return doubleValue in (min..max)
+    init {
+        this.consumes(ArgumentConsumer.single())
     }
 
     override fun getValueOfString(
@@ -25,7 +22,9 @@ class DoubleArgument(
         context: BaseCommandContext<*>,
         stringValue: String?
     ): Double? {
-        return stringValue?.toDoubleOrNull()
+        val doubleValue = stringValue?.toDoubleOrNull() ?: return null
+
+        return if (doubleValue in (min..max)) doubleValue else null
     }
 
     infix fun range(range: ClosedRange<Double>) = apply {

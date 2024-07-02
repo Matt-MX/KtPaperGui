@@ -3,21 +3,18 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class IntArgument(
     name: String,
     typeName: String
-) : Argument<Int>(name, typeName, SingleArgumentConsumer()) {
+) : Argument<Int>(name, typeName) {
     var min: Int = Int.MIN_VALUE
     var max: Int = Int.MAX_VALUE
 
-    override fun validate(stringValue: String?): Boolean {
-        stringValue ?: return isOptional()
-
-        val intValue = stringValue.toIntOrNull() ?: return false
-
-        return intValue in (min..max)
+    init {
+        this.consumes(ArgumentConsumer.single())
     }
 
     override fun getValueOfString(
@@ -25,7 +22,8 @@ class IntArgument(
         context: BaseCommandContext<*>,
         stringValue: String?
     ): Int? {
-        return stringValue?.toIntOrNull()
+        val intValue = stringValue?.toIntOrNull() ?: return null
+        return if (intValue in (min..max)) intValue else null
     }
 
     infix fun range(range: IntRange) = apply {
