@@ -7,7 +7,7 @@ class ArgumentProcessor(
     val command: DeclarativeCommandBuilder,
     val args: List<String>
 ) {
-    var pointer = 0
+    var pointer = -1
     var optionsAndFlagsValues = hashMapOf<String, Any>()
 
     fun peek(i: Int) = args.getOrNull(pointer + i)
@@ -36,7 +36,7 @@ class ArgumentProcessor(
     }
 
     fun reset() {
-        this.pointer = 0
+        this.pointer = -1
         this.optionsAndFlagsValues.clear()
     }
 
@@ -45,5 +45,5 @@ class ArgumentProcessor(
         this.pointer = this@ArgumentProcessor.pointer
     }
 
-    fun done() = pointer >= args.size
+    fun done() = pointer >= args.size - 1
 }

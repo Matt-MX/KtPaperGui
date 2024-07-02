@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.commands.declarative.arg
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.impl.OptionArgument
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
 import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
@@ -116,6 +116,8 @@ open class Argument<T : Any>(
             suggests.get().getValue(stringValue)
         } else null
     }
+
+    fun optionArgument() = OptionArgument(this)
 
     @JavaCompatibility
     fun getContext(context: RunnableCommandContext<*>) = context.getArgumentContext<T>(name());

@@ -5,15 +5,11 @@ import com.mattmx.ktgui.commands.declarative.ChainCommandBuilder;
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder;
 import com.mattmx.ktgui.commands.declarative.arg.Argument;
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext;
-import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer;
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer;
 import com.mattmx.ktgui.commands.declarative.arg.impl.OnlinePlayerArgument;
 import com.mattmx.ktgui.commands.declarative.arg.impl.StringArgument;
 import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilderKt.command;
 import static com.mattmx.ktgui.utils.ColorKt.component;
 
 public class JavaUpdateCommandExample {

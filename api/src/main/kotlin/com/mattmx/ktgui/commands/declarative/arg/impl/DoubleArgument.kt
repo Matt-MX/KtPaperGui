@@ -2,15 +2,14 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class DoubleArgument(
     name: String,
     typeName: String
 ) : Argument<Double>(name, typeName) {
-    var min: Double = Double.MIN_VALUE
+    var min: Double = -999999999999.0
     var max: Double = Double.MAX_VALUE
 
     init {

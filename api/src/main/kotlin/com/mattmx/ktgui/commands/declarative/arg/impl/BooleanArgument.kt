@@ -2,27 +2,24 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
+import com.mattmx.ktgui.commands.declarative.arg.suggests
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
-import java.util.*
 
-class SimpleArgument<T : Any>(
+class BooleanArgument(
     name: String,
     typeName: String
-) : Argument<T>(name, typeName) {
-    var valueFromString = Optional.empty<(String) -> T?>()
-        private set
+) : Argument<Boolean>(name, typeName) {
 
-    infix fun getValue(supplier: String.() -> T?) = apply {
-        this.valueFromString = Optional.of(supplier)
+    init {
+        suggests { listOf("true", "false") }
     }
 
     override fun getValueOfString(
         cmd: DeclarativeCommandBuilder,
         context: BaseCommandContext<*>,
         stringValue: String?
-    ): T? {
-        stringValue ?: return null
-        return if (valueFromString.isPresent) valueFromString.get()(stringValue) else null
+    ): Boolean? {
+        return stringValue?.toBooleanStrictOrNull()
     }
 
 }

@@ -1,9 +1,7 @@
 package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer
-import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentConsumer
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -24,7 +22,10 @@ fun stringArgument(type: String = "string") =
     delegateArgument(StringArgument(DELEGATED_ARG_NAME, type))
 
 fun greedyStringArgument(type: String = "string") =
-    delegateArgument(StringArgument(DELEGATED_ARG_NAME, type).apply { this.consumes(ArgumentConsumer.remaining()) })
+    delegateArgument(StringArgument(DELEGATED_ARG_NAME, type) greedy true)
+
+fun booleanArgument(type: String = "boolean") =
+    delegateArgument(BooleanArgument(DELEGATED_ARG_NAME, type))
 
 fun intArgument(type: String = "int") =
     delegateArgument(IntArgument(DELEGATED_ARG_NAME, type))

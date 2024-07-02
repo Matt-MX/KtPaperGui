@@ -2,7 +2,6 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

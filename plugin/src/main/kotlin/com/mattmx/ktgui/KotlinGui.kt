@@ -15,7 +15,6 @@ import com.mattmx.ktgui.papi.placeholder
 import com.mattmx.ktgui.papi.placeholderExpansion
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.sound.playSound
-import com.mattmx.ktgui.sound.sound
 import com.mattmx.ktgui.sound.soundBuilder
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
@@ -220,8 +219,8 @@ class KotlinGui : JavaPlugin() {
                 ("sound") {
                     runs<Player> {
                         val sound = soundBuilder {
-                            play(Sound.ENTITY_ENDERMAN_DEATH)
-                            wait(10)
+                            play(Sound.ENTITY_ENDERMAN_DEATH) volume 0.4f
+                            wait(7)
                             play(Sound.BLOCK_NOTE_BLOCK_BANJO) pitch 2f
                         } relative true
 
@@ -300,6 +299,7 @@ class KotlinGui : JavaPlugin() {
 
                 val username by stringArgument()
                 username suggests { history.map { it.first }.toSet() }
+
                 val maxResults by intArgument()
                 maxResults min 1 max 100
 

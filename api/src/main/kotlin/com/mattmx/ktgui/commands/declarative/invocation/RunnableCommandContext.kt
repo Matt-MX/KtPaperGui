@@ -28,7 +28,7 @@ class RunnableCommandContext<T : CommandSender>(
 
     operator fun <S : Any> Argument<S>.invoke(): S {
         val ctx = context
-        return ctx.getOrNull()!!
+        return ctx.getOrNull() ?: error("The argument ${name()} wasn't provided in this invocation.")
     }
 
 }

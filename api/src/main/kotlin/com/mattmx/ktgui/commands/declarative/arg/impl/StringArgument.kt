@@ -2,7 +2,7 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class StringArgument(
@@ -11,7 +11,6 @@ class StringArgument(
 ) : Argument<String>(name, type) {
     var min: Int = 0
     var max: Int = Int.MAX_VALUE
-    lateinit var regex: Regex
     val allowed = arrayListOf<Regex>()
     val disallow = arrayListOf<Regex>()
 

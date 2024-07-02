@@ -1,6 +1,4 @@
-package com.mattmx.ktgui.commands.declarative.arg.consumers
-
-import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
+package com.mattmx.ktgui.commands.declarative.arg
 
 fun interface ArgumentConsumer {
 
@@ -11,6 +9,8 @@ fun interface ArgumentConsumer {
         val consumed: List<Int>
     ) {
         fun isEmpty() = stringValue == null
+
+        override fun toString() = "Result('$stringValue', [${consumed.joinToString(", ")}])"
 
         companion object {
             private val EMPTY = Result(null, emptyList())
@@ -30,9 +30,9 @@ fun interface ArgumentConsumer {
 
         @JvmStatic
         infix fun untilFalse(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
-            var current = processor.next()
-            val startIndex = processor.pointer
-            var fullString = current ?: ""
+            var current: String? = ""
+            val startIndex = processor.pointer + 1
+            var fullString = ""
 
             while (current != null) {
                 current = processor.next()
@@ -41,7 +41,8 @@ fun interface ArgumentConsumer {
                     return@ArgumentConsumer Result.empty()
                 }
 
-                fullString += " $current"
+                fullString += "$current "
+                fullString = fullString.trim()
 
                 if (!predicate(processor, fullString)) {
                     return@ArgumentConsumer Result(fullString, (startIndex..processor.pointer).toList())
@@ -55,9 +56,9 @@ fun interface ArgumentConsumer {
 
         @JvmStatic
         infix fun untilFalsePartial(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
-            var current = processor.next()
-            val startIndex = processor.pointer
-            var fullString = current ?: ""
+            var current: String? = null
+            val startIndex = processor.pointer + 1
+            var fullString = ""
 
             while (current != null) {
                 current = processor.next()
@@ -66,7 +67,8 @@ fun interface ArgumentConsumer {
                     return@ArgumentConsumer Result(fullString, (startIndex..processor.pointer).toList())
                 }
 
-                fullString += " $current"
+                fullString += "$current "
+                fullString = fullString.trim()
 
                 if (!predicate(processor, current)) {
                     return@ArgumentConsumer Result(fullString, (startIndex..processor.pointer).toList())
@@ -79,9 +81,7 @@ fun interface ArgumentConsumer {
         infix fun untilPartial(predicate: (ArgumentProcessor, String) -> Boolean) = untilFalsePartial { p, s -> !predicate(p, s) }
 
         @JvmStatic
-        fun remaining() = untilPartial { processor, _ ->
-            processor.pointer >= processor.args.size
-        }
+        fun remaining() = untilFalse { processor, _ -> !processor.done() }
 
         @JvmStatic
         infix fun variable(amount: Int): ArgumentConsumer {

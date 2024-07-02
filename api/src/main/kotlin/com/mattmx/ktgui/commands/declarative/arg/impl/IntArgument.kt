@@ -2,8 +2,7 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class IntArgument(

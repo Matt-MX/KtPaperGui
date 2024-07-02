@@ -2,8 +2,7 @@ package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.arg.suggests
 import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
@@ -14,7 +13,12 @@ class MultiChoiceArgument<T : Any>(
     private val choices = initialChoices
 
     init {
-        this.consumes(ArgumentConsumer.until { argumentProcessor, s -> choices.containsKey(s) })
+        this.consumes(
+            ArgumentConsumer.until { argumentProcessor, s ->
+                println("processing op '$s'")
+                choices.containsKey(s)
+            }
+        )
         suggests { choices.keys.toList() }
     }
 

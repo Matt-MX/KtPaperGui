@@ -4,9 +4,6 @@ import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
-import com.mattmx.ktgui.commands.declarative.arg.consumer.GreedyArgumentConsumer
-import com.mattmx.ktgui.commands.declarative.arg.consumer.SingleArgumentConsumer
-import com.mattmx.ktgui.commands.declarative.arg.consumers.ArgumentConsumer
 import com.mattmx.ktgui.commands.declarative.arg.impl.FlagArgument
 import com.mattmx.ktgui.commands.declarative.arg.impl.OptionArgument
 import com.mattmx.ktgui.commands.declarative.arg.impl.OptionSyntax
@@ -312,6 +309,7 @@ open class DeclarativeCommandBuilder(
 //        var providedArgumentIndex = 0
 
         val argumentProcessor = ArgumentProcessor(this, context.rawArgs)
+        println(context.rawArgs)
         for ((index, arg) in expectedArguments.withIndex()) {
             if (argumentProcessor.done()) {
                 if (arg.isRequired()) {
@@ -342,7 +340,7 @@ open class DeclarativeCommandBuilder(
             val result = arg.consumer.consume(processorClone)
             val actualValue = arg.getValueOfString(this, context, result.stringValue)
 
-            if (arg.isOptional() || (result.isEmpty() && actualValue != null)) {
+            if (actualValue != null || arg.isOptional()) {
                 argumentValues[arg.name()] = arg.createContext(result.stringValue, actualValue)
                 argumentProcessor.pointer = processorClone.pointer
                 argumentProcessor.optionsAndFlagsValues = processorClone.optionsAndFlagsValues
@@ -355,6 +353,7 @@ open class DeclarativeCommandBuilder(
                 }
 
                 invalid.ifPresent { it.invoke(invalidArgumentContext) }
+                return
             }
         }
 
