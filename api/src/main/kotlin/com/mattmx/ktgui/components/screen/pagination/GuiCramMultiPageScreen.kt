@@ -55,21 +55,3 @@ class GuiCramMultiPageScreen(
 
 fun cramMultiPageScreen(title: Component, rows: Int = 6, block: GuiCramMultiPageScreen.() -> Unit) =
     GuiCramMultiPageScreen(title, rows).apply(block)
-
-fun main() {
-    val gui = cramMultiPageScreen(!"Materials") {
-        reserve(last() - 8..last())
-
-        button(Material.SPECTRAL_ARROW) {
-            named(!"&aNext")
-            click.left { navigateNextPage() }
-        } slot last()
-
-        button(Material.SPECTRAL_ARROW) {
-            named(!"&cLast")
-            click.left { navigatePreviousPage() }
-        } slot last() - 8
-
-        +Material.values().map { button(it) {} }
-    }
-}

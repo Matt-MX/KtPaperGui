@@ -6,6 +6,7 @@ import com.mattmx.ktgui.event.EventCallback
 import com.mattmx.ktgui.utils.not
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -22,6 +23,10 @@ open class GuiMultiPageScreen(
         }
     val pageChange = EventCallback<Int>()
     val pages = Collections.synchronizedList(arrayListOf<GuiScreen>())
+
+    override fun open(player: Player) {
+        TODO()
+    }
 
     infix fun page(block: GuiScreen.() -> Unit) = page(null, block)
     open fun page(index: Int? = null, block: GuiScreen.() -> Unit) = apply {
@@ -44,25 +49,3 @@ open class GuiMultiPageScreen(
 
 fun multiPageGui(title: Component, rows: Int = 6, block: GuiMultiPageScreen.() -> Unit) =
     GuiMultiPageScreen(title, rows).apply(block)
-
-fun main() {
-    val gui = multiPageGui(!"Test") {
-        button(Material.SPECTRAL_ARROW) {
-            named(!"&aLast")
-            click.left { navigatePreviousPage() }
-        } slot last()
-
-        button(Material.SPECTRAL_ARROW) {
-            named(!"&aNext")
-            click.left { navigateNextPage() }
-        } slot last()
-
-        page {
-
-        }
-
-        page {
-
-        }
-    }
-}
