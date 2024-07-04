@@ -45,6 +45,7 @@ class KotlinGui : JavaPlugin() {
 
         val animatedScoreboard = AnimatedScoreboardExample()
         val scoreboardExample = ScoreboardExample()
+        val signalScoreboardExample = SignalScoreboardExample()
         val examples = hashMapOf(
             "animated-scoreboard" to { animatedScoreboard },
             "scoreboard" to { scoreboardExample },
@@ -62,7 +63,8 @@ class KotlinGui : JavaPlugin() {
             "java-simple" to { JavaGuiExample() },
             "java-new" to { JavaUpdateExample() },
             "refresh" to { RefreshBlockExample() },
-            "config-gui" to { GuiConfigExample() }
+            "config-gui" to { GuiConfigExample() },
+            "refresh-scoreboard" to { signalScoreboardExample }
         )
         GuiHookExample.registerListener(this)
 

@@ -19,6 +19,7 @@ open class ScoreboardBuilder(
 ) {
     var title: Component = title
         set(value) {
+            objective.setAutoUpdateDisplay(true)
             this.objective.displayName(title)
             field = value
         }
@@ -102,7 +103,7 @@ open class ScoreboardBuilder(
     /**
      * Clears all scoreboard content
      */
-    fun clear() {
+    open fun clear() {
         scoreboardLines.clear()
         scoreboard.resetScores(name)
     }
