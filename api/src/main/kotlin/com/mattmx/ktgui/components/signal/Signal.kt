@@ -44,11 +44,11 @@ class Signal<V>(initial: V, private val owner: SignalOwner) : ReadWriteProperty<
      *
      * @return [value]
      */
-    operator fun invoke() = value.apply {
-        owner.addDependency(this@Signal)
+    operator fun SignalOwner.invoke() = value.apply {
+        addDependency(this@Signal)
     }
 
-    fun get() = invoke()
+    fun SignalOwner.get() = invoke()
 
     /**
      * Set the value of [value].

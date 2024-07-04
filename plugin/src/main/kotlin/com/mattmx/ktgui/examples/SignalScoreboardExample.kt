@@ -1,5 +1,7 @@
 package com.mattmx.ktgui.examples
 
+import com.mattmx.ktgui.KotlinGui
+import com.mattmx.ktgui.dsl.event
 import com.mattmx.ktgui.scoreboards.dynamicScoreboard
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.placeholders
@@ -7,12 +9,22 @@ import com.mattmx.ktgui.utils.pretty
 import com.mattmx.ktgui.utils.seconds
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerInteractEvent
 import java.text.DateFormat
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-class SignalScoreboardExample : Example {
+class SignalScoreboardExample(
+    plugin: KotlinGui
+) : Example {
+//    var timesDisplayed by signal(0)
+
+    init {
+        event<PlayerInteractEvent>(plugin) {
+//            timesDisplayed++
+        }
+    }
 
     val board = dynamicScoreboard(!"&#3D7068&lYour Server") {
 

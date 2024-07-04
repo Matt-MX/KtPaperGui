@@ -45,7 +45,7 @@ class KotlinGui : JavaPlugin() {
 
         val animatedScoreboard = AnimatedScoreboardExample()
         val scoreboardExample = ScoreboardExample()
-        val signalScoreboardExample = SignalScoreboardExample()
+        val signalScoreboardExample = SignalScoreboardExample(this)
         val examples = hashMapOf(
             "animated-scoreboard" to { animatedScoreboard },
             "scoreboard" to { scoreboardExample },
