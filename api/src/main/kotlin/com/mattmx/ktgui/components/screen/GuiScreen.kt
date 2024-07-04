@@ -9,6 +9,8 @@ import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
 import com.mattmx.ktgui.components.signal.GuiSignalOwner
 import com.mattmx.ktgui.components.signal.Signal
+import com.mattmx.ktgui.event.ContinuousEventCallback
+import com.mattmx.ktgui.event.EventCallback
 import com.mattmx.ktgui.event.PreGuiBuildEvent
 import com.mattmx.ktgui.event.PreGuiOpenEvent
 import com.mattmx.ktgui.extensions.setOpenGui
@@ -32,6 +34,7 @@ import java.lang.Integer.max
 import java.lang.Integer.min
 import java.util.*
 import java.util.concurrent.Future
+import java.util.function.Consumer
 
 open class GuiScreen(
     title: Component = Component.empty(),
@@ -52,16 +55,21 @@ open class GuiScreen(
     // Can be used to identify dsl guis
     var id: String = UUID.randomUUID().toString()
     var items = hashMapOf<Int, GuiButton<*>>()
+
+    // todo should be probably moved to a session context
     private val taskTracker = TaskTracker()
     override var currentlyProcessing: EffectBlock<GuiScreen>? = null
 
     var click = ClickCallback<IGuiButton<*>>()
         protected set
-    protected lateinit var closeCallback: (InventoryCloseEvent) -> Unit
-    protected lateinit var quitCallback: (PlayerQuitEvent) -> Unit
-    protected lateinit var moveCallback: (PlayerMoveEvent) -> Unit
-
-    protected var openCallback: ((Player) -> Unit)? = null
+    var close = EventCallback<InventoryCloseEvent>()
+        protected set
+    var quit = EventCallback<PlayerQuitEvent>()
+        protected set
+    var playerMove = EventCallback<PlayerMoveEvent>()
+        protected set
+    var open = EventCallback<Player>()
+        protected set
 
     /**
      * Return the default size of the inventory type
@@ -94,31 +102,31 @@ open class GuiScreen(
         }
     }
 
-    fun slotsUsed(): List<Int> = items.map { it.key }
+    open fun slotsUsed(): List<Int> = items.map { it.key }
 
-    fun findButton(id: String) = findButtons(id).firstOrNull()
+    open fun findButton(id: String) = findButtons(id).firstOrNull()
 
-    fun findButtons(id: String) = items.values.filter { it.id == id }
+    open fun findButtons(id: String) = items.values.filter { it.id == id }
 
-    fun <T : GuiButton<T>> findButton(id: String, block: T.() -> Unit) = (findButton(id) as T?)?.apply(block)
+    open fun <T : GuiButton<T>> findButton(id: String, block: T.() -> Unit) = (findButton(id) as T?)?.apply(block)
 
-    fun <T : GuiButton<T>> findButtons(id: String, block: T.() -> Unit) = findButtons(id).map { (it as T).apply(block) }
+    open fun <T : GuiButton<T>> findButtons(id: String, block: T.() -> Unit) = findButtons(id).map { (it as T).apply(block) }
 
-    infix fun type(type: InventoryType) = apply { this.type = type }
+    open infix fun type(type: InventoryType) = apply { this.type = type }
 
-    infix fun title(title: Component) = apply { this.title = title }
+    open infix fun title(title: Component) = apply { this.title = title }
 
-    infix fun rows(rows: Int) = apply { this.rows = rows }
+    open infix fun rows(rows: Int) = apply { this.rows = rows }
 
     @Deprecated("Guis should no longer be formatted per player, handle that yourself.", ReplaceWith("open(player)"))
     fun openAndFormat(player: Player) = open(player)
 
-    fun forceClose(player: Player) {
+    open fun forceClose(player: Player) {
         GuiManager.clearGui(player)
         player.closeInventory()
     }
 
-    fun refresh() {
+    open fun refresh() {
         val inv = arrayOfNulls<ItemStack?>(totalSlots())
 
         items.forEach { (slot, item) ->
@@ -176,17 +184,17 @@ open class GuiScreen(
                 Bukkit.getScheduler().runTask(GuiManager.owningPlugin) { ->
                     player.openInventory(inventory)
                     player.setOpenGui(this)
-                    openCallback?.invoke(player)
+                    open(player)
                 }
             } else {
                 player.openInventory(inventory)
                 player.setOpenGui(this)
-                openCallback?.invoke(player)
+                open(player)
             }
         }
     }
 
-    protected fun firePreGuiOpenEvent(player: Player): Boolean {
+    open protected fun firePreGuiOpenEvent(player: Player): Boolean {
         val event = PreGuiOpenEvent(this, player)
         Bukkit.getPluginManager().callEvent(event)
         return event.isCancelled
@@ -197,21 +205,13 @@ open class GuiScreen(
         screen.items = items.mapValues { it.value.copy(screen) }.toMutableMap() as HashMap<Int, GuiButton<*>>
         screen.type = type
         screen.rows = rows
-        screen.click = click
-        screen.closeCallback = closeCallback
-        screen.moveCallback = moveCallback
-        screen.quitCallback = quitCallback
-        screen.openCallback = openCallback
+        screen.click = click.clone()
+        screen.close = close.clone()
+        screen.playerMove = playerMove.clone()
+        screen.quit = quit.clone()
+        screen.open = open.clone()
         return screen
     }
-
-    fun move(moveCallback: (PlayerMoveEvent) -> Unit) = apply { this.moveCallback = moveCallback }
-
-    fun quit(quitCallback: (PlayerQuitEvent) -> Unit) = apply { this.quitCallback = quitCallback }
-
-    fun close(closeCallback: (InventoryCloseEvent) -> Unit) = apply { this.closeCallback = closeCallback }
-
-    fun open(openCallback: (Player) -> Unit) = apply { this.openCallback = openCallback }
 
     fun addEffect(effect: EffectBlock<GuiScreen>) {
         currentlyProcessing = effect
@@ -259,11 +259,12 @@ open class GuiScreen(
     }
 
     fun addRefreshBlock(block: RefreshBlock<GuiScreen>) {
-        // TODO this will not work if we open the gui later
-        this.taskTracker.runAsyncRepeat(0, block.repeat) {
-            // todo only change slots modified!
-            block.block.invoke(this@GuiScreen)
-            refresh()
+        open {
+            taskTracker.runAsyncRepeat(0, block.repeat) {
+                // todo only change slots modified!
+                block.block.invoke(this@GuiScreen)
+                refresh()
+            }
         }
     }
 
@@ -280,19 +281,34 @@ open class GuiScreen(
         RefreshBlock(repeat, this) { block.run() }.apply { addRefreshBlock(this) }
     }
 
-    override fun close(e: InventoryCloseEvent) {
-        if (::closeCallback.isInitialized)
-            closeCallback(e)
+    @JavaCompatibility
+    open infix fun onOpen(callback: Consumer<Player>) = apply {
+        this.open { callback.accept(this) }
+    }
+    @JavaCompatibility
+    open infix fun onClose(callback: Consumer<InventoryCloseEvent>) = apply {
+        this.close { callback.accept(this) }
     }
 
+    @JavaCompatibility
+    open infix fun onQuit(callback: Consumer<PlayerQuitEvent>) = apply {
+        this.quit { callback.accept(this) }
+    }
+
+    @JavaCompatibility
+    open infix fun onMove(callback: Consumer<PlayerMoveEvent>) = apply {
+        this.playerMove { callback.accept(this) }
+    }
+
+    override fun close(e: InventoryCloseEvent) {
+        close.invoke(e)
+    }
     override fun quit(e: PlayerQuitEvent) {
-        if (::quitCallback.isInitialized)
-            quitCallback(e)
+        quit.invoke(e)
     }
 
     override fun move(e: PlayerMoveEvent) {
-        if (::moveCallback.isInitialized)
-            moveCallback(e)
+        playerMove.invoke(e)
     }
 
     override fun destroy() {

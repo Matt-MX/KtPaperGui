@@ -3,6 +3,7 @@ package com.mattmx.ktgui.components.button
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.components.ClickCallback
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.event.EventCallback
 import com.mattmx.ktgui.extensions.setEnchantments
 import com.mattmx.ktgui.item.DslIBuilder
 import com.mattmx.ktgui.utils.Invokable
@@ -35,13 +36,11 @@ open class GuiButton<T : GuiButton<T>>(
     var id = "GuiButton"
     var click = ClickCallback<T>()
         protected set
-    var dragCallback: ((InventoryDragEvent) -> Unit)? = null
+    var drag = EventCallback<InventoryDragEvent>()
         protected set
-    var closeCallback: ((ButtonClickedEvent<T>) -> Unit)? = null
+    var ifTexturePackActive = EventCallback<T>()
         protected set
-    var ifTexturePackActive: ((T) -> Unit)? = null
-        protected set
-    var postBuild: ((ItemStack) -> Unit)? = null
+    var postBuild = EventCallback<ItemStack>()
         protected set
 
     // todo should remove this once we have no need for it (parent has been declared)
@@ -149,18 +148,6 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
-    infix fun ifTexturePackActive(block: GuiButton<T>.() -> Unit): T {
-        ifTexturePackActive = block
-        return this as T
-    }
-
-    /**
-     * Code runs after the [GuiButton] has built an [ItemStack]
-     */
-    infix fun postBuild(block: ItemStack.() -> Unit) = apply {
-        postBuild = block
-    } as T
-
     infix fun fromItemBuilder(builder: DslIBuilder): T {
         item = builder.build()
         return this as T
@@ -197,11 +184,6 @@ open class GuiButton<T : GuiButton<T>>(
         click.drop(block)
     } as T
 
-    infix fun drag(cb: InventoryDragEvent.() -> Unit): T {
-        dragCallback = cb
-        return this as T
-    }
-
     inline infix fun enchant(ce: MutableMap<Enchantment, Int>.() -> Unit): T {
         val enchantments = item?.itemMeta?.enchants?.toMutableMap() ?: mutableMapOf()
         ce.invoke(enchantments)
@@ -226,16 +208,16 @@ open class GuiButton<T : GuiButton<T>>(
     }
 
     override fun onButtonDrag(e: InventoryDragEvent) {
-        dragCallback?.invoke(e)
+        drag.invoke(e)
     }
 
     override fun formatIntoItemStack(player: Player?): ItemStack? {
-        if (player?.hasResourcePack() == true && ifTexturePackActive != null) {
-            val copy = this.copy(this.parent)
-            ifTexturePackActive!!(copy)
-            return copy.item.apply { this?.let { postBuild?.invoke(it) } }
+        if (player?.hasResourcePack() == true) {
+            val copy = this.copy(parent)
+            ifTexturePackActive(copy)
+            return copy.item.apply { this?.let { postBuild.invoke(it) } }
         }
-        return getItemStack()?.clone().apply { this?.let { postBuild?.invoke(it) } }
+        return getItemStack()?.clone().apply { this?.let { postBuild.invoke(it) } }
     }
 
     override fun slots(): List<Int> {
@@ -270,8 +252,8 @@ open class GuiButton<T : GuiButton<T>>(
         copy.parent = parent
         copy.item = item?.clone()
         copy.click = click.clone()
-        copy.closeCallback = closeCallback
-        copy.ifTexturePackActive = ifTexturePackActive
+        copy.ifTexturePackActive = ifTexturePackActive.clone()
+        copy.postBuild = postBuild.clone()
         return copy as T
     }
 }

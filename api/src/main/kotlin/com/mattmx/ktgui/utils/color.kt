@@ -31,7 +31,7 @@ fun String.component() = serializer.deserialize(this)
 val String.component: Component
     get() = component()
 fun String.legacyToComponent() = legacySerializer.deserialize(this)
-fun String.placeholders(player: OfflinePlayer? = null): String {
+infix fun String.placeholders(player: OfflinePlayer?): String {
     if (Dependencies.papi) {
         return PlaceholderAPI.setPlaceholders(player, this)
     }

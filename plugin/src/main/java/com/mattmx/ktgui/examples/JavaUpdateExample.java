@@ -66,12 +66,10 @@ public class JavaUpdateExample implements Example {
         );
 
         // Test Callbacks
-        gui.open((p) -> {
+        gui.onOpen((p) -> {
             p.sendMessage(component("opened."));
-            return null;
-        }).close((e) -> {
+        }).onClose((e) -> {
             e.getPlayer().sendMessage(component("closed."));
-            return null;
         });
 
         gui.open(player);

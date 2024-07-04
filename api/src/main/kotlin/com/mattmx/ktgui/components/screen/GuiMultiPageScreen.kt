@@ -4,6 +4,7 @@ import com.mattmx.ktgui.components.button.GuiButton
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
+// todo refactor to support pages and stuff
 open class GuiMultiPageScreen(
     title: Component = Component.empty(),
     rows: Int = 1,
@@ -16,8 +17,8 @@ open class GuiMultiPageScreen(
     protected var itemList = arrayListOf<GuiButton<*>>()
 
     init {
-        open { p ->
-            update(p)
+        open {
+            update(this)
         }
         click {
              any {
@@ -80,10 +81,10 @@ open class GuiMultiPageScreen(
         screen.type = type
         screen.rows = rows
         screen.click = click
-        screen.moveCallback = moveCallback
-        screen.closeCallback = closeCallback
-        screen.quitCallback = quitCallback
-        screen.openCallback = openCallback
+        screen.playerMove = playerMove.clone()
+        screen.close = close.clone()
+        screen.quit = quit.clone()
+        screen.open = open.clone()
         return screen
     }
 }

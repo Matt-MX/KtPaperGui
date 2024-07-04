@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.components.screen.IGuiScreen
+import com.mattmx.ktgui.guiconfig.configButton
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
@@ -118,8 +119,8 @@ class LegacyLoreCycleButton(
         copy.selectableLores = selectableLores.toMutableList()
         copy.changed = changed
         copy.parent = parent
-        copy.click = click
-        copy.closeCallback = closeCallback
+        copy.click = click.clone()
+        copy.postBuild = postBuild.clone()
         return copy
     }
 }
