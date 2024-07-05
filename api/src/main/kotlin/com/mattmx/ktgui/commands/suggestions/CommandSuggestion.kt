@@ -1,11 +1,11 @@
 package com.mattmx.ktgui.commands.suggestions
 
-import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
 
 fun interface CommandSuggestion<V> {
-    fun getSuggestion(invocation: SuggestionInvocation<*>): Collection<String>?
+    fun getSuggestion(invocation: StorageCommandContext<*>): Collection<String>?
 
-    fun getLastArgSuggestion(invocation: SuggestionInvocation<*>) = getSuggestion(invocation)
+    fun getLastArgSuggestion(invocation: StorageCommandContext<*>) = getSuggestion(invocation)
         ?.filter { it.startsWith((invocation.rawArgs.lastOrNull() ?: ""), true) }
 
     fun getValue(argumentString: String?) : V? {

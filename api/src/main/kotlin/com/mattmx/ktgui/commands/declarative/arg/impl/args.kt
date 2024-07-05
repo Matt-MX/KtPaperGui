@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.ArgumentConsumer
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -48,7 +47,10 @@ inline fun <reified E : Enum<E>> enumArgument(type: String = E::class.java.simpl
 fun flag() = delegateArgument(FlagArgument(DELEGATED_ARG_NAME))
 
 fun <T : Any> multiChoiceArgument(vararg choices: Pair<String, T>) =
-    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME, hashMapOf(*choices)))
+    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { hashMapOf(*choices) })
+
+fun <T : Any> multiChoiceArgument(choiceSupplier: () -> HashMap<String, T>) =
+    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier() })
 
 fun <T : Any> simpleMappedArgument() =
     delegateArgument(SimpleArgument<T>(DELEGATED_ARG_NAME, "type"))

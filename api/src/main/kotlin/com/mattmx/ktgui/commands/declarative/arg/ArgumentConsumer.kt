@@ -81,7 +81,9 @@ fun interface ArgumentConsumer {
         infix fun untilPartial(predicate: (ArgumentProcessor, String) -> Boolean) = untilFalsePartial { p, s -> !predicate(p, s) }
 
         @JvmStatic
-        fun remaining() = untilFalse { processor, _ -> !processor.done() }
+        fun remaining() = untilFalse { processor, _ ->
+            !processor.done()
+        }
 
         @JvmStatic
         infix fun variable(amount: Int): ArgumentConsumer {

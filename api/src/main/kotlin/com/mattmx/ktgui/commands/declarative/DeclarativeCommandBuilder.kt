@@ -22,6 +22,7 @@ import org.bukkit.permissions.PermissionDefault
 import java.time.Duration
 import java.util.*
 import java.util.function.Consumer
+import kotlin.math.exp
 
 open class DeclarativeCommandBuilder(
     val name: String
@@ -192,10 +193,10 @@ open class DeclarativeCommandBuilder(
     }
 
     operator fun FlagArgument.unaryPlus() = withFlag(this)
-    operator fun <T : Any> OptionArgument<T>.unaryPlus() = withOption(this)
+    operator fun <T : Any> OptionArgument<T>.unaryPlus() = this.apply { withOption(this) }
     operator fun <T : Any> Argument<T>.unaryPlus() = OptionArgument(this).unaryPlus()
 
-    fun getCurrentCommand(context: SuggestionInvocation<*>): Pair<SuggestionInvocation<*>, DeclarativeCommandBuilder?> {
+    fun getCurrentCommand(context: StorageCommandContext<*>): Pair<StorageCommandContext<*>, DeclarativeCommandBuilder?> {
         val firstArg = context.rawArgs.firstOrNull()
             ?: return context to this
 
@@ -208,7 +209,7 @@ open class DeclarativeCommandBuilder(
         return context to this
     }
 
-    fun getSuggestions(context: SuggestionInvocation<*>): List<String> {
+    fun getSuggestions(context: StorageCommandContext<*>): List<String> {
         val cmds = subcommands
             .filter { it.nameStarts(context.last) }
             .map { listOf(it.name) + it.aliases }
@@ -218,7 +219,7 @@ open class DeclarativeCommandBuilder(
         val suggestedArgs = arrayListOf(*cmdsList.toTypedArray())
 
         for (arg in expectedArguments) {
-            val processor = ArgumentProcessor(this, list)
+            val processor = ArgumentProcessor(this, context, list)
             val result = arg.consume(processor)
 
             if (result.isEmpty() && !arg.isRequired()) continue
@@ -302,14 +303,9 @@ open class DeclarativeCommandBuilder(
         }
 
         // Move onto args
-
         val argumentValues = hashMapOf<String, ArgumentContext<*>>()
 
-//        var expectedArgumentIndex = 0
-//        var providedArgumentIndex = 0
-
-        val argumentProcessor = ArgumentProcessor(this, context.rawArgs)
-        println(context.rawArgs)
+        val argumentProcessor = ArgumentProcessor(this, context, context.rawArgs)
         for ((index, arg) in expectedArguments.withIndex()) {
             if (argumentProcessor.done()) {
                 if (arg.isRequired()) {
@@ -355,6 +351,11 @@ open class DeclarativeCommandBuilder(
                 invalid.ifPresent { it.invoke(invalidArgumentContext) }
                 return
             }
+        }
+
+        // If there are no args they might be using optionals or flags
+        if (expectedArguments.isEmpty()) {
+            argumentProcessor.next()
         }
 
         if (!argumentProcessor.done()) {

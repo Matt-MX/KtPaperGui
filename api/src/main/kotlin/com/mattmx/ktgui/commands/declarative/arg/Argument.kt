@@ -27,7 +27,7 @@ open class Argument<T : Any>(
     var invalidCallback = EventCallback<InvalidArgContext<*>>()
         protected set
     private var optional = false
-    // todo impl default value
+    private var default: T? = null
 
     init {
         withTypeSuggestions()
@@ -62,6 +62,12 @@ open class Argument<T : Any>(
     infix fun optional(value: Boolean) = apply {
         this.optional = value
     }
+
+    infix fun defaultValue(default: T) = apply {
+        this.default = default
+    }
+
+    fun getDefaultValue() = default
 
     infix fun missing(block: InvalidArgContext<*>.() -> Unit) = apply {
         this.missingCallback.callbacks.add(block)

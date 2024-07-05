@@ -1,6 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.declarative.arg.impl.*
+import com.mattmx.ktgui.commands.declarative.arg.suggests
 import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
 import com.mattmx.ktgui.commands.declarative.arg.withArgs
 import com.mattmx.ktgui.commands.declarative.div
@@ -26,6 +27,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.util.logging.Logger
+import kotlin.math.max
 
 class KotlinGui : JavaPlugin() {
     override fun onEnable() {
@@ -313,6 +315,8 @@ class KotlinGui : JavaPlugin() {
                     +username
 
                     runs<Player> {
+                        reply(username.context.stringValue() ?: "null")
+
                         val results = history
                             .subList(0, maxResults.context.orElse(history.size).coerceAtMost(history.size))
                             .filter { it.first == username.context.orElse(it.first) }
@@ -326,7 +330,7 @@ class KotlinGui : JavaPlugin() {
 
                 val cooldownPeriod by longArgument()
                 cooldownPeriod optional true
-                // fixme: args optional don't work
+                cooldownPeriod suggests { listOf(cooldownPeriod.toString()) }
                 ("cooldown" / cooldownPeriod) {
 
                     cooldown(Duration.ofSeconds(3))
@@ -348,24 +352,23 @@ class KotlinGui : JavaPlugin() {
                 "obj" {
                     val objects = hashMapOf<String, HashMap<String, String>>()
 
-                    val objectId by stringArgument()
-                    objectId range (3..16) matches "[a-z0-9_]{3,16}".toRegex()
-                    objectId invalid { reply(!"Invalid object ID $provided") }
+                    val newObjectId by stringArgument()
+                    newObjectId range (3..16) matches "[a-z0-9_]{3,16}".toRegex()
+                    newObjectId invalid { reply(!"Invalid object ID $provided") }
 
-                    ("create" / objectId) {
+                    ("create" / newObjectId) {
                         runs<CommandSender> {
-                            objects.putIfAbsent(objectId(), hashMapOf())
-                            reply(!"&aCreated object ${objectId()}")
+                            objects.putIfAbsent(newObjectId(), hashMapOf())
+                            reply(!"&aCreated object ${newObjectId()}")
                         }
                     }
 
-                    val existingObjectId by simpleMappedArgument<HashMap<String, String>>()
-                    existingObjectId getValue { objects[this] }
-                    existingObjectId suggests { objects.keys.toList() }
-                    existingObjectId invalid objectId.invalidCallback.first()
+                    val existingObjectId by multiChoiceArgument { objects }
+                    existingObjectId invalid newObjectId.invalidCallback.first()
 
                     val path by stringArgument()
                     path matches "([a-z0-9_]\\.?)+".toRegex()
+
                     val value by stringArgument()
                     ("set" / existingObjectId / path / value) {
                         runs<CommandSender> {

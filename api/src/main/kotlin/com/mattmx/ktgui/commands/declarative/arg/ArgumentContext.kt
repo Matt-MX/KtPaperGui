@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.commands.declarative.arg
 
+import org.codehaus.plexus.util.cli.Arg
 import java.util.*
 
 class ArgumentContext<T : Any>(
@@ -22,4 +23,9 @@ class ArgumentContext<T : Any>(
     fun asOptional() = value
 
     override fun toString() = getOrNull().toString()
+
+    companion object {
+        fun <T : Any> empty(argument: Argument<T>) =
+            ArgumentContext(null, Optional.ofNullable(argument.getDefaultValue()), argument)
+    }
 }

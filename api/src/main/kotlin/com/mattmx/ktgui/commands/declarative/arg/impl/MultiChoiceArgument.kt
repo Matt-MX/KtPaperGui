@@ -8,23 +8,22 @@ import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class MultiChoiceArgument<T : Any>(
     name: String,
-    initialChoices: HashMap<String, T>
+    initialChoices: () -> HashMap<String, T>
 ) : Argument<T>(name, "multi-choice") {
-    private val choices = initialChoices
+    private val choices: () -> HashMap<String, T> = initialChoices
 
     init {
         this.consumes(
             ArgumentConsumer.until { argumentProcessor, s ->
-                println("processing op '$s'")
-                choices.containsKey(s)
+                choices().containsKey(s)
             }
         )
-        suggests { choices.keys.toList() }
+        suggests { choices().keys.toList() }
     }
 
     override fun getValueOfString(
         cmd: DeclarativeCommandBuilder,
         context: BaseCommandContext<*>,
         stringValue: String?
-    ) = choices[stringValue]
+    ) = choices()[stringValue]
 }

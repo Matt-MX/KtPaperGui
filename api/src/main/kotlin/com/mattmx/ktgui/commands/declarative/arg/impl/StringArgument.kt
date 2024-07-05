@@ -24,7 +24,7 @@ class StringArgument(
         val range = (min..max)
 
         val matchesRange = stringValue.length in range
-        val matchesAllowed = allowed.any { it.matches(stringValue) }
+        val matchesAllowed = allowed.all { it.matches(stringValue) }
         val meetsDisallowed = disallow.none { it.matches(stringValue) }
 
         val all = matchesRange && matchesAllowed && meetsDisallowed

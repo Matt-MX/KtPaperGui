@@ -24,7 +24,7 @@ class RunnableCommandContext<T : CommandSender>(
 
     val <S : Any> Argument<S>.context: ArgumentContext<S>
         get() = getArgumentContext(name())
-            ?: error("The argument ${name()} is not available in this command context.")
+            ?: ArgumentContext.empty(this)
 
     operator fun <S : Any> Argument<S>.invoke(): S {
         val ctx = context
