@@ -53,3 +53,6 @@ operator fun Component.plus(component: Component) = this.append(component)
 infix fun Component.clickEvent(event: ClickEvent) = clickEvent(event)
 infix fun <T> Component.hoverEvent(event: HoverEvent<T>) = hoverEvent(event)
 operator fun String.not() = component()
+
+val String.translatable
+    get() = Component.translatable(this)

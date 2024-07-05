@@ -36,9 +36,9 @@ class GuiCramMultiPageScreen(
     }
 
     fun nextSlotToFill(sub: GuiScreen): Int? {
-        var nextSlot = sub.slotsUsed().max() + 1
+        var nextSlot = (sub.slotsUsed().maxOrNull() ?: -1) + 1
 
-        while (nextSlot in reservedSlots() && nextSlot <= sub.totalSlots()) {
+        while (nextSlot in reservedSlots() && nextSlot < sub.totalSlots()) {
             nextSlot++
         }
 
@@ -49,7 +49,7 @@ class GuiCramMultiPageScreen(
 
     fun isFull(sub: GuiScreen) = sub.slotsUsed().size >= totalSlots() - reservedSlots().size
 
-    fun reservedSlots() = this.slotsUsed() + extraReservedSlots
+    fun reservedSlots() = (this.slotsUsed() + extraReservedSlots).toSet()
 
 }
 

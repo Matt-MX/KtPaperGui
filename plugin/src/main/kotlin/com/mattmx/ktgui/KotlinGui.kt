@@ -67,7 +67,7 @@ class KotlinGui : JavaPlugin() {
             "refresh-scoreboard" to { signalScoreboardExample },
             "new-multi-screen-cram" to { NewCramMultiPageExample() },
             "new-multi-screen" to { NewMultiPageExample() },
-            "player-inventory" to { HotbarExample() }
+            "hotbar" to { HotbarExample() }
         )
         GuiHookExample.registerListener(this)
 

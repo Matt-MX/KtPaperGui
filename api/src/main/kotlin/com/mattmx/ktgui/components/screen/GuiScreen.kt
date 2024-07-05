@@ -184,12 +184,12 @@ open class GuiScreen(
                 Bukkit.getScheduler().runTask(GuiManager.owningPlugin) { ->
                     player.openInventory(inventory)
                     player.setOpenGui(this)
-                    open(player)
+                    open.invoke(player)
                 }
             } else {
                 player.openInventory(inventory)
                 player.setOpenGui(this)
-                open(player)
+                open.invoke(player)
             }
         }
     }

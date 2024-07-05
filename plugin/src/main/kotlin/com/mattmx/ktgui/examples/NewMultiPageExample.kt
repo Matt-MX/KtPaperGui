@@ -8,22 +8,33 @@ import org.bukkit.entity.Player
 
 class NewMultiPageExample : Example {
     val gui = multiPageGui(!"Test") {
+
         button(Material.SPECTRAL_ARROW) {
             named(!"&aLast")
             click.left { navigatePreviousPage() }
-        } slot last()
+        } slot last() - 7
 
         button(Material.SPECTRAL_ARROW) {
             named(!"&aNext")
             click.left { navigateNextPage() }
-        } slot last()
+        } slot last() - 1
 
         page {
-            button(Material.BEACON) { named(!"Page 1 test") } slot middle()
+            button(Material.BEACON) {
+                named(!"Page 1 Item")
+                click.left {
+                    reply(!"&aClicked page 1 item")
+                }
+            } slot middle() // for some reason middle() is incorrect?
         }
 
         page {
-            button(Material.NETHER_STAR) { named(!"Page 2 test") } slot middle()
+            button(Material.NETHER_STAR) {
+                named(!"Page 2 Item")
+                click.left {
+                    reply(!"&aClicked page 2 item")
+                }
+            } slot middle()
         }
     }
 

@@ -50,23 +50,23 @@ open class GuiButton<T : GuiButton<T>>(
         if (item == null) item = ItemStack(material)
     }
 
-    open fun lore(block: MutableList<Component>.() -> Unit): T {
-        item?.editMeta {
-            val newLore = mutableListOf<Component>().apply(block)
-            it.lore(newLore.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
-        }
+    open fun lore(block: LoreList.() -> Unit): T {
+        val loreList = LoreList(item?.itemMeta?.lore()).apply(block)
+        lore(*loreList.toTypedArray())
         return this as T
     }
 
     @JavaCompatibility
-    fun lore(vararg lines: Component): T {
+    open fun lore(vararg lines: Component): T {
         item?.editMeta {
-            it.lore(lines.map { line -> Component.empty().decoration(TextDecoration.ITALIC, false).append(line) })
+            it.lore(lines.map { line ->
+                Component.empty().decoration(TextDecoration.ITALIC, false).append(line)
+            })
         }
         return this as T
     }
 
-    infix fun named(name: Component?): T {
+    open infix fun named(name: Component?): T {
         item?.editMeta {
             if (name != null)
                 it?.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(name))
@@ -80,12 +80,12 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
-    fun slots(vararg slots: Int): T {
+    open fun slots(vararg slots: Int): T {
         slots.forEach { slot(it) }
         return this as T
     }
 
-    fun removeSlots(vararg slot: Int): T = apply {
+    open fun removeSlots(vararg slot: Int): T = apply {
         if (hasParent()) {
             slots?.removeAll(slot.toSet())
             parent.clearSlot(*slot)
@@ -108,7 +108,7 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
-    fun hasParent() = this::parent.isInitialized
+    open fun hasParent() = this::parent.isInitialized
 
     override infix fun childOf(parent: IGuiScreen): T {
         this.parent = parent
@@ -120,14 +120,14 @@ open class GuiButton<T : GuiButton<T>>(
 
     }
 
-    fun materialOf(materialName: String?, fallback: Material): T {
+    open fun materialOf(materialName: String?, fallback: Material): T {
         val materialNameFormatted = materialName?.uppercase()?.replace(" ", "_")
         val mat = Material.values().firstOrNull { it.name == materialNameFormatted }
         mat?.also { material(it) } ?: material(fallback)
         return this as T
     }
 
-    infix fun material(material: Material): T {
+    open infix fun material(material: Material): T {
         item?.let {
             it.type = material
             return this as T
@@ -136,19 +136,19 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
-    infix fun customModelData(model: Int): T {
+    open infix fun customModelData(model: Int): T {
         val meta = item?.itemMeta ?: return this as T
         meta.setCustomModelData(model)
         item?.itemMeta = meta
         return this as T
     }
 
-    infix fun amount(amount: Int): T {
+    open infix fun amount(amount: Int): T {
         item?.let { it.amount = amount }
         return this as T
     }
 
-    infix fun fromItemBuilder(builder: DslIBuilder): T {
+    open infix fun fromItemBuilder(builder: DslIBuilder): T {
         item = builder.build()
         return this as T
     }
@@ -158,13 +158,9 @@ open class GuiButton<T : GuiButton<T>>(
     }
 
     @JavaCompatibility
-    fun click(type: ClickType, block: Consumer<ButtonClickedEvent<T>>): T {
+    open fun click(type: ClickType, block: Consumer<ButtonClickedEvent<T>>): T {
         click.handleClicks({ block.accept(this) }, type)
         return this as T
-    }
-
-    fun test(b: Consumer<StringBuilder>) {
-
     }
 
     inline infix fun click(block: ClickCallback<T>.() -> Unit): T {

@@ -4,8 +4,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import kotlin.math.max
-import kotlin.math.min
 
 class LoreCycleButton : GuiButton<LoreCycleButton>() {
     var selected = 0
@@ -38,7 +36,7 @@ class LoreCycleButton : GuiButton<LoreCycleButton>() {
     }
 
     @Deprecated("This should not be used in this class.", ReplaceWith("this"))
-    override fun lore(lore: MutableList<Component>.() -> Unit): LoreCycleButton {
+    override fun lore(block: LoreList.() -> Unit): LoreCycleButton {
         return this
     }
 

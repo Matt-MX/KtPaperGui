@@ -4,6 +4,7 @@ import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.item.DslIBuilder
 import com.mattmx.ktgui.item.builder
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
@@ -51,6 +52,8 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
     override fun isCancelled() = !shouldContinueCallback()
 
     override fun setCancelled(cancel: Boolean) = shouldContinueCallback(!cancel)
+
+    fun reply(component: Component) = player.sendMessage(component)
 
     fun forceClose() {
         GuiManager.clearGui(player)
