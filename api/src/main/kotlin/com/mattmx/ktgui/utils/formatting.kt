@@ -84,3 +84,12 @@ fun Number.pretty(): String {
  * @return formatted [Int] as a [String]
  */
 fun Int.commas() = "%,d".format(this)
+
+/**
+ * Insert commas every 3 digits.
+ *
+ * `e.g 142332 -> 142,332`
+ *
+ * @return formatted [Long] as a [String]
+ */
+fun Long.commas() = "%,d".format(this)

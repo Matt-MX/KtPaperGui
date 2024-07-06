@@ -20,7 +20,8 @@ class ChainCommandBuilder(val name: String) {
         subcommands.addAll(command)
     }
 
-    inline infix fun <reified S : CommandSender> runs(noinline block: RunnableCommandContext<S>.() -> Unit) = build().runs(block)
+    inline infix fun <reified S : CommandSender> runs(noinline block: RunnableCommandContext<S>.() -> Unit) =
+        build().runs(block)
 
     fun build() = build(DeclarativeCommandBuilder(name))
 

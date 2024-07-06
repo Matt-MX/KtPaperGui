@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.arg.Argument
+import it.unimi.dsi.fastutil.Hash
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -51,6 +52,12 @@ fun <T : Any> multiChoiceArgument(vararg choices: Pair<String, T>) =
 
 fun <T : Any> multiChoiceArgument(choiceSupplier: () -> HashMap<String, T>) =
     delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier() })
+
+fun multiChoiceStringArgument(vararg choiceSupplier: String) =
+    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier.associateWithTo(HashMap()) { it } })
+
+fun multiChoiceStringArgument(choiceSupplier: () -> List<String>) =
+    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier().associateWithTo(HashMap()) { it } })
 
 fun <T : Any> simpleMappedArgument() =
     delegateArgument(SimpleArgument<T>(DELEGATED_ARG_NAME, "type"))

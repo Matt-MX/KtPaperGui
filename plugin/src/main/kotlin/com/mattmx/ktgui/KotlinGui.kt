@@ -12,13 +12,16 @@ import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.designer.GuiDesigner
 import com.mattmx.ktgui.examples.*
+import com.mattmx.ktgui.papi.PlaceholderParseContext
 import com.mattmx.ktgui.papi.placeholder
 import com.mattmx.ktgui.papi.placeholderExpansion
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.sound.playSound
 import com.mattmx.ktgui.sound.soundBuilder
+import com.mattmx.ktgui.utils.commas
 import com.mattmx.ktgui.utils.not
 import com.mattmx.ktgui.utils.pretty
+import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.command.CommandSender
@@ -75,11 +78,19 @@ class KotlinGui : JavaPlugin() {
 
         placeholderExpansion {
 
-            val player by playerArgument()
+            val startCharIndex = 'a'.code
+            val fontMap = "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ"
+                .map { Char(startCharIndex) to it }
+                .toMap(HashMap())
+            val stringToConvert by greedyStringArgument()
+            placeholder("st" / stringToConvert) {
+                String(stringToConvert().map { fontMap[it] ?: it }.toCharArray())
+            }
 
-            placeholder("ping" / player) { player().ping }
-            placeholder("ping") { requestedBy?.ping }
-            placeholder("iscool" / player) { if (player().name == author) "this player's sick" else "nah not rly" }
+            placeholder("stph" / stringToConvert) {
+                val string = PlaceholderAPI.setPlaceholders(requestedBy, stringToConvert())
+                String(string.map { fontMap[it] ?: it }.toCharArray())
+            }
 
         } id "ktgui" author "MattMX"
 

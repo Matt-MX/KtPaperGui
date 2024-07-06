@@ -1,8 +1,13 @@
 package com.mattmx.ktgui.papi
 
+import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext
+import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
+import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 
 class PlaceholderExpansionWrapper(
     private val owner: JavaPlugin
@@ -10,17 +15,23 @@ class PlaceholderExpansionWrapper(
     private val placeholders = arrayListOf<Placeholder>()
     var id = owner.name
         private set
+    var _persists = false
+        private set
     var _author = owner.pluginMeta.authors.joinToString(", ")
         private set
     var _version = owner.pluginMeta.version
         private set
     var splitArgs = { params: String -> params.split("_") }
         private set
+    var requiresPredicate = Optional.empty<() -> Boolean>()
+    var isDebug = false
 
     override fun getIdentifier() = id
     override fun getAuthor() = _author
     override fun getVersion() = _version
     override fun getPlaceholders() = placeholders.map { it.toString() }.toMutableList()
+    override fun persist() = _persists
+    override fun canRegister() = if (requiresPredicate.isPresent) requiresPredicate.get()() else true
 
     infix fun id(id: String) = apply {
         this.id = id
@@ -38,17 +49,61 @@ class PlaceholderExpansionWrapper(
         this.splitArgs = splitArgs
     }
 
+    infix fun persists(persists: Boolean) = apply {
+        this._persists = persists
+    }
+
+    infix fun requires(predicate: () -> Boolean) = apply {
+        this.requiresPredicate = Optional.of(predicate)
+    }
+
     infix fun registerPlaceholder(placeholder: Placeholder) = placeholders.add(placeholder)
 
     override fun onPlaceholderRequest(player: Player?, params: String): String? {
-        val context = PlaceholderParseContext(player, splitArgs(params))
-        for (placeholder in placeholders.sortedByDescending { it.priority }) {
-            val content = placeholder.parse(context)
+        val paramsSplit = splitArgs(params)
 
-            if (content != null) {
-                return content.toString()
+        val args = hashMapOf<String, ArgumentContext<*>>()
+        val baseContext = if (player != null)
+            StorageCommandContext(player, paramsSplit.firstOrNull() ?: "", paramsSplit)
+        else null
+
+        for (placeholder in placeholders.sortedByDescending { it.priority }) {
+            val identifier = placeholder.match.name
+            if (paramsSplit.getOrNull(0) != identifier) continue
+
+            val argumentParser = ArgumentProcessor(emptyCommand, baseContext, paramsSplit)
+
+            var invalid = false
+
+            for (expArg in placeholder.match.arguments) {
+                if (invalid) continue
+
+                val stringValue = expArg.consume(argumentParser)
+
+                if (isDebug) {
+                    owner.logger.warning("Failed parsing for arg $expArg in placeholder $name")
+                }
+
+                if (expArg.isRequired() && stringValue.isEmpty()) {
+                    invalid = true
+                    continue
+                } else {
+                    args[expArg.name()] = expArg.createContext(emptyCommand, baseContext, stringValue.stringValue)
+                }
+            }
+            if (invalid) continue
+
+            val context = PlaceholderParseContext(player, paramsSplit, args)
+            val result = placeholder.parse(context)
+
+            if (result != null) {
+                return result.toString()
             }
         }
         return null
+    }
+
+    companion object {
+        val emptyCommand = DeclarativeCommandBuilder("null")
     }
 }

@@ -1,17 +1,2 @@
 Command: C:\Program Files\Java\jdk-17\bin\java.exe -Xmx1G -classpath C:\Users\Mangr\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-remapper\0.10.1\c293b2384ae12af74f407fa3aaa553bba4ac6763\tiny-remapper-0.10.1-fat.jar net.fabricmc.tinyremapper.Main D:\PC\Projects\KtBukkitGui\api\build\libs\ktgui-2.4.1-dev-all.jar D:\PC\Projects\KtBukkitGui\api\build\libs\api-2.4.1.jar C:\Users\Mangr\.gradle\caches\paperweight-userdev\ff775525efc29c3503a07d1006e63e5695a742b7505cf63e157d49d32419c69f\module\io.papermc.paper\dev-bundle\1.20.4-R0.1-SNAPSHOT\paperweight\setupCache\extractDevBundle.dir\data\mojang+yarn-spigot-reobf.tiny mojang+yarn spigot C:\Users\Mangr\.gradle\caches\paperweight-userdev\ff775525efc29c3503a07d1006e63e5695a742b7505cf63e157d49d32419c69f\module\io.papermc.paper\dev-bundle\1.20.4-R0.1-SNAPSHOT\paperweight\setupCache\applyMojangMappedPaperclipPatch.jar --threads=1
-Exception in thread "main" java.lang.RuntimeException: java.nio.file.FileSystemException: D:\PC\Projects\KtBukkitGui\api\build\libs\api-2.4.1.jar: The process cannot access the file because it is being used by another process
-	at net.fabricmc.tinyremapper.Main.main(Main.java:267)
-Caused by: java.nio.file.FileSystemException: D:\PC\Projects\KtBukkitGui\api\build\libs\api-2.4.1.jar: The process cannot access the file because it is being used by another process
-	at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
-	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
-	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
-	at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:275)
-	at java.base/sun.nio.fs.AbstractFileSystemProvider.delete(AbstractFileSystemProvider.java:105)
-	at java.base/java.nio.file.Files.delete(Files.java:1152)
-	at jdk.zipfs/jdk.nio.zipfs.ZipFileSystem.sync(ZipFileSystem.java:1914)
-	at jdk.zipfs/jdk.nio.zipfs.ZipFileSystem.lambda$close$10(ZipFileSystem.java:494)
-	at java.base/java.security.AccessController.doPrivileged(AccessController.java:569)
-	at jdk.zipfs/jdk.nio.zipfs.ZipFileSystem.close(ZipFileSystem.java:493)
-	at net.fabricmc.tinyremapper.FileSystemReference.close(FileSystemReference.java:131)
-	at net.fabricmc.tinyremapper.OutputConsumerPath.close(OutputConsumerPath.java:213)
-	at net.fabricmc.tinyremapper.Main.main(Main.java:266)
+Finished after 2782.23 ms.

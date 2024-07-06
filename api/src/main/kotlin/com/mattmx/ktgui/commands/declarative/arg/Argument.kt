@@ -2,15 +2,13 @@ package com.mattmx.ktgui.commands.declarative.arg
 
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.impl.OptionArgument
-import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
-import com.mattmx.ktgui.commands.declarative.invocation.InvalidArgContext
-import com.mattmx.ktgui.commands.declarative.invocation.RunnableCommandContext
-import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
+import com.mattmx.ktgui.commands.declarative.invocation.*
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestion
 import com.mattmx.ktgui.commands.suggestions.CommandSuggestionRegistry
 import com.mattmx.ktgui.event.EventCallback
 import com.mattmx.ktgui.utils.Invokable
 import com.mattmx.ktgui.utils.JavaCompatibility
+import org.bukkit.Bukkit
 import java.util.*
 
 open class Argument<T : Any>(
@@ -63,6 +61,9 @@ open class Argument<T : Any>(
         this.optional = value
     }
 
+    infix fun optionalWithDefault(default: T) =
+        optional(true).defaultValue(default)
+
     infix fun defaultValue(default: T) = apply {
         this.default = default
     }
@@ -92,7 +93,7 @@ open class Argument<T : Any>(
     }
 
     open fun getDefaultSuggestions(): Collection<String>? {
-        val context = SuggestionInvocation(Optional.empty(), "", emptyList())
+        val context = StorageCommandContext(Bukkit.getConsoleSender(), "", emptyList())
         return if (suggests.isPresent) {
             suggests.get().getSuggestion(context)
         } else {
@@ -111,12 +112,20 @@ open class Argument<T : Any>(
 
     open fun consume(processor: ArgumentProcessor) = this.consumer.consume(processor)
 
-    open fun getValueOfString(cmd: DeclarativeCommandBuilder, context: BaseCommandContext<*>, split: List<String>): T? {
+    open fun getValueOfString(
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>,
+        split: List<String>
+    ): T? {
         return getValueOfString(cmd, context, split.joinToString(" "))
     }
 
-    open fun getValueOfString(cmd: DeclarativeCommandBuilder, context: BaseCommandContext<*>, stringValue: String?): T? {
-        return if (cmd.localArgumentSuggestions.contains(name())) {
+    open fun getValueOfString(
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
+        stringValue: String?
+    ): T? {
+        return if (cmd?.localArgumentSuggestions?.contains(name()) == true) {
             cmd.localArgumentSuggestions[name()]?.getValue(stringValue) as T?
         } else if (suggests.isPresent) {
             suggests.get().getValue(stringValue)
@@ -131,6 +140,9 @@ open class Argument<T : Any>(
     @JavaCompatibility
     fun getValue(context: RunnableCommandContext<*>) = context.getArgumentContext<T>(name())?.getOrNull()
 
+    fun createContext(cmd: DeclarativeCommandBuilder?, context: BaseCommandContext<*>?, stringValue: String?) =
+        createContext(stringValue, getValueOfString(cmd, context, stringValue))
+
     fun createContext(stringValue: String?, actualValue: Any?): ArgumentContext<T> {
         return ArgumentContext(stringValue, Optional.ofNullable(actualValue as T?), this)
     }
@@ -142,7 +154,7 @@ open class Argument<T : Any>(
 
     open fun applyToClone(cloned: Argument<T>) = cloned
 
-    fun clone() : Argument<T> {
+    fun clone(): Argument<T> {
         return Argument<T>(name, typeName)
             .let {
                 it.consumer = consumer

@@ -6,7 +6,7 @@ import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
 
 class ArgumentProcessor(
     val command: DeclarativeCommandBuilder,
-    val context: StorageCommandContext<*>,
+    val context: StorageCommandContext<*>?,
     val args: List<String>
 ) {
     var pointer = -1
@@ -37,7 +37,8 @@ class ArgumentProcessor(
                 }
 
                 if (option != null) {
-                    val passed = if (option.requiresCheck.isEmpty) true else option.requiresCheck.get()(context)
+                    val passed = if (option.requiresCheck.isEmpty) true
+                    else context?.let { option.requiresCheck.get()(it) } == true
 
                     if (passed) {
                         val value = peek(1) ?: continue
