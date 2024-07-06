@@ -1,7 +1,6 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.declarative.arg.impl.*
-import com.mattmx.ktgui.commands.declarative.arg.suggests
 import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
 import com.mattmx.ktgui.commands.declarative.arg.withArgs
 import com.mattmx.ktgui.commands.declarative.div
@@ -12,16 +11,15 @@ import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.designer.GuiDesigner
 import com.mattmx.ktgui.examples.*
-import com.mattmx.ktgui.papi.PlaceholderParseContext
 import com.mattmx.ktgui.papi.placeholder
 import com.mattmx.ktgui.papi.placeholderExpansion
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.sound.playSound
 import com.mattmx.ktgui.sound.soundBuilder
-import com.mattmx.ktgui.utils.commas
-import com.mattmx.ktgui.utils.not
-import com.mattmx.ktgui.utils.pretty
+import com.mattmx.ktgui.utils.*
 import me.clip.placeholderapi.PlaceholderAPI
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.command.CommandSender
@@ -30,7 +28,6 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.util.logging.Logger
-import kotlin.math.max
 
 class KotlinGui : JavaPlugin() {
     override fun onEnable() {
@@ -76,23 +73,48 @@ class KotlinGui : JavaPlugin() {
         )
         GuiHookExample.registerListener(this)
 
-        placeholderExpansion {
+        fun mapFont(alphabet: String) = alphabet
+            .mapIndexed { index, it -> Char('a'.code + index) to it }
+            .toMap(HashMap())
 
-            val startCharIndex = 'a'.code
-            val fontMap = "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ"
-                .map { Char(startCharIndex) to it }
-                .toMap(HashMap())
-            val stringToConvert by greedyStringArgument()
-            placeholder("st" / stringToConvert) {
-                String(stringToConvert().map { fontMap[it] ?: it }.toCharArray())
+        fun convertFont(original: String, fontMap: Map<Char, Char>) =
+            String(original.map { c -> fontMap[c] ?: c }.toCharArray())
+
+        val smallFont = mapFont("ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ")
+        val doubleStruck =
+            mapFont("\uD835\uDD52\uD835\uDD53\uD835\uDD54\uD835\uDD55\uD835\uDD56\uD835\uDD57\uD835\uDD58\uD835\uDD59\uD835\uDD5A\uD835\uDD5B\uD835\uDD5C\uD835\uDD5D\uD835\uDD5E\uD835\uDD5F\uD835\uDD60\uD835\uDD61\uD835\uDD62\uD835\uDD63\uD835\uDD64\uD835\uDD65\uD835\uDD66\uD835\uDD67\uD835\uDD68\uD835\uDD69\uD835\uDD6A\uD835\uDD6B")
+        val balls = mapFont("ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ")
+        val block =
+            mapFont("\uD83C\uDDE6\u200C\uD83C\uDDE7\u200C\uD83C\uDDE8\u200C\uD83C\uDDE9\u200C\uD83C\uDDEA\u200C\uD83C\uDDEB\u200C\uD83C\uDDEC\u200C\uD83C\uDDED\u200C\uD83C\uDDEE\u200C\uD83C\uDDEF\u200C\uD83C\uDDF0\u200C\uD83C\uDDF1\u200C\uD83C\uDDF2\u200C\uD83C\uDDF3\u200C\uD83C\uDDF4\u200C\uD83C\uDDF5\u200C\uD83C\uDDF6\u200C\uD83C\uDDF7\u200C\uD83C\uDDF8\u200C\uD83C\uDDF9\u200C\uD83C\uDDFA\u200C\uD83C\uDDFB\u200C\uD83C\uDDFC\u200C\uD83C\uDDFD\u200C\uD83C\uDDFE\u200C\uD83C\uDDFF\u200C")
+
+        val stringToConvert by greedyStringArgument()
+        val fontType by multiChoiceArgument<(String) -> String>(
+            "smalltext" to { convertFont(it, smallFont) },
+            "doublestruck" to { convertFont(it, doubleStruck) },
+            "balls" to { convertFont(it, balls) },
+            "block" to { convertFont(it, block) }
+        )
+
+        placeholderExpansion {
+            placeholder("font" / fontType / stringToConvert) {
+                fontType()(stringToConvert())
             }
 
-            placeholder("stph" / stringToConvert) {
+            placeholder("font-ph" / fontType / stringToConvert) {
                 val string = PlaceholderAPI.setPlaceholders(requestedBy, stringToConvert())
-                String(string.map { fontMap[it] ?: it }.toCharArray())
+                fontType()(string)
             }
 
         } id "ktgui" author "MattMX"
+
+        ("font" / fontType / stringToConvert).runs<CommandSender> {
+            val text = fontType()(stringToConvert())
+            reply(
+                text.component
+                    .clickEvent(ClickEvent.suggestCommand(text))
+                    .hoverEvent(HoverEvent.showText(!"&aClick to copy"))
+            )
+        } permission "ktgui.command.font" register this
 
         sync {
             val cachedDesigners = hashMapOf<String, GuiDesigner>()
