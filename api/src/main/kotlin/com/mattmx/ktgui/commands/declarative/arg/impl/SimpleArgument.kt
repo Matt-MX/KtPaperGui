@@ -21,7 +21,8 @@ class SimpleArgument<T : Any>(
         context: BaseCommandContext<*>?,
         stringValue: String?
     ): T? {
-        stringValue ?: return null
+        stringValue ?: return getDefaultValue()
+
         return if (valueFromString.isPresent) valueFromString.get()(stringValue) else null
     }
 
