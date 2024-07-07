@@ -16,7 +16,9 @@ import com.mattmx.ktgui.papi.placeholderExpansion
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.sound.playSound
 import com.mattmx.ktgui.sound.soundBuilder
-import com.mattmx.ktgui.utils.*
+import com.mattmx.ktgui.utils.component
+import com.mattmx.ktgui.utils.not
+import com.mattmx.ktgui.utils.pretty
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -101,7 +103,6 @@ class KotlinGui : JavaPlugin() {
         )
 
         placeholderExpansion {
-            isDebug = true
             placeholder("font" / fontType / stringToConvert) {
                 fontType()(stringToConvert())
             }
@@ -112,6 +113,18 @@ class KotlinGui : JavaPlugin() {
             }
 
             placeholder("branding" / brandingType) { brandingType() }
+            val a by doubleArgument()
+            val op by multiChoiceArgument<(Double, Double) -> Double>(
+                "+" to { a, b -> a + b },
+                "-" to { a, b -> a - b },
+                "/" to { a, b -> a / b },
+                "*" to { a, b -> a * b },
+            )
+            val b by doubleArgument()
+
+            placeholder("math" / a / op / b) {
+                op()(a(), b())
+            }
 
         } id "ktgui" author "MattMX"
 
