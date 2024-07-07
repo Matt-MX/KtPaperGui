@@ -25,10 +25,10 @@ class FlagArgument(
     fun chatName() = name().replace("_", "-")
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         split: List<String>
-    ): Boolean? {
+    ): Boolean {
         // todo context should contain included flags/options
         return false
     }

@@ -114,7 +114,7 @@ open class Argument<T : Any>(
 
     open fun getValueOfString(
         cmd: DeclarativeCommandBuilder?,
-        context: BaseCommandContext<*>,
+        context: BaseCommandContext<*>?,
         split: List<String>
     ): T? {
         return getValueOfString(cmd, context, split.joinToString(" "))
@@ -140,8 +140,8 @@ open class Argument<T : Any>(
     @JavaCompatibility
     fun getValue(context: RunnableCommandContext<*>) = context.getArgumentContext<T>(name())?.getOrNull()
 
-    fun createContext(cmd: DeclarativeCommandBuilder?, context: BaseCommandContext<*>?, stringValue: String?) =
-        createContext(stringValue, getValueOfString(cmd, context, stringValue))
+    fun createContext(cmd: DeclarativeCommandBuilder?, context: BaseCommandContext<*>?, stringValue: List<String>) =
+        createContext(stringValue.joinToString(" "), getValueOfString(cmd, context, stringValue))
 
     fun createContext(stringValue: String?, actualValue: Any?): ArgumentContext<T> {
         return ArgumentContext(stringValue, Optional.ofNullable(actualValue as T?), this)

@@ -1,3 +1,11 @@
+branding:
+  name: "sᴇʀᴠᴇʀ ɴᴀᴍᴇ"
+  title: '&#B34262'
+  highlight: '&#AE76A6'
+  off-white: '&#A3C3D9'
+  dull: '&#CCD6EB'
+  primary: '&#E9ECF5'
+
 gui:
   example:
     title: "Config Gui"

@@ -12,8 +12,8 @@ class OnlinePlayerArgument(
 ) : Argument<Player>(name, typeName) {
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         stringValue: String?
     ): Player? {
         stringValue ?: return null

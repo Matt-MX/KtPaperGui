@@ -17,8 +17,8 @@ class SimpleArgument<T : Any>(
     }
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         stringValue: String?
     ): T? {
         stringValue ?: return null

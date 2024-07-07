@@ -15,8 +15,8 @@ class StringArgument(
     val disallow = arrayListOf<Regex>()
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         stringValue: String?
     ): String? {
         stringValue ?: return null

@@ -68,10 +68,15 @@ class PlaceholderExpansionWrapper(
         else null
 
         for (placeholder in placeholders.sortedByDescending { it.priority }) {
+            // todo support no identifiers (root placeholder)
             val identifier = placeholder.match.name
             if (paramsSplit.getOrNull(0) != identifier) continue
 
-            val argumentParser = ArgumentProcessor(emptyCommand, baseContext, paramsSplit)
+            val argumentParser = ArgumentProcessor(
+                emptyCommand,
+                baseContext,
+                paramsSplit.subList(1, paramsSplit.size)
+            )
 
             var invalid = false
 
@@ -80,15 +85,22 @@ class PlaceholderExpansionWrapper(
 
                 val stringValue = expArg.consume(argumentParser)
 
-                if (isDebug) {
-                    owner.logger.warning("Failed parsing for arg $expArg in placeholder $name")
-                }
-
                 if (expArg.isRequired() && stringValue.isEmpty()) {
                     invalid = true
+                    if (isDebug) {
+                        owner.logger.warning(
+                            "Placeholder(${
+                                identifier
+                            }) Failed parsing for arg $expArg in placeholder $name - $stringValue"
+                        )
+                    }
                     continue
                 } else {
-                    args[expArg.name()] = expArg.createContext(emptyCommand, baseContext, stringValue.stringValue)
+                    args[expArg.name()] = expArg.createContext(
+                        emptyCommand,
+                        baseContext,
+                        stringValue.stringValue?.split("_", " ") ?: emptyList()
+                    )
                 }
             }
             if (invalid) continue

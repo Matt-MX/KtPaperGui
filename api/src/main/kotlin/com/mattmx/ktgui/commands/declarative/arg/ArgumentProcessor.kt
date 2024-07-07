@@ -31,7 +31,6 @@ class ArgumentProcessor(
 
                 pointer++
             } else {
-                println(command.permittedOptions)
                 val option = command.permittedOptions.firstOrNull {
                     it.chatName() == optionOrPointerId
                 }

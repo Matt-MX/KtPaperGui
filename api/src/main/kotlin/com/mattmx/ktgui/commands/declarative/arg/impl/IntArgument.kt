@@ -17,8 +17,8 @@ class IntArgument(
     }
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         stringValue: String?
     ): Int? {
         val intValue = stringValue?.toIntOrNull() ?: return null

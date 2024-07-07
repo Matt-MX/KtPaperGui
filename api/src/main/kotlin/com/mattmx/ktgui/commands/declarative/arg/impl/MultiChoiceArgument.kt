@@ -22,8 +22,8 @@ class MultiChoiceArgument<T : Any>(
     }
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         stringValue: String?
     ) = choices()[stringValue]
 }

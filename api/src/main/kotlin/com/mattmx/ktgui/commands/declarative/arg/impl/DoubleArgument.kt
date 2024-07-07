@@ -17,8 +17,8 @@ class DoubleArgument(
     }
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         stringValue: String?
     ): Double? {
         val doubleValue = stringValue?.toDoubleOrNull() ?: return null

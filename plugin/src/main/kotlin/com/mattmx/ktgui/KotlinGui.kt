@@ -81,21 +81,27 @@ class KotlinGui : JavaPlugin() {
             String(original.map { c -> fontMap[c] ?: c }.toCharArray())
 
         val smallFont = mapFont("ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ")
-        val doubleStruck =
-            mapFont("\uD835\uDD52\uD835\uDD53\uD835\uDD54\uD835\uDD55\uD835\uDD56\uD835\uDD57\uD835\uDD58\uD835\uDD59\uD835\uDD5A\uD835\uDD5B\uD835\uDD5C\uD835\uDD5D\uD835\uDD5E\uD835\uDD5F\uD835\uDD60\uD835\uDD61\uD835\uDD62\uD835\uDD63\uD835\uDD64\uD835\uDD65\uD835\uDD66\uD835\uDD67\uD835\uDD68\uD835\uDD69\uD835\uDD6A\uD835\uDD6B")
         val balls = mapFont("ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ")
-        val block =
-            mapFont("\uD83C\uDDE6\u200C\uD83C\uDDE7\u200C\uD83C\uDDE8\u200C\uD83C\uDDE9\u200C\uD83C\uDDEA\u200C\uD83C\uDDEB\u200C\uD83C\uDDEC\u200C\uD83C\uDDED\u200C\uD83C\uDDEE\u200C\uD83C\uDDEF\u200C\uD83C\uDDF0\u200C\uD83C\uDDF1\u200C\uD83C\uDDF2\u200C\uD83C\uDDF3\u200C\uD83C\uDDF4\u200C\uD83C\uDDF5\u200C\uD83C\uDDF6\u200C\uD83C\uDDF7\u200C\uD83C\uDDF8\u200C\uD83C\uDDF9\u200C\uD83C\uDDFA\u200C\uD83C\uDDFB\u200C\uD83C\uDDFC\u200C\uD83C\uDDFD\u200C\uD83C\uDDFE\u200C\uD83C\uDDFF\u200C")
+        val blackSquares =
+            mapFont("\uD83C\uDD70\uD83C\uDD71\uD83C\uDD72\uD83C\uDD73\uD83C\uDD74\uD83C\uDD75\uD83C\uDD76\uD83C\uDD77\uD83C\uDD78\uD83C\uDD79\uD83C\uDD7A\uD83C\uDD7B\uD83C\uDD7C\uD83C\uDD7D\uD83C\uDD7E\uD83C\uDD7F\uD83C\uDD80\uD83C\uDD81\uD83C\uDD82\uD83C\uDD83\uD83C\uDD84\uD83C\uDD85\uD83C\uDD86\uD83C\uDD87\uD83C\uDD88\uD83C\uDD89")
 
         val stringToConvert by greedyStringArgument()
         val fontType by multiChoiceArgument<(String) -> String>(
             "smalltext" to { convertFont(it, smallFont) },
-            "doublestruck" to { convertFont(it, doubleStruck) },
             "balls" to { convertFont(it, balls) },
-            "block" to { convertFont(it, block) }
+            "blacksquares" to { convertFont(it, blackSquares) }
+        )
+
+        val brandingType by multiChoiceArgument(
+            config.getConfigurationSection("branding")
+                ?.let { section ->
+                    section.getKeys(false).associateWithTo(HashMap()) { k -> section.getString(k) ?: "null" }
+                }
+                ?: hashMapOf()
         )
 
         placeholderExpansion {
+            isDebug = true
             placeholder("font" / fontType / stringToConvert) {
                 fontType()(stringToConvert())
             }
@@ -104,6 +110,8 @@ class KotlinGui : JavaPlugin() {
                 val string = PlaceholderAPI.setPlaceholders(requestedBy, stringToConvert())
                 fontType()(string)
             }
+
+            placeholder("branding" / brandingType) { brandingType() }
 
         } id "ktgui" author "MattMX"
 

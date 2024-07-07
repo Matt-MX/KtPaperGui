@@ -15,8 +15,8 @@ class BooleanArgument(
     }
 
     override fun getValueOfString(
-        cmd: DeclarativeCommandBuilder,
-        context: BaseCommandContext<*>,
+        cmd: DeclarativeCommandBuilder?,
+        context: BaseCommandContext<*>?,
         stringValue: String?
     ): Boolean? {
         return stringValue?.toBooleanStrictOrNull()
