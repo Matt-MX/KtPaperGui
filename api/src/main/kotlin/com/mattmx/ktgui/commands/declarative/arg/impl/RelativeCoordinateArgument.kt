@@ -20,9 +20,9 @@ class RelativeCoordinateArgument(
     override fun getValueOfString(
         cmd: DeclarativeCommandBuilder?,
         context: BaseCommandContext<*>?,
-        split: List<String>
+        split: List<String>?
     ): Location? {
-        if (split.size != 3) return null
+        if (split?.size != 3) return null
 
         val entity = (context?.sender as Entity?)
             ?: return null

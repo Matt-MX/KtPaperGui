@@ -5,10 +5,12 @@ import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
 import com.mattmx.ktgui.commands.declarative.arg.withArgs
 import com.mattmx.ktgui.commands.declarative.div
 import com.mattmx.ktgui.commands.declarative.invoke
+import com.mattmx.ktgui.commands.declarative.runs
 import com.mattmx.ktgui.commands.rawCommand
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.cooldown.ActionCoolDown
+import com.mattmx.ktgui.designer.DesignerManager
 import com.mattmx.ktgui.designer.GuiDesigner
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.papi.placeholder
@@ -108,7 +110,8 @@ class KotlinGui : JavaPlugin() {
             }
 
             placeholder("font-ph" / fontType / stringToConvert) {
-                val string = PlaceholderAPI.setPlaceholders(requestedBy, stringToConvert())
+                val formatted = "%${stringToConvert().replace(" ", "_")}%"
+                val string = PlaceholderAPI.setPlaceholders(requestedBy, formatted)
                 fontType()(string)
             }
 
@@ -138,7 +141,6 @@ class KotlinGui : JavaPlugin() {
         } permission "ktgui.command.font" register this
 
         sync {
-            val cachedDesigners = hashMapOf<String, GuiDesigner>()
             rawCommand("ktgui") {
                 permission = "ktgui.command"
                 playerOnly = true
@@ -189,90 +191,6 @@ class KotlinGui : JavaPlugin() {
                     }
                 }
             }.register(false)
-
-            "designer" {
-                buildAutomaticPermissions("ktgui.command")
-                withDefaultUsageSubCommand(defaultUsageOptions)
-
-                val typeOrRowArgMessage = !"&cYou must provide an InventoryType or an amount of rows."
-                val typeOrRowArg by argument<String>("type_or_row")
-                val id by argument<String>("unique_id")
-
-                typeOrRowArg suggestsTopLevel { InventoryType.values().map { it.name.lowercase() } }
-                typeOrRowArg invalid { reply(typeOrRowArgMessage) }
-                id missing { reply(!"&cMissing argument 'id'. Need an identifier for the designer UI.") }
-
-                val create = ("create" / typeOrRowArg / id) {
-                    runs<Player> {
-                        val type = runCatching {
-                            InventoryType.valueOf(typeOrRowArg().uppercase())
-                        }.getOrNull()
-                        val rows = typeOrRowArg().toIntOrNull()
-
-                        if (type == null && rows == null) {
-                            reply(typeOrRowArgMessage)
-                            return@runs
-                        }
-
-                        if (cachedDesigners.containsKey(id())) {
-                            return@runs reply("&cThere is already a designer by that name.")
-                        }
-
-                        val designer =
-                            cachedDesigners.getOrPut(id()) { GuiDesigner(id(), type = type, rows = rows ?: 1) }
-                        designer.open(sender)
-                    }
-                }
-
-                ("open" / id) {
-
-                    id suggests { cachedDesigners.keys.toList() }
-
-                    runs<Player> {
-                        val designer = cachedDesigners[id()]
-                            ?: return@runs reply(
-                                !"&cInvalid id, create one using &7/&fdesigner ${
-                                    create.getUsage(
-                                        defaultUsageOptions,
-                                        false
-                                    )
-                                }"
-                            )
-                        designer.open(sender)
-                    }
-                }
-
-                val newTitle by argument<String>("string")
-                ("set-title" / id / newTitle) {
-
-                    id suggests { cachedDesigners.keys.toList() }
-
-                    runs<CommandSender> {
-                        val designer = cachedDesigners[id()]
-                            ?: return@runs reply(
-                                !"&cInvalid id, create one using &7/&fdesigner ${
-                                    create.getUsage(
-                                        defaultUsageOptions,
-                                        false
-                                    )
-                                }"
-                            )
-                        designer.exportTitle = newTitle()
-                        reply(!"&aSet title of ${id()} to ${newTitle()}")
-                    }
-                }
-
-                subcommand("export" / id) {
-
-                    id suggests { cachedDesigners.keys.toList() }
-
-                    runs<CommandSender> {
-                        val designer = cachedDesigners.getOrPut(id()) { GuiDesigner(id()) }
-                        val file = designer.save(this@KotlinGui)
-                        reply(!"&aSaved to /plugins/KtGUI/designer/${file.name}")
-                    }
-                }
-            } register this@KotlinGui
 
             "ktgui-cmd-examples" {
                 buildAutomaticPermissions("ktgui.examples.command")
@@ -464,6 +382,8 @@ class KotlinGui : JavaPlugin() {
                     reply(!getUsage(defaultUsageOptions))
                 }
             } register this@KotlinGui
+
+            DesignerManager(this@KotlinGui)
         }
     }
 

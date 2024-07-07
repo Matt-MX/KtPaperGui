@@ -27,7 +27,7 @@ class FlagArgument(
     override fun getValueOfString(
         cmd: DeclarativeCommandBuilder?,
         context: BaseCommandContext<*>?,
-        split: List<String>
+        split: List<String>?
     ): Boolean {
         // todo context should contain included flags/options
         return false

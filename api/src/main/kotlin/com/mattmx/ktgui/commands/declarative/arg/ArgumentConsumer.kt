@@ -5,15 +5,18 @@ fun interface ArgumentConsumer {
     fun consume(processor: ArgumentProcessor): Result
 
     class Result(
-        val stringValue: String?,
-        val consumed: List<Int>
+        val args: List<String>?
     ) {
-        fun isEmpty() = stringValue == null
+        constructor(single: String?) : this(single?.let { listOf(it) })
 
-        override fun toString() = "Result('$stringValue', [${consumed.joinToString(", ")}])"
+        val argsAsStringValue = args?.joinToString(" ")
+
+        fun isEmpty() = args.isNullOrEmpty()
+
+        override fun toString() = "Result($args)"
 
         companion object {
-            private val EMPTY = Result(null, emptyList())
+            private val EMPTY = Result(emptyList())
             fun empty() = EMPTY
         }
 
@@ -21,7 +24,7 @@ fun interface ArgumentConsumer {
 
     companion object {
         private val NONE = ArgumentConsumer { _ -> Result.empty() }
-        private val SINGLE = ArgumentConsumer { processor -> Result(processor.next(), listOf(processor.pointer)) }
+        private val SINGLE = ArgumentConsumer { processor -> ArgumentConsumer.Result(processor.next()) }
 
         @JvmStatic
         fun none() = NONE
@@ -29,10 +32,9 @@ fun interface ArgumentConsumer {
         fun single() = SINGLE
 
         @JvmStatic
-        infix fun untilFalse(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
+        infix fun untilFalse(predicate: (ArgumentProcessor, List<String>) -> Boolean) = ArgumentConsumer { processor ->
             var current: String? = ""
-            val startIndex = processor.pointer + 1
-            var fullString = ""
+            val consumed = arrayListOf<String>()
 
             while (current != null) {
                 current = processor.next()
@@ -41,40 +43,37 @@ fun interface ArgumentConsumer {
                     return@ArgumentConsumer Result.empty()
                 }
 
-                fullString += "$current "
-                fullString = fullString.trim()
+                consumed += current
 
-                if (!predicate(processor, fullString)) {
-                    return@ArgumentConsumer Result(fullString, (startIndex..processor.pointer).toList())
+                if (!predicate(processor, consumed)) {
+                    return@ArgumentConsumer Result(consumed)
                 }
             }
             Result.empty()
         }
 
         @JvmStatic
-        infix fun until(predicate: (ArgumentProcessor, String) -> Boolean) = untilFalse { p, s -> !predicate(p, s) }
+        infix fun until(predicate: (ArgumentProcessor, List<String>) -> Boolean) = untilFalse { p, s -> !predicate(p, s) }
 
         @JvmStatic
         infix fun untilFalsePartial(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
             var current: String? = null
-            val startIndex = processor.pointer + 1
-            var fullString = ""
+            val consumed = arrayListOf<String>()
 
             while (current != null) {
                 current = processor.next()
 
                 if (current == null) {
-                    return@ArgumentConsumer Result(fullString, (startIndex..processor.pointer).toList())
+                    return@ArgumentConsumer Result(consumed)
                 }
 
-                fullString += "$current "
-                fullString = fullString.trim()
+                consumed += current
 
                 if (!predicate(processor, current)) {
-                    return@ArgumentConsumer Result(fullString, (startIndex..processor.pointer).toList())
+                    return@ArgumentConsumer Result(consumed)
                 }
             }
-            Result(fullString, (startIndex..processor.pointer).toList())
+            Result(consumed)
         }
 
         @JvmStatic

@@ -34,7 +34,11 @@ class GuiDesignerButton(item: ItemStack) : GuiButton<GuiDesignerButton>(item) {
 
     val namedPart: String
         get() {
-            val name = getItemStack()!!.displayName().legacy().replace("§", "&")
+            val name = getItemStack()!!
+                .displayName()
+                .legacy()
+                .replace("§", "&")
+
             return "named(!\"$name\")"
         }
 

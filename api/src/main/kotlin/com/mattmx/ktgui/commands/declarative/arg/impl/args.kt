@@ -56,6 +56,9 @@ fun <T : Any> multiChoiceArgument(choices: HashMap<String, T>) =
 fun <T : Any> multiChoiceArgument(choiceSupplier: () -> HashMap<String, T>) =
     delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier() })
 
+fun multiChoiceStringArgument(choiceSupplier: List<String>) =
+    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier.associateWithTo(HashMap()) { it } })
+
 fun multiChoiceStringArgument(vararg choiceSupplier: String) =
     delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier.associateWithTo(HashMap()) { it } })
 

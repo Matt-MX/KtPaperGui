@@ -27,7 +27,8 @@ fun Component.json() = gsonSerializer.serialize(this)
 fun Component.legacy() = legacySerializer.serialize(this)
 fun String.jsonToComponent() = gsonSerializer.deserialize(this)
 fun JsonElement.component() = gsonSerializer.deserializeFromTree(this)
-fun String.component() = serializer.deserialize(this)
+fun String.component() = component(null)
+infix fun String.component(player: OfflinePlayer?) = serializer.deserialize(this.placeholders(null))
 val String.component: Component
     get() = component()
 fun String.legacyToComponent() = legacySerializer.deserialize(this)
@@ -53,6 +54,7 @@ operator fun Component.plus(component: Component) = this.append(component)
 infix fun Component.clickEvent(event: ClickEvent) = clickEvent(event)
 infix fun <T> Component.hoverEvent(event: HoverEvent<T>) = hoverEvent(event)
 operator fun String.not() = component()
+operator fun String.minus(player: OfflinePlayer?) = component(player)
 
 val String.translatable
     get() = Component.translatable(this)

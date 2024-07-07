@@ -83,15 +83,15 @@ class PlaceholderExpansionWrapper(
             for (expArg in placeholder.match.arguments) {
                 if (invalid) continue
 
-                val stringValue = expArg.consume(argumentParser)
+                val consumeResult = expArg.consume(argumentParser)
 
-                if (expArg.isRequired() && stringValue.isEmpty()) {
+                if (expArg.isRequired() && consumeResult.isEmpty()) {
                     invalid = true
                     if (isDebug) {
                         owner.logger.warning(
                             "Placeholder(${
                                 identifier
-                            }) Failed parsing for arg $expArg in placeholder $name - $stringValue"
+                            }) Failed parsing for arg $expArg in placeholder $name - $consumeResult"
                         )
                     }
                     continue
@@ -99,7 +99,7 @@ class PlaceholderExpansionWrapper(
                     args[expArg.name()] = expArg.createContext(
                         emptyCommand,
                         baseContext,
-                        stringValue.stringValue?.split("_", " ") ?: emptyList()
+                        consumeResult.args ?: emptyList()
                     )
                 }
             }

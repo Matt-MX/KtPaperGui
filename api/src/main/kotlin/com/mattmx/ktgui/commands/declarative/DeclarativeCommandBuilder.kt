@@ -22,7 +22,6 @@ import org.bukkit.permissions.PermissionDefault
 import java.time.Duration
 import java.util.*
 import java.util.function.Consumer
-import kotlin.math.exp
 
 open class DeclarativeCommandBuilder(
     val name: String
@@ -151,6 +150,12 @@ open class DeclarativeCommandBuilder(
 
     inline operator fun ChainCommandBuilder.invoke(block: DeclarativeSubCommandBuilder.() -> Unit) =
         subcommand(this, block)
+
+    inline infix fun <reified S : CommandSender> ChainCommandBuilder.runs(noinline block: RunnableCommandContext<S>.() -> Unit) =
+        build().runs(block).let {
+            this@DeclarativeCommandBuilder.subcommands += it
+            it
+        }
 
     inline operator fun String.invoke(block: DeclarativeSubCommandBuilder.() -> Unit) =
         fromString(this).let {
@@ -334,15 +339,19 @@ open class DeclarativeCommandBuilder(
 
             val processorClone = argumentProcessor.clone()
             val result = arg.consumer.consume(processorClone)
-            val actualValue = arg.getValueOfString(this, context, result.stringValue)
+            val actualValue = arg.getValueOfString(
+                this,
+                context,
+                result.args
+            )
 
             if (actualValue != null || arg.isOptional()) {
-                argumentValues[arg.name()] = arg.createContext(result.stringValue, actualValue)
+                argumentValues[arg.name()] = arg.createContext(result.argsAsStringValue, actualValue)
                 argumentProcessor.pointer = processorClone.pointer
                 argumentProcessor.optionsAndFlagsValues = processorClone.optionsAndFlagsValues
             } else {
                 val invalidArgumentContext =
-                    InvalidArgContext(context.sender, context.alias, context.rawArgs, arg, result.stringValue)
+                    InvalidArgContext(context.sender, context.alias, context.rawArgs, arg, result.argsAsStringValue)
 
                 if (arg.invokeInvalid(invalidArgumentContext)) {
                     return

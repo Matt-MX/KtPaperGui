@@ -82,12 +82,12 @@ class GuiDesigner(
     }
 
     fun export(): String {
-        val start = "gui(!\"$exportTitle\") {\n"
-        val guiOption = if (type == null) "    rows = $rows" else "type = InventoryType.${type!!.name}"
+        val guiOption = if (type == null) "rows = $rows" else "type = InventoryType.${type!!.name}"
+        val start = "gui(!\"$exportTitle\", ${guiOption}) {\n"
         val middle = items.values
             .filterIsInstance<GuiDesignerButton>()
-            .filter { it.getItemStack()?.type != Material.AIR }
-            .joinToString("\n    ") { it.full + " childOf this" }
+            .filter { it.formatIntoItemStack()?.type != Material.AIR }
+            .joinToString("\n    ") { it.full }
         val end = "\n}"
 
         return "$start$guiOption\n$middle$end"

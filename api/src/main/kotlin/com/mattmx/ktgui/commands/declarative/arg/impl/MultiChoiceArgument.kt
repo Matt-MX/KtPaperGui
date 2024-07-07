@@ -15,7 +15,7 @@ class MultiChoiceArgument<T : Any>(
     init {
         this.consumes(
             ArgumentConsumer.until { argumentProcessor, s ->
-                choices().containsKey(s)
+                choices().containsKey(s.joinToString(" "))
             }
         )
         suggests { choices().keys.toList() }

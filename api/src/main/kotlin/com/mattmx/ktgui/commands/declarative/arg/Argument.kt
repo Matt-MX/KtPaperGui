@@ -115,9 +115,9 @@ open class Argument<T : Any>(
     open fun getValueOfString(
         cmd: DeclarativeCommandBuilder?,
         context: BaseCommandContext<*>?,
-        split: List<String>
+        split: List<String>?
     ): T? {
-        return getValueOfString(cmd, context, split.joinToString(" "))
+        return getValueOfString(cmd, context, split?.joinToString(" "))
     }
 
     open fun getValueOfString(
