@@ -193,8 +193,8 @@ open class GuiButton<T : GuiButton<T>>(
         editMeta(block)
     } as T
 
-    inline infix fun <reified T : ItemMeta> editMeta(crossinline block: T.() -> Unit): T = apply {
-        item?.editMeta(T::class.java) {
+    inline infix fun <reified M : ItemMeta> editMeta(crossinline block: M.() -> Unit): T = apply {
+        item?.editMeta(M::class.java) {
             block(it)
         }
     } as T
