@@ -63,6 +63,10 @@ open class DeclarativeCommandBuilder(
         this.coolDownCallback = Optional.ofNullable(block)
     }
 
+    infix fun description(desc: String) = apply {
+        this.description = desc
+    }
+
     infix fun permission(block: StorageCommandContext<*>.() -> Boolean) = apply {
         this.permission = Optional.of(block)
     }

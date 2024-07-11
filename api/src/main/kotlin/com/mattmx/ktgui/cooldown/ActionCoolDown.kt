@@ -5,9 +5,9 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-class ActionCoolDown<T>(
+open class ActionCoolDown<T : Any>(
     duration: Duration
-) {
+) : CoolDown<T> {
     var shouldRefreshIfAlreadyOnCoolDown = false
     private val expire = duration.toMillis()
     private val cache = Collections.synchronizedMap(hashMapOf<Any, Long>())
@@ -16,11 +16,13 @@ class ActionCoolDown<T>(
         register(this)
     }
 
-    fun removeAnyUsers(vararg user: Any) = user.forEach { cache.remove(it) }
+    override fun removeAnyUsers(vararg user: Any) = user.forEach { cache.remove(it) }
 
-    fun removeUser(user: T) = cache.remove(user)
+    override fun removeUser(user: Any) {
+        cache.remove(user)
+    }
 
-    fun test(user: T): Boolean {
+    override fun test(user: T): Boolean {
         val currentMillis = System.currentTimeMillis()
         val returnValue = if (!cache.containsKey(user)) {
             true
@@ -34,16 +36,12 @@ class ActionCoolDown<T>(
         return returnValue
     }
 
-    fun timeRemaining(user: T): Long {
+    override fun millisRemaining(user: T): Long {
         return max(-1L, expire - (System.currentTimeMillis() - cache.getOrDefault(user, 0)))
     }
 
-    fun durationRemaining(user: T) : Duration {
-        return Duration.ofMillis(timeRemaining(user))
-    }
-
     fun test(user: T, block: (Duration) -> Unit): Unit? {
-        val timeLeft = timeRemaining(user)
+        val timeLeft = millisRemaining(user)
         val valid = timeLeft < 0
 
         if (valid || shouldRefreshIfAlreadyOnCoolDown)
