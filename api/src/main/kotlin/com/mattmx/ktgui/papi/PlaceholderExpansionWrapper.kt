@@ -1,9 +1,13 @@
 package com.mattmx.ktgui.papi
 
+import com.mattmx.ktgui.commands.declarative.ChainCommandBuilder
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
+import com.mattmx.ktgui.commands.declarative.arg.Argument
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext
 import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
+import com.mattmx.ktgui.commands.declarative.div
 import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
+import com.mattmx.ktgui.utils.JavaCompatibility
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -59,6 +63,21 @@ class PlaceholderExpansionWrapper(
 
     infix fun registerPlaceholder(placeholder: Placeholder) = placeholders.add(placeholder)
 
+    @JavaCompatibility
+    infix fun withPlaceholder(placeholder: Placeholder) = apply {
+        placeholders.add(placeholder)
+    }
+
+    @JavaCompatibility
+    infix fun withPlaceholder(builder: Placeholder.Builder) = apply {
+        placeholders.add(builder.build(this))
+    }
+
+    operator fun Argument<*>.div(other: Argument<*>) =
+        ChainCommandBuilder(Placeholder.EMPTY_PLACEHOLDER)
+            .div(this)
+            .div(other)
+
     override fun onPlaceholderRequest(player: Player?, params: String): String? {
         val paramsSplit = splitArgs(params)
 
@@ -68,9 +87,9 @@ class PlaceholderExpansionWrapper(
         else null
 
         for (placeholder in placeholders.sortedByDescending { it.priority }) {
-            // todo support no identifiers (root placeholder)
             val identifier = placeholder.match.name
-            if (paramsSplit.getOrNull(0) != identifier) continue
+            if (identifier != Placeholder.EMPTY_PLACEHOLDER && paramsSplit.getOrNull(0) != identifier)
+                continue
 
             val argumentParser = ArgumentProcessor(
                 emptyCommand,

@@ -77,69 +77,6 @@ class KotlinGui : JavaPlugin() {
         )
         GuiHookExample.registerListener(this)
 
-        fun mapFont(alphabet: String) = alphabet
-            .mapIndexed { index, it -> Char('a'.code + index) to it }
-            .toMap(HashMap())
-
-        fun convertFont(original: String, fontMap: Map<Char, Char>) =
-            String(original.map { c -> fontMap[c] ?: c }.toCharArray())
-
-        val smallFont = mapFont("ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ")
-        val balls = mapFont("ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ")
-        val blackSquares =
-            mapFont("\uD83C\uDD70\uD83C\uDD71\uD83C\uDD72\uD83C\uDD73\uD83C\uDD74\uD83C\uDD75\uD83C\uDD76\uD83C\uDD77\uD83C\uDD78\uD83C\uDD79\uD83C\uDD7A\uD83C\uDD7B\uD83C\uDD7C\uD83C\uDD7D\uD83C\uDD7E\uD83C\uDD7F\uD83C\uDD80\uD83C\uDD81\uD83C\uDD82\uD83C\uDD83\uD83C\uDD84\uD83C\uDD85\uD83C\uDD86\uD83C\uDD87\uD83C\uDD88\uD83C\uDD89")
-
-        val stringToConvert by greedyStringArgument()
-        val fontType by multiChoiceArgument<(String) -> String>(
-            "smalltext" to { convertFont(it, smallFont) },
-            "balls" to { convertFont(it, balls) },
-            "blacksquares" to { convertFont(it, blackSquares) }
-        )
-
-        val brandingType by multiChoiceArgument(
-            config.getConfigurationSection("branding")
-                ?.let { section ->
-                    section.getKeys(false).associateWithTo(HashMap()) { k -> section.getString(k) ?: "null" }
-                }
-                ?: hashMapOf()
-        )
-
-        placeholderExpansion {
-            placeholder("font" / fontType / stringToConvert) {
-                fontType()(stringToConvert())
-            }
-
-            placeholder("font-ph" / fontType / stringToConvert) {
-                val formatted = "%${stringToConvert().replace(" ", "_")}%"
-                val string = PlaceholderAPI.setPlaceholders(requestedBy, formatted)
-                fontType()(string)
-            }
-
-            placeholder("branding" / brandingType) { brandingType() }
-            val a by doubleArgument()
-            val op by multiChoiceArgument<(Double, Double) -> Double>(
-                "+" to { a, b -> a + b },
-                "-" to { a, b -> a - b },
-                "/" to { a, b -> a / b },
-                "*" to { a, b -> a * b },
-            )
-            val b by doubleArgument()
-
-            placeholder("math" / a / op / b) {
-                op()(a(), b())
-            }
-
-        } id "ktgui" author "MattMX"
-
-        ("font" / fontType / stringToConvert).runs<CommandSender> {
-            val text = fontType()(stringToConvert())
-            reply(
-                text.component
-                    .clickEvent(ClickEvent.suggestCommand(text))
-                    .hoverEvent(HoverEvent.showText(!"&aClick to copy"))
-            )
-        } permission "ktgui.command.font" register this
-
         sync {
             rawCommand("ktgui") {
                 permission = "ktgui.command"
