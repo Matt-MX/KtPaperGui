@@ -1,6 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.commands.declarative.arg.impl.*
+import com.mattmx.ktgui.commands.declarative.arg.suggests
 import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
 import com.mattmx.ktgui.commands.declarative.arg.withArgs
 import com.mattmx.ktgui.commands.declarative.div
@@ -155,9 +156,9 @@ class KotlinGui : JavaPlugin() {
                     }
                 }
 
-                val invType by enumArgument<InventoryType>()
-
-                invType getStringValueOf { name.lowercase() }
+                val invType by multiChoiceArgument(
+                    InventoryType.values().map { it.name.lowercase() to it }
+                )
                 invType invalid { reply(!"&cThat is not a valid inventory type.") }
 
                 ("inventory" / invType) {
@@ -189,7 +190,7 @@ class KotlinGui : JavaPlugin() {
                         val target = player()
                         reply(
                             !"&aFound ${target.name} @ ${
-                                target.location.clone().toVector()
+                                target.location.clone().toVector().toString().replace(",", ", ")
                             } in world '${target.location.world.name}'."
                         )
                     }
@@ -198,6 +199,7 @@ class KotlinGui : JavaPlugin() {
                 val msg by greedyStringArgument()
                 msg min 1
                 msg invalid { reply(!"&cMust provide a valid msg (at least 1 char)") }
+                msg suggests { emptyList() }
                 ("msg" / player / msg) {
                     runs<CommandSender> {
                         reply(!"&f[Me -> ${player().name}]: ${msg()}")

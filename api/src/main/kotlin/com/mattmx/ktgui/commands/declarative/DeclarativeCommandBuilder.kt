@@ -222,6 +222,7 @@ open class DeclarativeCommandBuilder(
         val cmds = subcommands
             .filter { it.nameStarts(context.last) }
             .map { listOf(it.name) + it.aliases }
+
         val cmdsList = cmds.flatten()
 
         val list = context.rawArgs.toMutableList()

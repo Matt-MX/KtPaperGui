@@ -50,10 +50,13 @@ fun flag() = delegateArgument(FlagArgument(DELEGATED_ARG_NAME))
 fun <T : Any> multiChoiceArgument(vararg choices: Pair<String, T>) =
     delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { hashMapOf(*choices) })
 
-fun <T : Any> multiChoiceArgument(choices: HashMap<String, T>) =
+fun <T : Any> multiChoiceArgument(choices: List<Pair<String, T>>) =
+    delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choices.toMap() })
+
+fun <T : Any> multiChoiceArgument(choices: Map<String, T>) =
     delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choices })
 
-fun <T : Any> multiChoiceArgument(choiceSupplier: () -> HashMap<String, T>) =
+fun <T : Any> multiChoiceArgument(choiceSupplier: () -> Map<String, T>) =
     delegateArgument(MultiChoiceArgument(DELEGATED_ARG_NAME) { choiceSupplier() })
 
 fun multiChoiceStringArgument(choiceSupplier: List<String>) =

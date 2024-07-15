@@ -8,9 +8,9 @@ import com.mattmx.ktgui.commands.declarative.invocation.BaseCommandContext
 
 class MultiChoiceArgument<T : Any>(
     name: String,
-    initialChoices: () -> HashMap<String, T>
+    initialChoices: () -> Map<String, T>
 ) : Argument<T>(name, "multi-choice") {
-    private val choices: () -> HashMap<String, T> = initialChoices
+    private val choices: () -> Map<String, T> = initialChoices
 
     init {
         this.consumes(
