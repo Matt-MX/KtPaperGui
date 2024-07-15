@@ -18,3 +18,10 @@ fun PlaceholderExpansionWrapper.placeholder(string: String, supplier: Placeholde
 
 fun PlaceholderExpansionWrapper.placeholder(chain: ChainCommandBuilder, supplier: PlaceholderParseContext.() -> Any?) =
     Placeholder(this, chain, supplier).apply { registerPlaceholder(this) }
+
+fun PlaceholderExpansionWrapper.placeholder(argument: Argument<*>, supplier: PlaceholderParseContext.() -> Any?) =
+    Placeholder(
+        this,
+        Placeholder.emptyCommandBuilder().argument(argument),
+        supplier
+    ).apply { registerPlaceholder(this) }
