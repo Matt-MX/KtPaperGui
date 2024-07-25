@@ -40,9 +40,9 @@ tasks {
         archiveClassifier.set("")
         archiveVersion.set(rootProject.version.toString())
 
-//        minimize {
-//            exclude("kotlin/**")
-//        }
+        minimize {
+            exclude("kotlin/**")
+        }
 
         mergeServiceFiles()
     }
