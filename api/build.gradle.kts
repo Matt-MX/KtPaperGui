@@ -1,52 +1,43 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    alias(libs.plugins.paperweight) apply true
+    alias(libs.plugins.kotlinJvm) apply true
+    alias(libs.plugins.shadow) apply true
     `maven-publish`
 }
 
-val paper_version: String by rootProject
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-//    compileOnly(kotlin("reflect"))
-    shadow(implementation(kotlin("reflect"))!!)
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
+    paperweight.paperDevBundle(libs.versions.paperApi.get())
+    compileOnly(libs.placeholder.api)
 
-    paperweight.paperDevBundle(paper_version)
-}
-
-tasks.test {
-    useJUnitPlatform()
+    compileOnly(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
 }
 
 version = rootProject.version
 
 sourceSets["main"].resources.srcDir("src/resources/")
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
 tasks {
+    test {
+        useJUnitPlatform()
+    }
+
     build {
         dependsOn(shadowJar)
     }
+
     shadowJar {
         mergeServiceFiles()
+        archiveBaseName.set("ktgui")
     }
+
     assemble {
-        dependsOn(reobfJar)
+        dependsOn("reobfJar")
     }
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveBaseName.set("ktgui")
-    mergeServiceFiles()
+kotlin {
+    jvmToolchain(17)
 }
 
 java {

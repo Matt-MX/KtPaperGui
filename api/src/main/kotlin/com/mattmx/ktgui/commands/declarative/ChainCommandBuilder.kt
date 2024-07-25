@@ -38,12 +38,12 @@ val ChainCommandBuilder.command
     get() = build()
 
 operator fun String.div(argument: Argument<*>) = ChainCommandBuilder(this).apply {
-    arguments.add(argument)
+    argument(argument)
 }
 
 @JvmName("div1")
 operator fun String.div(argument: List<Argument<*>>) = ChainCommandBuilder(this).apply {
-    arguments.add(MultiArgument("multi-argument", *argument.toTypedArray()))
+    argument(MultiArgument("multi-argument", *argument.toTypedArray()))
 }
 
 operator fun String.div(s: String) = ChainCommandBuilder(this).apply {
@@ -57,5 +57,5 @@ operator fun String.div(subs: List<DeclarativeCommandBuilder>) = ChainCommandBui
 operator fun DeclarativeCommandBuilder.plus(other: DeclarativeCommandBuilder) = listOf(this, other)
 
 operator fun ChainCommandBuilder.div(argument: Argument<*>) = this.apply {
-    arguments.add(argument)
+    argument(argument)
 }

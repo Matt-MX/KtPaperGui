@@ -2,7 +2,10 @@ package com.mattmx.ktgui.utils
 
 import com.google.gson.JsonElement
 import me.clip.placeholderapi.PlaceholderAPI
+import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.event.ClickCallback
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.event.HoverEvent.ShowEntity
@@ -38,6 +41,9 @@ infix fun String.placeholders(player: OfflinePlayer?): String {
     }
     return this
 }
+infix fun Component.click(callback: ClickCallback<Audience>) =
+    clickEvent(ClickEvent.callback(callback))
+
 private val pattern: Pattern = Pattern.compile("&#[a-fA-F0-9]{6}")
 fun String.legacyColor(): String {
     var string = this

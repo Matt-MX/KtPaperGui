@@ -24,10 +24,11 @@ fun interface ArgumentConsumer {
 
     companion object {
         private val NONE = ArgumentConsumer { _ -> Result.empty() }
-        private val SINGLE = ArgumentConsumer { processor -> ArgumentConsumer.Result(processor.next()) }
+        private val SINGLE = ArgumentConsumer { processor -> Result(processor.next()) }
 
         @JvmStatic
         fun none() = NONE
+
         @JvmStatic
         fun single() = SINGLE
 
@@ -40,7 +41,7 @@ fun interface ArgumentConsumer {
                 current = processor.next()
 
                 if (current == null) {
-                    return@ArgumentConsumer Result.empty()
+                    return@ArgumentConsumer Result(consumed)
                 }
 
                 consumed += current
@@ -49,15 +50,16 @@ fun interface ArgumentConsumer {
                     return@ArgumentConsumer Result(consumed)
                 }
             }
-            Result.empty()
+            Result(consumed)
         }
 
         @JvmStatic
-        infix fun until(predicate: (ArgumentProcessor, List<String>) -> Boolean) = untilFalse { p, s -> !predicate(p, s) }
+        infix fun until(predicate: (ArgumentProcessor, List<String>) -> Boolean) =
+            untilFalse { p, s -> !predicate(p, s) }
 
         @JvmStatic
         infix fun untilFalsePartial(predicate: (ArgumentProcessor, String) -> Boolean) = ArgumentConsumer { processor ->
-            var current: String? = null
+            var current: String? = ""
             val consumed = arrayListOf<String>()
 
             while (current != null) {
@@ -77,7 +79,8 @@ fun interface ArgumentConsumer {
         }
 
         @JvmStatic
-        infix fun untilPartial(predicate: (ArgumentProcessor, String) -> Boolean) = untilFalsePartial { p, s -> !predicate(p, s) }
+        infix fun untilPartial(predicate: (ArgumentProcessor, String) -> Boolean) =
+            untilFalsePartial { p, s -> !predicate(p, s) }
 
         @JvmStatic
         fun remaining() = untilFalse { processor, _ ->
@@ -86,8 +89,13 @@ fun interface ArgumentConsumer {
 
         @JvmStatic
         infix fun variable(amount: Int): ArgumentConsumer {
-            var i = amount
-            return untilFalse { _, _ -> i-- == 0 }
+            return ArgumentConsumer { processor: ArgumentProcessor ->
+                var i = 0
+                until { _, _ ->
+                    (i >= amount).apply { i++ }
+                }.consume(processor)
+                    .apply { println(this) }
+            }
         }
     }
 }

@@ -1,6 +1,4 @@
 rootProject.name = "ktgui"
-include("api")
-include("plugin")
 
 pluginManagement {
     repositories {
@@ -13,6 +11,9 @@ pluginManagement {
 plugins {
     id("com.gradle.enterprise") version("3.15")
 }
+
+include("api")
+include("plugin:reobf")
 
 gradleEnterprise {
     if (System.getenv("CI") != null) {

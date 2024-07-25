@@ -3,6 +3,7 @@ package com.mattmx.ktgui.commands.declarative
 import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
 import com.mattmx.ktgui.commands.declarative.invocation.SuggestionInvocation
 import com.mattmx.ktgui.commands.wrapper.CommandWrapper
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import java.util.*
 
@@ -10,6 +11,7 @@ class DeclarativeCommandWrapper(
     name: String,
     val builder: DeclarativeCommandBuilder
 ) : CommandWrapper(name) {
+    val cachedUsage = builder.getUsage()
 
     override fun execute(sender: CommandSender, commandLabel: String, args: Array<out String>): Boolean {
         val context = StorageCommandContext(sender, commandLabel, args.toList())
@@ -31,6 +33,18 @@ class DeclarativeCommandWrapper(
         val context = StorageCommandContext(target, name, listOf())
 
         return builder.permission.orElse(null)?.invoke(context) ?: false
+    }
+
+    override fun getAliases(): MutableList<String> {
+        return builder.aliases.toMutableList()
+    }
+
+    override fun getDescription(): String {
+        return builder.description
+    }
+
+    override fun getUsage() : String {
+        return cachedUsage
     }
 
 }

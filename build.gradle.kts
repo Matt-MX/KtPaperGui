@@ -1,35 +1,37 @@
 plugins {
-    kotlin("jvm") version "1.7.10"
-    id("io.papermc.paperweight.userdev") version "1.7.1" apply false
+    alias(libs.plugins.runPaper)
 }
 
-val version = "2.4.2-alpha"
-
-rootProject.version = version
+runPaper.folia.registerTask()
+rootProject.version = "2.4.2-alpha"
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = "io.papermc.paperweight.userdev")
-
-    repositories {
-        mavenCentral()
-        maven("https://jitpack.io")
-        maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    allprojects {
+        repositories {
+            mavenLocal()
+            mavenCentral()
+            maven("https://repo.papermc.io/repository/maven-public/")
+            maven("https://maven.pvphub.me/releases")
+            maven("https://repo.dmulloy2.net/repository/public/")
+            maven("https://jitpack.io")
+            maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        }
     }
-    dependencies {
-//        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
-        compileOnly("me.clip:placeholderapi:2.11.1")
-    }
+}
 
-    java {
-        withJavadocJar()
-        withSourcesJar()
-    }
+tasks {
+    runServer {
+        dependsOn(":plugin:assemble")
+        val mcVersion = libs.versions.paperApi.get().split("-")[0]
+        minecraftVersion(mcVersion)
 
-    tasks.assemble {
-        dependsOn("reobfJar")
-    }
+        pluginJars("./plugin/build/libs/ktgui-plugin-${rootProject.version}-dev-all.jar")
 
+        downloadPlugins {
+            hangar("ViaVersion", "5.0.1")
+            hangar("ViaBackwards", "5.0.1")
+            hangar("PlaceholderAPI", "2.11.6")
+            url("https://download.luckperms.net/1552/bukkit/loader/LuckPerms-Bukkit-5.4.137.jar")
+        }
+    }
 }

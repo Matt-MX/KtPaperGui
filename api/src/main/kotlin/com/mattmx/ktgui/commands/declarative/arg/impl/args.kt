@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.commands.declarative.arg.impl
 
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import it.unimi.dsi.fastutil.Hash
+import org.bukkit.Axis
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -10,7 +10,7 @@ const val DELEGATED_ARG_NAME = "delegated_arg"
 fun <T : Any> argument(type: String, isVarArg: Boolean = false) =
     delegateArgument(argument<T>(type, DELEGATED_ARG_NAME))
 
-fun <T : Argument<*>> delegateArgument(arg: T) = ReadOnlyProperty { ref: Nothing?, property: KProperty<*> ->
+fun <T : Argument<*>> delegateArgument(arg: T) = ReadOnlyProperty { ref: Any?, property: KProperty<*> ->
     arg.apply {
         name(property.name)
     }
@@ -38,6 +38,9 @@ fun doubleArgument(type: String = "double") =
 
 fun relativeCoords(type: String = "coords") =
     delegateArgument(RelativeCoordinateArgument(DELEGATED_ARG_NAME, type))
+
+fun relativePositionOfAxis(axis: Axis) =
+    delegateArgument(PositionalArgument(DELEGATED_ARG_NAME, axis))
 
 fun playerArgument() =
     delegateArgument(OnlinePlayerArgument(DELEGATED_ARG_NAME))

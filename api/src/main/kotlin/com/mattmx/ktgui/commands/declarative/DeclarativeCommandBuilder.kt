@@ -146,10 +146,12 @@ open class DeclarativeCommandBuilder(
         localArgumentSuggestions[name()] = suggest
     }
 
-    fun getSuggestions(argument: Argument<*>?): CommandSuggestion<out Any?>? {
-        if (argument == null) return null
-        return localArgumentSuggestions[argument.name()]
-            ?: argument.suggests.orElse(null)
+    fun getSuggestions(argument: Argument<*>?, invocation: StorageCommandContext<*>): Optional<Collection<String>> {
+        if (argument == null) return Optional.empty()
+        return Optional.ofNullable(
+            localArgumentSuggestions[argument.name()]?.getSuggestion(invocation)
+                ?: argument.getSuggestions(invocation).orElse(null)
+        )
     }
 
     inline operator fun ChainCommandBuilder.invoke(block: DeclarativeSubCommandBuilder.() -> Unit) =
@@ -234,9 +236,9 @@ open class DeclarativeCommandBuilder(
 
             if (result.isEmpty() && !arg.isRequired()) continue
 
-            val thisArgSuggestions = getSuggestions(arg)?.getLastArgSuggestion(context)
-            if (thisArgSuggestions != null) {
-                suggestedArgs.addAll(thisArgSuggestions)
+            val thisArgSuggestions = getSuggestions(arg, context)
+            if (thisArgSuggestions.isPresent) {
+                suggestedArgs.addAll(thisArgSuggestions.get())
             }
         }
 
@@ -253,17 +255,17 @@ open class DeclarativeCommandBuilder(
     infix fun register(localObject: Any) = apply {
         val permissionNodePrefix = buildAutomaticPermissions.orElse(null)
         if (permissionNodePrefix != null) {
-            registerPermissionWithPrefixRecursively(permissionNodePrefix)
+            registerPermissionWithPrefixRecursively(permissionNodePrefix, 0)
         }
 
         val wrapper = DeclarativeCommandWrapper(name, this)
         GuiManager.registerCommand(localObject::class.javaObjectType, wrapper)
     }
 
-    fun registerPermissionWithPrefixRecursively(prefix: String) {
-        val finalPrefix = "$prefix.$name"
+    fun registerPermissionWithPrefixRecursively(prefix: String, depth: Int) {
+        val finalPrefix = if (depth == 0) name else "$prefix.$name"
         for (sub in subcommands) {
-            sub.registerPermissionWithPrefixRecursively(finalPrefix)
+            sub.registerPermissionWithPrefixRecursively(finalPrefix, depth + 1)
         }
         registerPermissionWithPrefix(finalPrefix)
     }
@@ -385,116 +387,14 @@ open class DeclarativeCommandBuilder(
         val runnableContext =
             RunnableCommandContext(context.sender, context.alias, context.rawArgs, argumentValues)
 
+        if (runs.isEmpty()) return
+
         val executor = runs.entries.firstOrNull { (clazz, _) ->
             clazz.isAssignableFrom(context.sender.javaClass)
         }
-            ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString("/") { "${it.javaClass.simpleName}s" }}.")
+            ?: return context.reply(!"&cThis command can only be ran by ${runs.keys.joinToString(", ") { "${it.javaClass.simpleName}s" }}.")
 
         executor.value.invoke(runnableContext)
-
-//        while (providedArgumentIndex < context.rawArgs.size) {
-//            val arg = context.rawArgs[providedArgumentIndex]
-//
-//            // Check sub-commands
-//            // todo could match multiple subcommands
-//            val cmd = subcommands.firstOrNull { it.nameEquals(arg) }
-//            if (cmd != null) {
-//                return cmd.invoke(
-//                    context.clone(context.rawArgs.subList(1, context.rawArgs.size))
-//                )
-//            }
-//
-//            // Check arguments
-//            val expectedArg = expectedArguments.getOrNull(expectedArgumentIndex)
-//            if (expectedArg != null) {
-//                // Get full argument string using consumer
-//                val consumed =
-//                    expectedArg.consumer.consume(context.rawArgs.subList(providedArgumentIndex, context.rawArgs.size))
-//                providedArgumentIndex += consumed.size
-//
-//                // If the value is empty and IS required
-//                if (expectedArg.isRequired() && consumed.isEmpty()) {
-//                    val missingArgContext =
-//                        InvalidArgContext(context.sender, context.alias, context.rawArgs, expectedArg, null)
-//
-//                    // Try and invoke this specific missing arg
-//                    if (expectedArg.invokeMissing(missingArgContext)) {
-//                        return
-//                    } else if (expectedArg.invokeInvalid(missingArgContext)) {
-//                        return
-//                    }
-//
-//                    // Invoke the global missing or invalid
-//                    if (missing.isPresent) {
-//                        missing.get().invoke(missingArgContext)
-//                    } else if (invalid.isPresent) {
-//                        invalid.get().invoke(missingArgContext)
-//                    }
-//
-//                    return
-//                } else {
-//                    var isValid = expectedArg.validate(consumed)
-//
-//                    val stringValue = consumed.joinToString(" ")
-//                    val actualValue = expectedArg.getValueOfString(this, context, consumed)
-//
-//                    isValid = isValid && (expectedArg.isOptional() || actualValue != null)
-//
-//                    if (!isValid) {
-//                        val invalidArgumentContext =
-//                            InvalidArgContext(context.sender, context.alias, context.rawArgs, expectedArg, stringValue)
-//
-//                        if (expectedArg.invokeInvalid(invalidArgumentContext)) {
-//                            return
-//                        }
-//
-//                        invalid.ifPresent { it.invoke(invalidArgumentContext) }
-//                        return
-//                    }
-//
-//                    argumentValues[expectedArg.name()] = expectedArg.createContext(stringValue, actualValue)
-//
-//                    expectedArgumentIndex++
-//                }
-//            } else {
-//                if (unknownCommand.isPresent) {
-//                    unknownCommand.get().invoke(context)
-//                } else {
-//                    context.reply(!"&cUnknown sub-command or arguments.")
-//                }
-//                return
-//            }
-//        }
-//
-//        val missing = expectedArguments.filter { arg ->
-//            !argumentValues.containsKey(arg.name())
-//        }
-//
-//        if (missing.isNotEmpty()) {
-//            missing.forEach { arg ->
-//                val missingArgContext =
-//                    InvalidArgContext(context.sender, context.alias, context.rawArgs, arg, null)
-//
-//                // Try and invoke this specific missing arg
-//                if (arg.invokeMissing(missingArgContext)) {
-//                    return
-//                } else if (arg.invokeInvalid(missingArgContext)) {
-//                    return
-//                }
-//            }
-//            return
-//        }
-//
-//        val runnableContext =
-//            RunnableCommandContext(context.sender, context.alias, context.rawArgs, argumentValues)
-//
-//        val executor =
-//            runs.entries.firstOrNull { (clazz, _) ->
-//                clazz.isAssignableFrom(context.sender.javaClass)
-//            }
-//                ?: return context.reply(!"&cThis command can only be ran by ${runs.values.joinToString("/") { "${it.javaClass.simpleName}s" }}.")
-//
-//        executor.value.invoke(runnableContext)
     }
 
     /**

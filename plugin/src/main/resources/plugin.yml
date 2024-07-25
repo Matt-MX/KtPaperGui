@@ -7,8 +7,15 @@ authors: [ MattMX ]
 website: https://github.com/Matt-MX/KtPaperGui
 description: Declarative GUI Library for Paper.
 
-depend:
-  - MCKotlin-Paper
-
 softdepend:
   - PlaceholderAPI
+  - MCKotlin-Paper
+
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.0.0
+
+commands:
+  ktgui-cmd-examples:
+    description: Example commands
+  ktgui:
+    description: Examples and debug

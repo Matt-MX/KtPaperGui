@@ -1,5 +1,6 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.commands.declarative.DeclarativeCommandWrapper
 import com.mattmx.ktgui.commands.declarative.arg.impl.*
 import com.mattmx.ktgui.commands.declarative.arg.suggests
 import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
@@ -14,17 +15,17 @@ import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.designer.DesignerManager
 import com.mattmx.ktgui.designer.GuiDesigner
 import com.mattmx.ktgui.examples.*
+import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.papi.placeholder
 import com.mattmx.ktgui.papi.placeholderExpansion
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.sound.playSound
 import com.mattmx.ktgui.sound.soundBuilder
-import com.mattmx.ktgui.utils.component
-import com.mattmx.ktgui.utils.not
-import com.mattmx.ktgui.utils.pretty
+import com.mattmx.ktgui.utils.*
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.command.CommandSender
@@ -53,7 +54,7 @@ class KotlinGui : JavaPlugin() {
         val animatedScoreboard = AnimatedScoreboardExample()
         val scoreboardExample = ScoreboardExample()
         val signalScoreboardExample = SignalScoreboardExample(this)
-        val examples = hashMapOf(
+        val examples by multiChoiceArgument(hashMapOf(
             "animated-scoreboard" to { animatedScoreboard },
             "scoreboard" to { scoreboardExample },
             "anvil-input" to { AnvilInputGuiExample() },
@@ -75,60 +76,47 @@ class KotlinGui : JavaPlugin() {
             "new-multi-screen-cram" to { NewCramMultiPageExample() },
             "new-multi-screen" to { NewMultiPageExample() },
             "hotbar" to { HotbarExample() }
-        )
+        ))
         GuiHookExample.registerListener(this)
 
         sync {
-            rawCommand("ktgui") {
-                permission = "ktgui.command"
-                playerOnly = true
-                suggestSubCommands = true
+            "ktgui" {
+                permission("ktgui.command")
 
-                executes {
-                    source.sendMessage(!"${mainColor}You are running ${subColor}KtGUI v${pluginMeta.version}")
+                examples invalid { reply(!"&cProvide a valid example ID") }
+                ("example" / examples).runs<Player> {
+                    examples()().run(sender)
+                } permission "ktgui.command.examples"
+
+                ("version").runs<CommandSender> {
+                    reply(!"${mainColor}You are on ${subColor}KtGUI v${pluginMeta.version}")
                 }
 
-                subCommands += rawCommand("example") {
-                    permission = "ktgui.command.example"
-                    playerOnly = true
-
-                    executes {
-                        val exampleId = args.getOrNull(1)
-                            ?: return@executes source.sendMessage(!"${mainColor}Please provide a valid example id.")
-
-                        val example = examples[exampleId]
-                            ?: return@executes source.sendMessage(!"${mainColor}Please provide a valid example id.")
-
-                        example().run(player())
-                    }
-                    suggests {
-                        examples.keys.filter { ex -> ex.startsWith(it.lastArg) }
-                    }
-                }
-
-                subCommands += rawCommand("cooldown-example") {
-                    permission = "ktgui.command.cooldown-example"
-                    playerOnly = true
-                    cooldown(Duration.ofSeconds(2))
-
-                    executes {
-                        source.sendMessage(!"&aNot on cool-down!")
-
-                        if (args.isNotEmpty()) {
-                            val newCoolDown = args.first().toLongOrNull()
-                                ?: return@executes
-
-                            val dur = Duration.ofMillis(newCoolDown)
-                            source.sendMessage(!"&aNew cool-down set: ${dur.pretty()}")
-                            cooldown(dur)
-                        }
+                ("debug") {
+                    runs<CommandSender> {
+                        val guis = GuiManager.getPlayersInGui()
+                        reply(!"${mainColor}${guis.size} players in a GUI currently.")
+                        guis.forEach { reply(!"&f- ${subColor}${it.key.name} in ${it.value::class.java.simpleName}") }
                     }
 
-                    onCooldown {
-                        player.sendMessage(!"&cPlease wait before doing that again.")
+                    val player by playerArgument()
+                    ("player" / player).runs<CommandSender> {
+                        val gui = player().getOpenGui()
+                            ?: return@runs reply(!"&cThat player has no GUI open.")
+
+                        reply(
+                            "${subColor}${player().name} ${mainColor}is currently in ${gui::class.java.simpleName}"
+                                .component
+                                .apply {
+                                    if (sender is Player) {
+                                        append("&a[open]".component.click { gui.open(sender as Player) })
+                                    }
+                                }
+                                .append("&c[close]".component.click { GuiManager.forceClose(player()) })
+                        )
                     }
                 }
-            }.register(false)
+            } register this@KotlinGui
 
             "ktgui-cmd-examples" {
                 buildAutomaticPermissions("ktgui.examples.command")
@@ -154,6 +142,18 @@ class KotlinGui : JavaPlugin() {
                         reply(!"&aTeleporting to ${coords().toVector()}")
                         sender.teleport(coords())
                     }
+                }
+
+                val block by relativeCoords()
+                block blockPos true
+                ("getblock" / block).runs<Player> {
+                    reply(
+                        !"&aBlock at ${block().toVector()} is " + block().block
+                            .type
+                            .translationKey()
+                            .translatable
+                            .color(TextColor.color(75, 200, 100))
+                    )
                 }
 
                 val invType by multiChoiceArgument(

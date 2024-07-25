@@ -36,13 +36,16 @@ object GuiManager : Listener {
     lateinit var owningPlugin: JavaPlugin
 
     fun init(plugin: JavaPlugin): Boolean {
+        pluginCache.cacheInstance(plugin::class.java, plugin)
         if (initialized) {
-            pluginCache.cacheInstance(plugin::class.java, plugin)
             return false
         }
+
         initialized = true
         owningPlugin = plugin
+        // todo probably should change this
         Scheduling.plugin = plugin
+
         Bukkit.getPluginManager().registerEvents(this, plugin)
         return true
     }

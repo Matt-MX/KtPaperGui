@@ -23,7 +23,7 @@ class DesignerManager(
             val typeOrRowArgMessage = !"&cYou must provide an InventoryType or an amount of rows."
             val typeOrRow by multiChoiceStringArgument(
                 (1..6).toList().map(Int::toString) +
-                    InventoryType.values().map { it.name.lowercase() }
+                    InventoryType.entries.map { it.name.lowercase() }
             )
             typeOrRow invalid { reply(typeOrRowArgMessage) }
 

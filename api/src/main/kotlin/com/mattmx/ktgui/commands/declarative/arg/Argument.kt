@@ -88,8 +88,8 @@ open class Argument<T : Any>(
         return !invalidCallback.isEmpty()
     }
 
-    open fun getSuggestions() {
-        TODO()
+    open fun getSuggestions(invocation: StorageCommandContext<*>): Optional<Collection<String>> {
+        return Optional.ofNullable(suggests.orElse(null)?.getLastArgSuggestion(invocation))
     }
 
     open fun getDefaultSuggestions(): Collection<String>? {

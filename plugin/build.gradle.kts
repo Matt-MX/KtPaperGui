@@ -1,63 +1,79 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 plugins {
-    kotlin("jvm")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    alias(libs.plugins.paperweight) apply true
+    alias(libs.plugins.kotlinJvm) apply true
+    alias(libs.plugins.shadow) apply true
+
     `maven-publish`
-    id("org.ajoberstar.grgit") version "4.1.0"
-}
-
-val paper_version: String by rootProject
-
-repositories {
-    mavenCentral()
-    maven("https://maven.pvphub.me/releases")
-    maven("https://repo.dmulloy2.net/repository/public/")
 }
 
 dependencies {
-    shadow(implementation(project(":api", "reobf"))!!)
+    shadow(implementation(project(":api"))!!)
+
+    paperweight.paperDevBundle(libs.versions.paperApi.get())
+    compileOnly(libs.placeholder.api)
+
     shadow(implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")!!)
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
-
-    paperweight.paperDevBundle(paper_version)
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 sourceSets["main"].resources.srcDir("src/resources/")
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
-fun getCheckedOutGitCommitHash(): String = grgit.head().abbreviatedId
-
-val commitHash = getCheckedOutGitCommitHash()
-
 tasks {
-    withType<ProcessResources> {
-        val props = "version" to "${rootProject.version}-commit-$commitHash"
+    test {
+        useJUnitPlatform()
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
+    shadowJar {
+        mergeServiceFiles()
+        archiveBaseName.set("ktgui")
+    }
+
+    shadowJar {
+        archiveBaseName.set("ktgui-plugin")
+        archiveClassifier.set("")
+        archiveVersion.set(rootProject.version.toString())
+
+//        minimize {
+//            exclude("kotlin/**")
+//        }
+
+        mergeServiceFiles()
+    }
+
+    processResources {
+        val props = "version" to "${rootProject.version}-commit-${getCurrentCommitHash()}"
         inputs.properties(props)
         filteringCharset = "UTF-8"
         filesMatching("plugin.yml") {
             expand(props)
         }
     }
-    build {
-        dependsOn(shadowJar)
+
+    assemble {
+        dependsOn("reobfJar")
     }
-    shadowJar {
-        archiveBaseName.set("ktgui-plugin")
-        archiveClassifier.set("")
-        archiveVersion.set(rootProject.version.toString())
+}
 
-        minimize {
-            exclude("kotlin/**")
-        }
+kotlin {
+    jvmToolchain(17)
+}
 
-        mergeServiceFiles()
+fun getCurrentCommitHash(): String {
+    val process = ProcessBuilder("git", "rev-parse", "HEAD").start()
+    val reader = BufferedReader(InputStreamReader(process.inputStream))
+    val commitHash = reader.readLine()
+    reader.close()
+    process.waitFor()
+    if (process.exitValue() == 0) {
+        return commitHash?.substring(0, 7) ?: ""
+    } else {
+        throw IllegalStateException("Failed to retrieve the commit hash.")
     }
 }
