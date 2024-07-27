@@ -44,3 +44,5 @@ include("api:api-core")
 findProject(":api:api-core")?.name = "api-core"
 include("api:api-paper")
 findProject(":api:api-paper")?.name = "api-paper"
+include("api:api-config")
+findProject(":api:api-config")?.name = "api-config"

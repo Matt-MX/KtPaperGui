@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     compileOnly(libs.kotlin.reflect)
-    compileOnly(libs.paper.api) // TODO remove
+    compileOnly(libs.paper.api)
     compileOnly(libs.placeholder.api)
     compileOnly(libs.kotlin.stdlib)
 }
