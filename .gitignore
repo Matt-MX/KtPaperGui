@@ -8,3 +8,4 @@
 /plugin/build
 /api/.gradle
 /plugin/.gradle
+.idea/

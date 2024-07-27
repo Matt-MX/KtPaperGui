@@ -7,6 +7,7 @@ grgit = "5.2.2"
 paperApi = "1.20.2-R0.1-SNAPSHOT"
 placeholderapi = "2.11.6"
 protocolLib = "5.1.0"
+paperweight = "1.7.1"
 
 [libraries]
 
@@ -22,3 +23,4 @@ kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 updateDeps = { id = "com.github.ben-manes.versions", version.ref = "updateVersions" }
 shadow = { id = "io.github.goooler.shadow", version.ref = "shadow" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
+paperweight = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight" }
