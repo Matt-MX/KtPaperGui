@@ -42,6 +42,11 @@ class ChainSoundBuilder {
         steps.add(Step(Step.Type.SOUND, sound))
     }
 
+    infix fun mapSounds(block: SoundBuilder.() -> Unit) = apply {
+        steps.filter { it.type == Step.Type.SOUND }
+            .forEach { block.invoke(it.sound()) }
+    }
+
     @JvmName("waitTicks")
     fun wait(ticks: Long) {
         this.steps.add(Step(Step.Type.WAIT, ticks))
@@ -63,8 +68,9 @@ class ChainSoundBuilder {
                         Step.Type.SOUND -> {
                             val wrapper = step.sound()
                             val sound = wrapper.build()
-                            if (wrapper.emitter == EmitterType.LOCATION && wrapper.location.isPresent) {
-                                val location = wrapper.location.get().get()
+
+                            if (wrapper.emitter == EmitterType.LOCATION) {
+                                val location = wrapper.location.orElse(this@ChainSoundBuilder.location.get()).get()
                                 audience.forEach { it.playSound(sound, location.x, location.z, location.z) }
                             } else {
                                 audience.forEach { it.playSound(sound(wrapper.sound, wrapper.source, wrapper.volume, wrapper.pitch), Emitter.self()) }

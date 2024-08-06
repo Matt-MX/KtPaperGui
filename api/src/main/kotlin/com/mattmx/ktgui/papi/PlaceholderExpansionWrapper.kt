@@ -3,20 +3,19 @@ package com.mattmx.ktgui.papi
 import com.mattmx.ktgui.commands.declarative.ChainCommandBuilder
 import com.mattmx.ktgui.commands.declarative.DeclarativeCommandBuilder
 import com.mattmx.ktgui.commands.declarative.arg.Argument
-import com.mattmx.ktgui.commands.declarative.arg.ArgumentContext
-import com.mattmx.ktgui.commands.declarative.arg.ArgumentProcessor
 import com.mattmx.ktgui.commands.declarative.div
-import com.mattmx.ktgui.commands.declarative.invocation.StorageCommandContext
 import com.mattmx.ktgui.utils.JavaCompatibility
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import me.clip.placeholderapi.expansion.Relational
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
 class PlaceholderExpansionWrapper(
-    private val owner: JavaPlugin
-) : PlaceholderExpansion() {
+    val owner: JavaPlugin
+) : PlaceholderExpansion(), Relational {
     private val placeholders = arrayListOf<Placeholder>()
+    private val parser = PlaceholderParser(this)
     var id = owner.name
         private set
     var _persists = false
@@ -34,6 +33,7 @@ class PlaceholderExpansionWrapper(
     override fun getAuthor() = _author
     override fun getVersion() = _version
     override fun getPlaceholders() = placeholders.map { it.toString() }.toMutableList()
+    fun getPlaceholdersList() = placeholders
     override fun persist() = _persists
     override fun canRegister() = if (requiresPredicate.isPresent) requiresPredicate.get()() else true
 
@@ -80,56 +80,26 @@ class PlaceholderExpansionWrapper(
 
     override fun onPlaceholderRequest(player: Player?, params: String): String? {
         val paramsSplit = splitArgs(params)
+        val (placeholder, args) = parser.parse(player, params) ?: return null
 
-        val args = hashMapOf<String, ArgumentContext<*>>()
-        val baseContext = if (player != null)
-            StorageCommandContext(player, paramsSplit.firstOrNull() ?: "", paramsSplit)
-        else null
+        val context = PlaceholderParseContext(player, paramsSplit, args)
+        val result = placeholder.parse(context)
 
-        for (placeholder in placeholders.sortedByDescending { it.priority }) {
-            val identifier = placeholder.match.name
-            if (identifier != Placeholder.EMPTY_PLACEHOLDER && paramsSplit.getOrNull(0) != identifier)
-                continue
+        if (result != null) {
+            return result.toString()
+        }
+        return null
+    }
 
-            val argumentParser = ArgumentProcessor(
-                emptyCommand,
-                baseContext,
-                paramsSplit.subList(1, paramsSplit.size)
-            )
+    override fun onPlaceholderRequest(one: Player, two: Player, params: String): String? {
+        val paramsSplit = splitArgs(params)
+        val (placeholder, args) = parser.parse(one, params) ?: return null
 
-            var invalid = false
+        val context = RelationalPlaceholderParseContext(one, two, paramsSplit, args)
+        val result = placeholder.parseRelationally(context)
 
-            for (expArg in placeholder.match.arguments) {
-                if (invalid) continue
-
-                val consumeResult = expArg.consume(argumentParser)
-
-                if (expArg.isRequired() && consumeResult.isEmpty()) {
-                    invalid = true
-                    if (isDebug) {
-                        owner.logger.warning(
-                            "Placeholder(${
-                                identifier
-                            }) Failed parsing for arg $expArg in placeholder $name - $consumeResult"
-                        )
-                    }
-                    continue
-                } else {
-                    args[expArg.name()] = expArg.createContext(
-                        emptyCommand,
-                        baseContext,
-                        consumeResult.args ?: emptyList()
-                    )
-                }
-            }
-            if (invalid) continue
-
-            val context = PlaceholderParseContext(player, paramsSplit, args)
-            val result = placeholder.parse(context)
-
-            if (result != null) {
-                return result.toString()
-            }
+        if (result != null) {
+            return result.toString()
         }
         return null
     }

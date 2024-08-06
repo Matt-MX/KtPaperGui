@@ -61,8 +61,10 @@ tasks {
     }
 }
 
-kotlin {
-    jvmToolchain(17)
+java {
+    withJavadocJar()
+    withSourcesJar()
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 fun getCurrentCommitHash(): String {

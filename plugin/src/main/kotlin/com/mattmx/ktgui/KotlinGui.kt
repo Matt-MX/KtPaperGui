@@ -1,30 +1,22 @@
 package com.mattmx.ktgui
 
-import com.mattmx.ktgui.commands.declarative.DeclarativeCommandWrapper
 import com.mattmx.ktgui.commands.declarative.arg.impl.*
-import com.mattmx.ktgui.commands.declarative.arg.suggests
-import com.mattmx.ktgui.commands.declarative.arg.suggestsTopLevel
 import com.mattmx.ktgui.commands.declarative.arg.withArgs
 import com.mattmx.ktgui.commands.declarative.div
 import com.mattmx.ktgui.commands.declarative.invoke
 import com.mattmx.ktgui.commands.declarative.runs
-import com.mattmx.ktgui.commands.rawCommand
 import com.mattmx.ktgui.commands.usage.CommandUsageOptions
 import com.mattmx.ktgui.components.screen.GuiScreen
 import com.mattmx.ktgui.cooldown.ActionCoolDown
 import com.mattmx.ktgui.designer.DesignerManager
-import com.mattmx.ktgui.designer.GuiDesigner
+import com.mattmx.ktgui.dsl.placeholder
+import com.mattmx.ktgui.dsl.placeholderExpansion
 import com.mattmx.ktgui.examples.*
 import com.mattmx.ktgui.extensions.getOpenGui
-import com.mattmx.ktgui.papi.placeholder
-import com.mattmx.ktgui.papi.placeholderExpansion
 import com.mattmx.ktgui.scheduling.sync
 import com.mattmx.ktgui.sound.playSound
 import com.mattmx.ktgui.sound.soundBuilder
 import com.mattmx.ktgui.utils.*
-import me.clip.placeholderapi.PlaceholderAPI
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Sound
@@ -74,10 +66,17 @@ class KotlinGui : JavaPlugin() {
             "config-gui" to { GuiConfigExample() },
             "refresh-scoreboard" to { signalScoreboardExample },
             "new-multi-screen-cram" to { NewCramMultiPageExample() },
+            "new-multi-screen-cram-strategy" to { CramStrategyExample() },
             "new-multi-screen" to { NewMultiPageExample() },
             "hotbar" to { HotbarExample() }
         ))
         GuiHookExample.registerListener(this)
+
+        placeholderExpansion {
+            placeholder("v") {
+                version
+            }
+        }
 
         sync {
             "ktgui" {

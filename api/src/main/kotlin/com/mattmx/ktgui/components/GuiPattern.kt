@@ -8,7 +8,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 class GuiPattern(
-    private var pattern: String
+    var pattern: String
 ) {
     private val items = hashMapOf<Char, IGuiButton<*>>()
     var blankSpaceChar = '-'
@@ -52,12 +52,6 @@ class GuiPattern(
         }
         return map
     }
-
-    fun setPattern(pattern: String) {
-        this.pattern = pattern
-    }
-
-    fun getPattern() = pattern
 
     private fun trimPattern() {
         pattern = pattern.replace("\n", "")

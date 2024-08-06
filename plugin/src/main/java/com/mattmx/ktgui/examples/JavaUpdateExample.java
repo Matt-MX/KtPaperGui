@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.examples;
 
 import com.mattmx.ktgui.GuiManager;
+import com.mattmx.ktgui.commands.declarative.ChainCommandBuilder;
 import com.mattmx.ktgui.components.GuiPattern;
 import com.mattmx.ktgui.components.button.ButtonClickedEvent;
 import com.mattmx.ktgui.components.button.GuiButton;
@@ -10,9 +11,11 @@ import com.mattmx.ktgui.components.signal.Signal;
 import com.mattmx.ktgui.event.PreGuiBuildEvent;
 import com.mattmx.ktgui.scheduling.TaskTracker;
 import com.mattmx.ktgui.scoreboards.ScoreboardBuilder;
+import com.mattmx.ktgui.sound.ChainSoundBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -21,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.mattmx.ktgui.dsl.EventKt.event;
 import static com.mattmx.ktgui.dsl.EventKt.event;
+import static com.mattmx.ktgui.sound.ChainSoundBuilderKt.sound;
 import static com.mattmx.ktgui.utils.ColorKt.component;
 
 public class JavaUpdateExample implements Example {
@@ -115,5 +119,17 @@ public class JavaUpdateExample implements Example {
             System.out.println("Will not execute.");
             return null;
         });
+    }
+
+    public void testSound(Player player) {
+        ChainSoundBuilder sound = new ChainSoundBuilder()
+            .thenPlay(Sound.ENTITY_ITEM_PICKUP)
+            .thenWait(1L)
+            .thenPlay(
+                sound(Sound.ENTITY_ALLAY_DEATH)
+                    .pitch(1f)
+            );
+
+        sound.playFor(player);
     }
 }
