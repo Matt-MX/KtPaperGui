@@ -1,6 +1,8 @@
 package com.mattmx.ktgui.components.screen.slot
 
+import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.screen.GuiScreen
+import kotlin.math.floor
 
 class Slots(
     private val parent: GuiScreen
@@ -13,8 +15,10 @@ class Slots(
 
     val first: Int
         get() = parent.first()
-    val middle: Int
-        get() = parent.middle()
+    val center: Int
+        get() = if (parent.type == null) {
+            row(floor(parent.rows * 0.5).toInt()).middle
+        } else floor(parent.totalSlots() * 0.5).toInt()
     val last: Int
         get() = parent.last()
 
@@ -24,6 +28,14 @@ class Slots(
 
     fun of(x: Int, y: Int): Int {
         return Row(y).column(x)
+    }
+
+    fun after(sibling: GuiButton<*>): Int {
+        return (sibling.slots().maxOrNull() ?: (first - 1)) + 1
+    }
+
+    fun before(sibling: GuiButton<*>): Int {
+        return (sibling.slots().minOrNull() ?: (last + 1)) - 1
     }
 
     class Row(

@@ -46,4 +46,8 @@ fun GuiScreen.effect(block: GuiScreen.() -> Unit) =
     EffectBlock(this, block).apply { this@effect.addEffect(this) }
 
 fun GuiScreen.refresh(repeat: Long, block: GuiScreen.() -> Unit) =
-    RefreshBlock(repeat, this, block).apply { this@refresh.addRefreshBlock(this) }
+    RefreshBlock(repeat, this, block)
+        .apply {
+            block.invoke(this@refresh)
+            this@refresh.addRefreshBlock(this)
+        }

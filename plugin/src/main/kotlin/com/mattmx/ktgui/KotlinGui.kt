@@ -68,7 +68,8 @@ class KotlinGui : JavaPlugin() {
             "new-multi-screen-cram" to { NewCramMultiPageExample() },
             "new-multi-screen-cram-strategy" to { CramStrategyExample() },
             "new-multi-screen" to { NewMultiPageExample() },
-            "hotbar" to { HotbarExample() }
+            "hotbar" to { HotbarExample() },
+            "f" to { Example { createMenu() andOpen it } }
         ))
         GuiHookExample.registerListener(this)
 

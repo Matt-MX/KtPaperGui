@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.components.button
 
 import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.Replyable
 import com.mattmx.ktgui.extensions.getOpenGui
 import com.mattmx.ktgui.item.DslIBuilder
 import com.mattmx.ktgui.item.builder
@@ -27,7 +28,7 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
     val player: Player,
     val event: InventoryClickEvent,
     val itemClicked: ItemStack? = event.currentItem
-) : Event(), Cancellable {
+) : Event(), Cancellable, Replyable {
     val slot = event.rawSlot
     val currentGui = player.getOpenGui()
     private var callbackShouldContinue = true
@@ -53,7 +54,9 @@ data class ButtonClickedEvent<T : IGuiButton<*>>(
 
     override fun setCancelled(cancel: Boolean) = shouldContinueCallback(!cancel)
 
-    fun reply(component: Component) = player.sendMessage(component)
+    override fun getTarget(): Player {
+        return player
+    }
 
     fun forceClose() {
         GuiManager.clearGui(player)

@@ -264,6 +264,7 @@ open class GuiScreen(
         return totalSlots() - 1
     }
 
+    @Deprecated("Use slots.middle", replaceWith = ReplaceWith("slots.middle"))
     fun middle(): Int {
         return if (type == null) {
             (floor(rows * 0.5) + 4).toInt()
