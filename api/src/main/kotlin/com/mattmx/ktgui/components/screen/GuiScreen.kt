@@ -35,6 +35,7 @@ import java.lang.Integer.min
 import java.util.*
 import java.util.concurrent.Future
 import java.util.function.Consumer
+import kotlin.math.floor
 
 open class GuiScreen(
     title: Component = Component.empty(),
@@ -51,6 +52,7 @@ open class GuiScreen(
                 player.openInventory.title = value.legacy()
             }
         }
+    val onRefresh = EventCallback<Unit>()
 
     // Can be used to identify dsl guis
     var id: String = UUID.randomUUID().toString()
@@ -85,6 +87,10 @@ open class GuiScreen(
         return items.entries
             .filter { it.value == button }
             .map { it.key }
+    }
+
+    override fun getSlot(slot: Int): IGuiButton<*>? {
+        return items[slot]
     }
 
     override fun numberOfItems(): Int {
@@ -134,12 +140,18 @@ open class GuiScreen(
                 inv[slot] = item.formatIntoItemStack()
         }
 
+        onRefresh(Unit)
+
         GuiManager.getPlayers(this)
             .forEach { player ->
                 for ((index, item) in inv.withIndex()) {
                     player.openInventory.setItem(index, item)
                 }
             }
+    }
+
+    infix fun andOpen(player: Player) = apply {
+        open(player)
     }
 
     override fun open(player: Player) {
@@ -251,7 +263,9 @@ open class GuiScreen(
     }
 
     fun middle(): Int {
-        return kotlin.math.floor(totalSlots() * 0.5).toInt()
+        return if (type == null) {
+            (floor(rows * 0.5) + 4).toInt()
+        } else floor(totalSlots() * 0.5).toInt()
     }
 
     fun first(): Int {

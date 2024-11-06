@@ -12,6 +12,8 @@ interface IGuiScreen {
 
     fun getSlots(button: IGuiButton<*>) : List<Int>
 
+    fun getSlot(slot: Int) : IGuiButton<*>?
+
     fun totalSlots() : Int
 
     fun numberOfItems() : Int { return 0 }
@@ -20,7 +22,7 @@ interface IGuiScreen {
 
     fun clearSlot(vararg slot: Int)
 
-    fun open(player: Player)
+    infix fun open(player: Player)
 
     fun copy() : IGuiScreen
 

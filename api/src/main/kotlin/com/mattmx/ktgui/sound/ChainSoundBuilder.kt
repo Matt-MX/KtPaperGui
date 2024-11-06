@@ -173,4 +173,6 @@ fun main(player: Player) {
         .thenPlay(Sound.ENTITY_ENDER_DRAGON_DEATH)
         .thenWait(100)
         .thenPlay(sound(Sound.BLOCK_NOTE_BLOCK_BANJO) volume 0.4f)
+
+    builder.playFor(player)
 }

@@ -12,8 +12,15 @@ import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryType
 import java.util.function.Supplier
 
-inline fun gui(title: Component, rows: Int = 6, block: GuiScreen.() -> Unit) = GuiScreen(title, rows).apply(block)
-inline fun gui(title: Component, type: InventoryType, block: GuiScreen.() -> Unit) = GuiScreen(title, type = type).apply(block)
+inline fun gui(title: Component, rows: Int = 6, block: GuiScreen.() -> Unit) =
+    GuiScreen(title, rows).apply(block)
+inline fun gui(title: Component, type: InventoryType, block: GuiScreen.() -> Unit) =
+    GuiScreen(title, type = type).apply(block)
+inline fun gui(rows: Int = 6, block: GuiScreen.() -> Unit) =
+    GuiScreen(Component.empty(), rows).apply(block)
+inline fun gui(type: InventoryType, block: GuiScreen.() -> Unit) =
+    GuiScreen(Component.empty(), type = type).apply(block)
+
 
 inline fun <reified T : IGuiButton<*>> IGuiScreen.button(
     constructor: Supplier<T> = Supplier { GuiButton() as T },
@@ -37,5 +44,6 @@ fun IGuiScreen.signalButton(material: Material, block: SignalButton.() -> Unit) 
 
 fun GuiScreen.effect(block: GuiScreen.() -> Unit) =
     EffectBlock(this, block).apply { this@effect.addEffect(this) }
+
 fun GuiScreen.refresh(repeat: Long, block: GuiScreen.() -> Unit) =
     RefreshBlock(repeat, this, block).apply { this@refresh.addRefreshBlock(this) }

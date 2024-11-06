@@ -18,9 +18,6 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.PotionMeta
-import org.bukkit.potion.PotionEffect
-import java.lang.StringBuilder
-import java.util.StringJoiner
 import java.util.function.Consumer
 
 open class GuiButton<T : GuiButton<T>>(
@@ -42,6 +39,7 @@ open class GuiButton<T : GuiButton<T>>(
         protected set
     var postBuild = EventCallback<ItemStack>()
         protected set
+    val onUpdate = EventCallback<GuiButton<T>>()
 
     // todo should remove this once we have no need for it (parent has been declared)
     private var slots: ArrayList<Int>? = null
@@ -89,6 +87,19 @@ open class GuiButton<T : GuiButton<T>>(
         if (hasParent()) {
             slots?.removeAll(slot.toSet())
             parent.clearSlot(*slot)
+
+            // Update in live
+            getViewers().forEach {
+                for (i in slot) {
+                    val button = parent.getSlot(i)
+                        ?: continue
+
+                    val item = button.formatIntoItemStack(it)
+
+                    it.openInventory.setItem(i, item)
+                }
+            }
+
         } else {
             if (slots != null) {
                 slots?.removeAll(slot.toSet())
@@ -101,6 +112,14 @@ open class GuiButton<T : GuiButton<T>>(
             if (slots == null) slots = arrayListOf()
             slots!!.add(slot)
             parent.setSlot(this, slot)
+
+            // Update in live
+            getViewers().forEach {
+                val item = formatIntoItemStack(it)
+
+                it.openInventory.setItem(slot, item)
+            }
+
         } else {
             if (slots == null) slots = arrayListOf()
             slots!!.add(slot)
@@ -230,12 +249,17 @@ open class GuiButton<T : GuiButton<T>>(
         return this as T
     }
 
+    fun getViewers() = if (hasParent()) GuiManager.getPlayers(parent) else emptySet()
+
     /**
      * Updates the item for all players with the parent GUI open.
      */
     fun update() {
+        onUpdate(this)
+
         val itemStack = formatIntoItemStack()
         val players = GuiManager.getPlayers(parent)
+
         players.forEach { player ->
             this.slots().forEach { slot ->
                 player.openInventory.setItem(slot, itemStack)
