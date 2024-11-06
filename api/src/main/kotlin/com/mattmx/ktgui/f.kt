@@ -13,8 +13,6 @@ import org.bukkit.entity.Player
 fun createMenu(player: Player): GuiScreen {
     return gui(3) {
         title { !"Balls" }
-        
-        val slots = Slots(this)
 
         button(Material.RED_STAINED_GLASS) {
             named { !"Test" }

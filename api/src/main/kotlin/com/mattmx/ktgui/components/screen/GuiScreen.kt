@@ -7,6 +7,7 @@ import com.mattmx.ktgui.components.RefreshBlock
 import com.mattmx.ktgui.components.button.ButtonClickedEvent
 import com.mattmx.ktgui.components.button.GuiButton
 import com.mattmx.ktgui.components.button.IGuiButton
+import com.mattmx.ktgui.components.screen.slot.Slots
 import com.mattmx.ktgui.components.signal.GuiSignalOwner
 import com.mattmx.ktgui.components.signal.Signal
 import com.mattmx.ktgui.event.ContinuousEventCallback
@@ -52,6 +53,7 @@ open class GuiScreen(
                 player.openInventory.title = value.legacy()
             }
         }
+    val slots = Slots(this)
     val onRefresh = EventCallback<Unit>()
 
     // Can be used to identify dsl guis
