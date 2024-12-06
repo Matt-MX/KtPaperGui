@@ -3,12 +3,15 @@ package com.mattmx.ktgui
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemRarity
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
+import com.github.retrooper.packetevents.protocol.sound.Sounds
 import com.github.retrooper.packetevents.util.Dummy
 import com.google.inject.Inject
+import com.mattmx.ktgui.click.ClickType
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.Slots
 import com.mattmx.ktgui.screen.refresh
+import com.mattmx.ktgui.screen.updatable
 import com.mattmx.ktgui.util.not
 import com.mojang.brigadier.Command.SINGLE_SUCCESS
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -19,10 +22,13 @@ import com.velocitypowered.api.plugin.Dependency
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import org.slf4j.Logger
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.time.Duration.Companion.seconds
 
@@ -111,20 +117,53 @@ class VelocityKtGuiImpl @Inject constructor(
                 })
             .then(BrigadierCommand.literalArgumentBuilder("refresh")
                 .executes { invoc ->
-                    val player = invoc as? Player ?: return@executes SINGLE_SUCCESS
+                    val player = invoc.source as? Player ?: return@executes SINGLE_SUCCESS
 
-                    val timeOpen = LocalDate.now()
-                    val formatter = DateTimeFormatter.ISO_DATE
+                    val timeOpened = LocalDateTime.now()
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                     gui(!"Refreshing", GuiType.ofRows(1)) {
-                        refresh(20.seconds) {
+                        val refreshing = refresh(1.seconds) {
+                            val now = LocalDateTime.now()
+                            val timeOpen = Duration.between(timeOpened, now)
+
+                            title = !"Refreshing ${timeOpen.seconds}"
+
                             button(ItemTypes.CLOCK) {
-                                named(!"&f${LocalDate.now().format(formatter)}")
+                                named(!"<white>${now.format(formatter)}")
                                 lore {
-                                    +!"&7Open for ${Duration.between(timeOpen, LocalDate.now()).seconds}s"
+                                    +!"<gray>Open for ${timeOpen.seconds}s"
+
+                                    +!"<dark_gray><i>Italic</i> :3"
                                 }
+                                click {
+                                    ClickTypes.LEFT {
+                                        player.sendMessage(!"Clicked")
+                                    }
+                                }
+                            } slot guiType.middle
+                        }
+
+                        updatable {
+                            if (refreshing.isActive()) {
+                                button(ItemTypes.REDSTONE) {
+                                    named(!"<red>Stop updating")
+                                    click.handle(ClickTypes.LEFT) {
+                                        refreshing.stop()
+                                        update()
+                                    }
+                                } slot guiType.last
+                            } else {
+                                button(ItemTypes.TURTLE_SCUTE) {
+                                    named(!"<green>Resume")
+                                    click.handle(ClickTypes.LEFT) {
+                                        refreshing.resume()
+                                        update()
+                                    }
+                                } slot guiType.last
                             }
                         }
-                    }
+
+                    }.open(player)
 
                     SINGLE_SUCCESS
                 })

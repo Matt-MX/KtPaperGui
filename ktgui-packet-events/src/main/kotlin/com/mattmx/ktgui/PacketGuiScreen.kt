@@ -87,6 +87,7 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
     }
 
     override fun open(player: Any) {
+        open.apply(player)
         setActiveGui(player)
         val playerManager = PacketEvents.getAPI().playerManager
 
@@ -105,5 +106,13 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
         PacketEvents.getAPI()
             .playerManager
             .sendPacket(player, contents)
+    }
+
+    override fun refreshTitle(player: Any) {
+        val updateTitle = createOpenWindowPacket()
+
+        PacketEvents.getAPI()
+            .playerManager
+            .sendPacket(player, updateTitle)
     }
 }

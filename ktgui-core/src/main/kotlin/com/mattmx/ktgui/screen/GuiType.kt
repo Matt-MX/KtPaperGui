@@ -6,6 +6,8 @@ class GuiType(
 ) {
     val middle = rows?.let { Slots.ofRow(rows).middle }
         ?: error("Can only get middle slot of a row gui type!")
+    val last = getTotalSlots() - 1
+    val first = 0
 
     fun getTotalSlots(): Int {
         return if (rows != null) {

@@ -11,6 +11,9 @@ import com.mattmx.ktgui.click.ClickButtonEvent
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
 import com.mattmx.ktgui.util.ParentEventCallback
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.Style
+import net.kyori.adventure.text.format.TextDecoration
 
 @Suppress("UNCHECKED_CAST")
 open class PacketGuiButton<T : PacketGuiButton<T>>(
@@ -49,8 +52,16 @@ open class PacketGuiButton<T : PacketGuiButton<T>>(
                 components.forEach { (type, value) ->
                     builder.addComponent(type, value)
                 }
+
+                // Clients perceive lore as always italic if not otherwise specified.
+                val finalLore = lore.map { line ->
+                    Component.empty()
+                        .append(line)
+                        .style(Style.style().decoration(TextDecoration.ITALIC, false))
+                }
+
+                builder.component(ComponentTypes.LORE, ItemLore(finalLore))
             }
-            .component(ComponentTypes.LORE, ItemLore(lore))
             .component(ComponentTypes.ENCHANTMENTS, ItemEnchantments(enchantments, showEnchantsInTooltip))
             .also { builder ->
                 preBuild.apply(builder)

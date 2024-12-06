@@ -7,8 +7,13 @@ import net.kyori.adventure.text.Component
 
 abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     var guiType: GuiType,
-    open var title: Component
+    title: Component
 ) {
+    open var title: Component = title
+        set(value) {
+            field = value
+            refreshTitle()
+        }
     var windowIdentifier: String = GuiButton.EMPTY_ID
     var items = hashMapOf<Int, B>()
     abstract val open: ParentEventCallback<P, *>
@@ -45,12 +50,21 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
 
     abstract fun refresh(player: P)
 
+    abstract fun refreshTitle(player: P)
+
     fun openAsAny(player: Any) = (player as? P)?.let { open(it) }
     fun refreshAsAny(player: Any) = (player as? P)?.let { refresh(it) }
+    fun refreshTitleAsAny(player: Any) = (player as? P)?.let { refreshTitle(it) }
 
     fun refresh() {
         for ((player, _) in GuiManager.getInstance().getActiveOfInstance(this)) {
             refreshAsAny(player)
+        }
+    }
+
+    fun refreshTitle() {
+        for ((player, _) in GuiManager.getInstance().getActiveOfInstance(this)) {
+            refreshTitleAsAny(player)
         }
     }
 }
