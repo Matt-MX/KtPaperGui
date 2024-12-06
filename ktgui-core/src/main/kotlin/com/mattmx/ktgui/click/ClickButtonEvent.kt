@@ -8,4 +8,6 @@ interface ClickButtonEvent {
 
     fun getClickType() : ClickType
 
+    fun <T> getPlayer() : T
+
 }

@@ -9,7 +9,7 @@ class PacketEventsGuiManagerImpl(
 ) : PacketEventsGuiManager() {
 
     init {
-        instance = this
+        setInstance(this)
     }
 
     override fun createRepeatingTask(repeat: Duration, task: () -> Unit): TaskWrapper {

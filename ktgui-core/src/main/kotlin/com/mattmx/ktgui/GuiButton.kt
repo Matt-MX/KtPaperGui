@@ -1,5 +1,7 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.click.ClickButtonEvent
+import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.util.EnchantmentMap
 import com.mattmx.ktgui.util.ParentEventCallback
 import com.mattmx.ktgui.util.UnaryOperatorList
@@ -60,6 +62,8 @@ abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
     } as S
 
     abstract fun buildItem(): I
+
+    abstract fun getClickEventHandler(): ClickEventCallback<S, *>
 
     companion object {
         const val EMPTY_ID = "emptyId"

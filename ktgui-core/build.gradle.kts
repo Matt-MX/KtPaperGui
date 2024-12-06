@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     compileOnly(libs.adventure)
+    compileOnly(libs.adventure.minimessage)
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }

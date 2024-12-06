@@ -13,14 +13,18 @@ class WindowEventsListener : PacketListenerAbstract() {
         when (event.packetType) {
             PacketType.Play.Client.CLICK_WINDOW -> {
                 val packet = WrapperPlayClientClickWindow(event)
-                val gui = PacketEventsGuiManager.instance.getActiveGui(event.getPlayer()) ?: return
+                val gui = GuiManager.getInstance<PacketEventsGuiManager>()
+                    .getActiveGui(event.getPlayer())
+                    ?: return
                 gui.handleClick(event.getPlayer(), packet)
                 event.isCancelled = true
             }
 
             PacketType.Play.Client.CLOSE_WINDOW -> {
                 val packet = WrapperPlayClientCloseWindow(event)
-                val gui = PacketEventsGuiManager.instance.getActiveGui(event.getPlayer()) ?: return
+                val gui = GuiManager.getInstance<PacketEventsGuiManager>()
+                    .getActiveGui(event.getPlayer())
+                    ?: return
                 gui.handleClose(event.getPlayer(), packet)
                 event.isCancelled = true
             }

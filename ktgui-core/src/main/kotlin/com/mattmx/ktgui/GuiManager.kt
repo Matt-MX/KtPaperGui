@@ -1,11 +1,29 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.screen.GuiScreen
+import com.mattmx.ktgui.screen.GuiType
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.text.Component
 import java.time.Duration
 import java.util.*
 
-abstract class GuiManager<P, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B>> {
+abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B>> {
     private val activeSessions = Collections.synchronizedMap(hashMapOf<P, G>())
+
+    fun setActiveGui(player: Any, gui: Any) {
+        val finalPlayer = player as? P ?: return
+        val finalGui = gui as? G ?: return
+        synchronized(activeSessions) {
+            activeSessions[finalPlayer] = finalGui
+        }
+    }
+
+    fun removeActiveGui(player: Any): G? {
+        val finalPlayer = player as? P ?: return null
+        synchronized(activeSessions) {
+            return activeSessions.remove(finalPlayer)
+        }
+    }
 
     fun getActiveGui(player: P): G? {
         synchronized(activeSessions) {
@@ -23,5 +41,33 @@ abstract class GuiManager<P, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B>> {
         return activeSessions.filterValues { it.windowIdentifier == id }
     }
 
+    abstract fun createPlatformButtonOfType(typeKeyed: Key) : B
+
+    abstract fun createPlatformButton(type: Any) : B
+
+    abstract fun createPlatformGui(title: Component, type: GuiType) : G
+
     abstract fun createRepeatingTask(repeat: Duration, task: () -> Unit) : TaskWrapper
+
+    companion object {
+        private lateinit var instance: GuiManager<*, *, *>
+
+        fun setInstance(instance: GuiManager<*, *, *>) {
+            this.instance = instance
+        }
+
+        @JvmName("getInstanceAny")
+        fun getInstance(): GuiManager<*, *, *> {
+            if (!::instance.isInitialized) {
+                error("GuiManager is not initialized yet!")
+            }
+
+            return instance
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        fun <T : GuiManager<*, *, *>> getInstance() : T {
+            return getInstance() as T
+        }
+    }
 }

@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemLor
 import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
+import com.mattmx.ktgui.click.ClickButtonEvent
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
 import com.mattmx.ktgui.util.ParentEventCallback
@@ -59,5 +60,9 @@ open class PacketGuiButton<T : PacketGuiButton<T>>(
         postBuild.apply(itemStack)
 
         return itemStack
+    }
+
+    override fun getClickEventHandler(): ClickEventCallback<T, *> {
+        return click
     }
 }

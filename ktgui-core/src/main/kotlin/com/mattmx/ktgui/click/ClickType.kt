@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.click
 
 // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol#Click_Container:~:text=on%20the%20item.-,Click%20Container,-%5Bedit%20source
-class ClickType(
+data class ClickType(
     val mode: Int,
     val button: Int,
     val slot: Int = 0
@@ -12,6 +12,7 @@ class ClickType(
 }
 
 object ClickTypes {
+    val ALL_CLICK_TYPES = mutableListOf<ClickType>()
     val NUMBER_KEY_RANGE = (0..8)
 
     val LEFT = ClickType(0, 0)
@@ -59,8 +60,6 @@ object ClickTypes {
         DRAG_END_MIDDLE
     )
 
-    val allClickTypes = mutableListOf<ClickType>()
-
     fun numberKey(number: Int): ClickType {
         assert(number in NUMBER_KEY_RANGE) { "Number keys range from ${NUMBER_KEY_RANGE.first}-${NUMBER_KEY_RANGE.last}!" }
 
@@ -68,11 +67,11 @@ object ClickTypes {
     }
 
     fun registerType(clickType: ClickType) {
-        allClickTypes.add(clickType)
+        ALL_CLICK_TYPES.add(clickType)
     }
 
     fun match(mode: Int, button: Int, slot: Int): ClickType {
         val searching = ClickType(mode, button, slot)
-        return allClickTypes.firstOrNull { it == searching } ?: LEFT
+        return ALL_CLICK_TYPES.firstOrNull { it == searching } ?: LEFT
     }
 }

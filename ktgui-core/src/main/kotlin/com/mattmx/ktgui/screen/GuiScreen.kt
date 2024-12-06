@@ -1,9 +1,10 @@
 package com.mattmx.ktgui.screen
 
 import com.mattmx.ktgui.GuiButton
+import com.mattmx.ktgui.GuiManager
 import net.kyori.adventure.text.Component
 
-abstract class GuiScreen<P, B : GuiButton<*, *, *, *>>(
+abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     var guiType: GuiType,
     open var title: Component
 ) {
@@ -22,9 +23,21 @@ abstract class GuiScreen<P, B : GuiButton<*, *, *, *>>(
         return this
     }
 
+    operator fun set(slot: Int, button: B) = button.slot(slot)
+    operator fun set(slot: Int, button: Any) = (button as? B)?.slot(slot)
+
     fun slot(x: Int, y: Int) = Slots.ofPosition(x, y)
+
+    fun setActiveGui(player: P) {
+        GuiManager.getInstance().setActiveGui(player, this)
+    }
+
+    fun unsetActiveGui(player: P) {
+        GuiManager.getInstance().removeActiveGui(player)
+    }
 
     abstract fun getVisibleGuiButtons() : Map<Int, B>
 
     abstract fun open(player: P)
+    fun openAsAny(player: Any) = (player as? P)?.let { open(it) }
 }

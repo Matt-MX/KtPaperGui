@@ -11,9 +11,9 @@ object Slots {
 class Row(
     val row: Int
 ) {
-    val middle = ROW_SIZE * row + HALF_ROW
-    val first = ROW_SIZE * row
-    val last = ROW_SIZE * (row + 1) - 1
+    val middle = ROW_SIZE * (row - 1) + HALF_ROW
+    val first = ROW_SIZE * (row - 1)
+    val last = ROW_SIZE * row - 1
 
     fun column(c: Int) = ROW_SIZE * row + c
 

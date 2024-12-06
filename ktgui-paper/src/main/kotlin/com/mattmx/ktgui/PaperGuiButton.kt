@@ -1,7 +1,10 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.click.ClickButtonEvent
+import com.mattmx.ktgui.click.ClickEventCallback
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
@@ -9,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta
 open class PaperGuiButton<T : PaperGuiButton<T>>(
     var material: Material
 ) : GuiButton<T, Material, Enchantment, ItemStack>() {
+    val click by lazy { ClickEventCallback<T, ClickButtonEvent>(this as T) }
 
     inline fun <reified M : ItemMeta> consumeMeta(noinline block: M.() -> Unit) = apply {
         postBuild { editMeta(M::class.java, block) }
@@ -30,5 +34,9 @@ open class PaperGuiButton<T : PaperGuiButton<T>>(
         postBuild.apply(itemStack)
 
         return itemStack
+    }
+
+    override fun getClickEventHandler(): ClickEventCallback<T, *> {
+        return click
     }
 }
