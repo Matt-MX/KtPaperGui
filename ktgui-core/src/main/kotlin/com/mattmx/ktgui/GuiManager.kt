@@ -41,6 +41,10 @@ abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B
         return activeSessions.filterValues { it.windowIdentifier == id }
     }
 
+    fun getActiveOfInstance(g: GuiScreen<*, *>) : Map<P, G> {
+        return activeSessions.filterValues { gui -> gui == g }
+    }
+
     abstract fun createPlatformButtonOfType(typeKeyed: Key) : B
 
     abstract fun createPlatformButton(type: Any) : B

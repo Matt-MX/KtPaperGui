@@ -2,14 +2,13 @@ package com.mattmx.ktgui
 
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemRarity
-import com.github.retrooper.packetevents.protocol.item.enchantment.Enchantment
-import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.util.Dummy
 import com.google.inject.Inject
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.Slots
+import com.mattmx.ktgui.screen.refresh
 import com.mattmx.ktgui.util.not
 import com.mojang.brigadier.Command.SINGLE_SUCCESS
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -22,6 +21,10 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
 import org.slf4j.Logger
+import java.time.Duration
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.seconds
 
 @Plugin(
     id = "ktgui",
@@ -103,6 +106,25 @@ class VelocityKtGuiImpl @Inject constructor(
                     gui[Slots.ofRow(2).middle] = button
 
                     gui.openAsAny(invoc.source)
+
+                    SINGLE_SUCCESS
+                })
+            .then(BrigadierCommand.literalArgumentBuilder("refresh")
+                .executes { invoc ->
+                    val player = invoc as? Player ?: return@executes SINGLE_SUCCESS
+
+                    val timeOpen = LocalDate.now()
+                    val formatter = DateTimeFormatter.ISO_DATE
+                    gui(!"Refreshing", GuiType.ofRows(1)) {
+                        refresh(20.seconds) {
+                            button(ItemTypes.CLOCK) {
+                                named(!"&f${LocalDate.now().format(formatter)}")
+                                lore {
+                                    +!"&7Open for ${Duration.between(timeOpen, LocalDate.now()).seconds}s"
+                                }
+                            }
+                        }
+                    }
 
                     SINGLE_SUCCESS
                 })

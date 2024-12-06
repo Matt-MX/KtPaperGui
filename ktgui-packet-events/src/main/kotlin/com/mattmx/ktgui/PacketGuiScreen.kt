@@ -24,7 +24,8 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
     var windowId = GuiManager.getInstance<PacketEventsGuiManager>().getWindowId()
     var stateId: Int = 0
     val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<*>>(this as T) }
-    val close by lazy { ParentEventCallback<Any, T>(this as T) }
+    override val close by lazy { ParentEventCallback<Any, T>(this as T) }
+    override val open by lazy { ParentEventCallback<Any, T>(this as T) }
 
     fun handleClick(player: Any, packet: WrapperPlayClientClickWindow) {
         val button = items[packet.slot]
@@ -66,8 +67,8 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
 //            return
 //        }
 
-        close.apply(player)
         unsetActiveGui(player)
+        close.apply(player)
     }
 
     fun createOpenWindowPacket(): WrapperPlayServerOpenWindow {
@@ -96,5 +97,13 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
     override fun getVisibleGuiButtons(): Map<Int, PacketGuiButton<*>> {
         val visibleRange = (0..guiType.getTotalSlots())
         return items.filterKeys { it in visibleRange }
+    }
+
+    override fun refresh(player: Any) {
+        val contents = createWindowContentsPacket()
+
+        PacketEvents.getAPI()
+            .playerManager
+            .sendPacket(player, contents)
     }
 }

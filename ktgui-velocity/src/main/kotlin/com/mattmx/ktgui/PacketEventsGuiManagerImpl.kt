@@ -17,6 +17,7 @@ class PacketEventsGuiManagerImpl(
         val scheduledTask = proxy.scheduler
             .buildTask(plugin, task)
             .repeat(repeat)
+            .delay(Duration.ZERO)
             .schedule()
 
         return TaskWrapper { scheduledTask.cancel() }

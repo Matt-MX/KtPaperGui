@@ -2,6 +2,7 @@ package com.mattmx.ktgui.screen
 
 import com.mattmx.ktgui.GuiButton
 import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.util.ParentEventCallback
 import net.kyori.adventure.text.Component
 
 abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
@@ -10,6 +11,8 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
 ) {
     var windowIdentifier: String = GuiButton.EMPTY_ID
     var items = hashMapOf<Int, B>()
+    abstract val open: ParentEventCallback<P, *>
+    abstract val close: ParentEventCallback<P, *>
 
     infix fun B.slot(slot: Int): B {
         items[slot] = this
@@ -39,5 +42,15 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     abstract fun getVisibleGuiButtons() : Map<Int, B>
 
     abstract fun open(player: P)
+
+    abstract fun refresh(player: P)
+
     fun openAsAny(player: Any) = (player as? P)?.let { open(it) }
+    fun refreshAsAny(player: Any) = (player as? P)?.let { refresh(it) }
+
+    fun refresh() {
+        for ((player, _) in GuiManager.getInstance().getActiveOfInstance(this)) {
+            refreshAsAny(player)
+        }
+    }
 }
