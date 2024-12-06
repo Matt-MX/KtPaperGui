@@ -17,7 +17,7 @@ open class PacketGuiButton<T : PacketGuiButton<T>>(
     var material: ItemType
 ) : GuiButton<T, ItemType, EnchantmentType, ItemStack>() {
     val preBuild by lazy { ParentEventCallback<ItemStack.Builder, T>(this as T) }
-    val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<T>>(this as T) }
+    override val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<T>>(this as T) }
     var showEnchantsInTooltip = true
     var components = mutableMapOf<ComponentType<*>, Any>()
 
@@ -60,9 +60,5 @@ open class PacketGuiButton<T : PacketGuiButton<T>>(
         postBuild.apply(itemStack)
 
         return itemStack
-    }
-
-    override fun getClickEventHandler(): ClickEventCallback<T, *> {
-        return click
     }
 }

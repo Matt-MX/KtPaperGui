@@ -95,9 +95,10 @@ class VelocityKtGuiImpl @Inject constructor(
                             +!"<dark_gray>Lore"
                             +Component.empty()
                         }
-                        .getClickEventHandler()
-                        .handle(ClickTypes.LEFT) {
-                            getPlayer<Player>().sendMessage(!"Clicked!")
+                        .click {
+                            ClickTypes.LEFT {
+                                getPlayer<Player>().sendMessage(!"Clicked!")
+                            }
                         }
                     gui[Slots.ofRow(2).middle] = button
 

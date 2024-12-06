@@ -1,6 +1,5 @@
 package com.mattmx.ktgui
 
-import com.mattmx.ktgui.click.ClickButtonEvent
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.util.EnchantmentMap
 import com.mattmx.ktgui.util.ParentEventCallback
@@ -16,6 +15,7 @@ abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
     var amount: Int = 1
     var enchantments = mutableMapOf<E, Int>()
     val postBuild = ParentEventCallback<I, S>(this as S)
+    abstract val click: ClickEventCallback<S, *>
 
     infix fun named(name: Component?): S = apply {
         this.name = Optional.ofNullable(name)
@@ -61,9 +61,11 @@ abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
         enchantments.remove(enchantment)
     } as S
 
-    abstract fun buildItem(): I
+    fun <T> consumeAs(block: T.() -> Unit) = apply {
+        (this as? T)?.apply(block)
+    } as S
 
-    abstract fun getClickEventHandler(): ClickEventCallback<S, *>
+    abstract fun buildItem(): I
 
     companion object {
         const val EMPTY_ID = "emptyId"

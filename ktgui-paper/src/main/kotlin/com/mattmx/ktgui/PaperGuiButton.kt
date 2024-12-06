@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta
 open class PaperGuiButton<T : PaperGuiButton<T>>(
     var material: Material
 ) : GuiButton<T, Material, Enchantment, ItemStack>() {
-    val click by lazy { ClickEventCallback<T, ClickButtonEvent>(this as T) }
+    override val click by lazy { ClickEventCallback<T, ClickButtonEvent>(this as T) }
 
     inline fun <reified M : ItemMeta> consumeMeta(noinline block: M.() -> Unit) = apply {
         postBuild { editMeta(M::class.java, block) }
@@ -34,9 +34,5 @@ open class PaperGuiButton<T : PaperGuiButton<T>>(
         postBuild.apply(itemStack)
 
         return itemStack
-    }
-
-    override fun getClickEventHandler(): ClickEventCallback<T, *> {
-        return click
     }
 }
