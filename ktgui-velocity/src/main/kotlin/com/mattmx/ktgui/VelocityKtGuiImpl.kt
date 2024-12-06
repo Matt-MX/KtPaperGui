@@ -1,17 +1,16 @@
 package com.mattmx.ktgui
 
+import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemRarity
+import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
-import com.github.retrooper.packetevents.protocol.sound.Sounds
 import com.github.retrooper.packetevents.util.Dummy
 import com.google.inject.Inject
-import com.mattmx.ktgui.click.ClickType
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.Slots
 import com.mattmx.ktgui.screen.refresh
-import com.mattmx.ktgui.screen.updatable
 import com.mattmx.ktgui.util.not
 import com.mojang.brigadier.Command.SINGLE_SUCCESS
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -23,13 +22,13 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import org.slf4j.Logger
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
 @Plugin(
@@ -97,7 +96,7 @@ class VelocityKtGuiImpl @Inject constructor(
                         .createPlatformGui(!"Non platform specific", GuiType.ofRows(3))
 
                     val button = GuiManager.getInstance()
-                        .createPlatformButton(ItemTypes.STONE_SWORD)
+                        .createPlatformButtonOfType(Key.key("minecraft:stone_sword"))
                         .named(!"<gray>Item Name")
                         .lore {
                             +Component.empty()
@@ -143,26 +142,59 @@ class VelocityKtGuiImpl @Inject constructor(
                             } slot guiType.middle
                         }
 
-                        updatable {
-                            if (refreshing.isActive()) {
-                                button(ItemTypes.REDSTONE) {
-                                    named(!"<red>Stop updating")
-                                    click.handle(ClickTypes.LEFT) {
-                                        refreshing.stop()
-                                        update()
-                                    }
-                                } slot guiType.last
-                            } else {
-                                button(ItemTypes.TURTLE_SCUTE) {
-                                    named(!"<green>Resume")
-                                    click.handle(ClickTypes.LEFT) {
-                                        refreshing.resume()
-                                        update()
-                                    }
-                                } slot guiType.last
+                    }.open(player)
+
+                    SINGLE_SUCCESS
+                })
+            .then(BrigadierCommand.literalArgumentBuilder("pages")
+                .executes { invoc ->
+                    val player = invoc.source as? Player ?: return@executes SINGLE_SUCCESS
+                    val version = PacketEvents.getAPI().playerManager.getClientVersion(player)
+
+                    val test = (0..100).map { if (Random.nextBoolean()) ItemTypes.DIRT else ItemTypes.STONE }
+
+                    var page = 0
+                    gui(!"All Items", GuiType.ofRows(6)) {
+                        visiblePagesOverride = Optional.of {
+                            val size = guiType.getTotalSlots()
+                            val start = size * page
+                            val end = start + size
+                            (start..<end)
+                        }
+
+                        var slot = 0
+                        for (item in test) {
+                            val clientVersionItemId = item.getId(version)
+                            val finalItemType = ItemTypes.getById(version, clientVersionItemId)
+                                ?: continue
+
+                            button(finalItemType) {
+                                click.handle(ClickTypes.ALL_CLICK_TYPES) {
+                                    player.sendMessage(!"<white>Clicked ${finalItemType.name.namespace}")
+                                }
+                            } slot slot
+                            slot++
+
+                            if (slot >= Slots.ofRow(6).first) {
+                                slot += 9
                             }
                         }
 
+                        button(ItemTypes.ARROW) {
+                            named(!"Previous")
+                            click.handle(ClickTypes.LEFT) {
+                                page--
+                                refresh()
+                            }
+                        } slot Slots.ofRow(6).first
+
+                        button(ItemTypes.ARROW) {
+                            named(!"Next")
+                            click.handle(ClickTypes.LEFT) {
+                                page++
+                                refresh()
+                            }
+                        } slot Slots.ofRow(6).last
                     }.open(player)
 
                     SINGLE_SUCCESS

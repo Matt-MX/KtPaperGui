@@ -15,6 +15,7 @@ import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.util.ParentEventCallback
 import net.kyori.adventure.text.Component
+import java.util.Optional
 
 @Suppress("UNCHECKED_CAST")
 open class PacketGuiScreen<T : PacketGuiScreen<T>>(
@@ -26,6 +27,7 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
     val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<*>>(this as T) }
     override val close by lazy { ParentEventCallback<Any, T>(this as T) }
     override val open by lazy { ParentEventCallback<Any, T>(this as T) }
+    var visiblePagesOverride: Optional<() -> IntRange> = Optional.empty()
 
     fun handleClick(player: Any, packet: WrapperPlayClientClickWindow) {
         val button = items[packet.slot]
@@ -76,14 +78,16 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
     }
 
     fun createWindowContentsPacket(): WrapperPlayServerWindowItems {
-        val slottedItems = getVisibleGuiButtons().mapValues { (i, b) -> b.buildItem() }
+        val visibleSlots = getVisibleGuiButtons()
 
-        val items = mutableListOf<ItemStack>()
-        for (slot in (0..<guiType.getTotalSlots())) {
-            items.add(slottedItems[slot] ?: ItemStack.EMPTY)
+        val contents = mutableListOf<ItemStack>()
+        for (i in (0..<guiType.getTotalSlots())) {
+            val offsetSlot = visibleSlots.first + i
+            val itemStack = items[offsetSlot]?.buildItem() ?: ItemStack.EMPTY
+            contents.add(itemStack)
         }
 
-        return WrapperPlayServerWindowItems(windowId, stateId, items, ItemStack.EMPTY)
+        return WrapperPlayServerWindowItems(windowId, stateId, contents, ItemStack.EMPTY)
     }
 
     override fun open(player: Any) {
@@ -95,9 +99,10 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
         playerManager.sendPacket(player, createWindowContentsPacket())
     }
 
-    override fun getVisibleGuiButtons(): Map<Int, PacketGuiButton<*>> {
-        val visibleRange = (0..guiType.getTotalSlots())
-        return items.filterKeys { it in visibleRange }
+    override fun getVisibleGuiButtons(): IntRange {
+        return visiblePagesOverride.orElse {
+            (0..guiType.getTotalSlots())
+        }.invoke()
     }
 
     override fun refresh(player: Any) {

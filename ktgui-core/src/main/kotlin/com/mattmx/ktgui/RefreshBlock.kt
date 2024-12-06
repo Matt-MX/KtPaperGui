@@ -4,12 +4,12 @@ import com.mattmx.ktgui.screen.GuiScreen
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-class RefreshBlock(
-    val block: () -> Unit,
-    val duration: Duration,
-    val owner: GuiScreen<*, *>
+open class RefreshBlock(
+    protected val block: () -> Unit,
+    protected val refreshDuration: Duration,
+    protected val owner: GuiScreen<*, *>
 ) {
-    var task: TaskWrapper? = null
+    protected var task: TaskWrapper? = null
 
     init {
         block()
@@ -29,7 +29,7 @@ class RefreshBlock(
     }
 
     fun createTask() : TaskWrapper {
-        return GuiManager.getInstance().createRepeatingTask(duration.toJavaDuration()) {
+        return GuiManager.getInstance().createRepeatingTask(refreshDuration.toJavaDuration()) {
             block()
             owner.refresh()
         }

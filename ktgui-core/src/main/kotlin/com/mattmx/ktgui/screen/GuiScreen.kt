@@ -44,7 +44,7 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
         GuiManager.getInstance().removeActiveGui(player)
     }
 
-    abstract fun getVisibleGuiButtons() : Map<Int, B>
+    abstract fun getVisibleGuiButtons() : IntRange
 
     abstract fun open(player: P)
 
