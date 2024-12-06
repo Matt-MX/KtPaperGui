@@ -24,3 +24,8 @@ gradleEnterprise {
         }
     }
 }
+
+include("ktgui-core")
+include("ktgui-paper")
+include("ktgui-packet-events")
+include("ktgui-velocity")
