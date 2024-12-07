@@ -7,9 +7,10 @@ import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemLor
 import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
-import com.mattmx.ktgui.click.ClickButtonEvent
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
+import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.util.ParentEventCallback
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.Style
@@ -41,13 +42,25 @@ open class PacketGuiButton<T : PacketGuiButton<T>>(
         component(type, asCast)
     }
 
+    override fun <G : GuiScreen<*, *>> refresh(parent: G) {
+        if (parent !is PacketGuiScreen<*>) error("Must be an instance of PacketGuiScreen<*>!")
+
+        val slots = parent.getSlots(this)
+
+        val setItemPackets = slots.map { slot ->
+            WrapperPlayServerSetSlot(parent.windowId, parent.stateId, slot, buildItem())
+        }
+
+        parent.sendPacketsToViewers(*setItemPackets.toTypedArray())
+    }
+
     override fun buildItem(): ItemStack {
         val itemStack = ItemStack.builder()
             .type(material)
             .amount(amount)
             .also { builder ->
-                name.ifPresent { finalName ->
-                    builder.component(ComponentTypes.ITEM_NAME, finalName)
+                if (name != null) {
+                    builder.component(ComponentTypes.ITEM_NAME, name)
                 }
                 components.forEach { (type, value) ->
                     builder.addComponent(type, value)
@@ -72,4 +85,5 @@ open class PacketGuiButton<T : PacketGuiButton<T>>(
 
         return itemStack
     }
+
 }

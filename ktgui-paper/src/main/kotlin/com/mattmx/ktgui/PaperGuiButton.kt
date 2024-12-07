@@ -2,6 +2,7 @@ package com.mattmx.ktgui
 
 import com.mattmx.ktgui.click.ClickButtonEvent
 import com.mattmx.ktgui.click.ClickEventCallback
+import com.mattmx.ktgui.screen.GuiScreen
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -17,6 +18,10 @@ open class PaperGuiButton<T : PaperGuiButton<T>>(
     inline fun <reified M : ItemMeta> consumeMeta(noinline block: M.() -> Unit) = apply {
         postBuild { editMeta(M::class.java, block) }
     } as T
+
+    override fun <G : GuiScreen<*, *>> refresh(parent: G) {
+        TODO("Not yet implemented")
+    }
 
     override fun buildItem(): ItemStack {
         val itemStack = ItemStack(material)

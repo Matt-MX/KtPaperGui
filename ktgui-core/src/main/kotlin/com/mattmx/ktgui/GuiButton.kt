@@ -1,6 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.click.ClickEventCallback
+import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.util.EnchantmentMap
 import com.mattmx.ktgui.util.ParentEventCallback
 import com.mattmx.ktgui.util.UnaryOperatorList
@@ -10,7 +11,7 @@ import java.util.*
 @Suppress("UNCHECKED_CAST")
 abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
     var buttonId: String = EMPTY_ID
-    var name: Optional<Component> = Optional.empty()
+    var name: Component? = null
     var lore = mutableListOf<Component>()
     var amount: Int = 1
     var enchantments = mutableMapOf<E, Int>()
@@ -18,7 +19,7 @@ abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
     abstract val click: ClickEventCallback<S, *>
 
     infix fun named(name: Component?): S = apply {
-        this.name = Optional.ofNullable(name)
+        this.name = name
     } as S
 
     infix fun amount(amount: Int): S = apply {
@@ -64,6 +65,8 @@ abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
     fun <T> consumeAs(block: T.() -> Unit) = apply {
         (this as? T)?.apply(block)
     } as S
+
+    abstract fun <G : GuiScreen<*, *>> refresh(parent: G)
 
     abstract fun buildItem(): I
 

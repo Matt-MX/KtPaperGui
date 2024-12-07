@@ -1,10 +1,12 @@
 package com.mattmx.ktgui.screen
 
+import kotlin.math.floor
+
 class GuiType(
     val rows: Int?,
     val type: InventoryType
 ) {
-    val middle = rows?.let { Slots.ofRow(rows).middle }
+    val middle = rows?.let { Slots.ofRow(floor(rows / 2.0).toInt()).middle }
         ?: error("Can only get middle slot of a row gui type!")
     val last = getTotalSlots() - 1
     val first = 0

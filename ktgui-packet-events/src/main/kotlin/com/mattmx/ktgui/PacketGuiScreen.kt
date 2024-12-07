@@ -3,6 +3,7 @@ package com.mattmx.ktgui
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
+import com.github.retrooper.packetevents.wrapper.PacketWrapper
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenWindow
@@ -90,14 +91,14 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
         return WrapperPlayServerWindowItems(windowId, stateId, contents, ItemStack.EMPTY)
     }
 
-    override fun open(player: Any) {
+    override fun open(player: Any) = apply {
         open.apply(player)
         setActiveGui(player)
         val playerManager = PacketEvents.getAPI().playerManager
 
         playerManager.sendPacket(player, createOpenWindowPacket())
         playerManager.sendPacket(player, createWindowContentsPacket())
-    }
+    } as T
 
     override fun getVisibleGuiButtons(): IntRange {
         return visiblePagesOverride.orElse {
@@ -119,5 +120,39 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
         PacketEvents.getAPI()
             .playerManager
             .sendPacket(player, updateTitle)
+    }
+
+    /**
+     * Attempts to update listener's GUIs if any slots are
+     * updated in real time.
+     *
+     * @param state should we update automatically?
+     * @return self
+     */
+    fun updateOnModify(state: Boolean) = apply {
+        if (!state) {
+            slotUpdated.clear()
+        } else {
+            slotUpdated {
+                val packet = WrapperPlayServerSetSlot(
+                    windowId,
+                    stateId,
+                    slot,
+                    new?.buildItem() ?: ItemStack.EMPTY
+                )
+                sendPacketsToViewers(packet)
+            }
+        }
+    } as T
+
+    fun sendPacketsToViewers(vararg packets: PacketWrapper<*>) {
+        if (packets.isEmpty()) return
+
+        val playerManager = PacketEvents.getAPI().playerManager
+        for ((player, _) in GuiManager.getInstance().getActiveOfInstance(this)) {
+            for (packet in packets) {
+                playerManager.sendPacket(player, packet)
+            }
+        }
     }
 }

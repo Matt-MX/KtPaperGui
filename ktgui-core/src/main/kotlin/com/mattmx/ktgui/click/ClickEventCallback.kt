@@ -24,6 +24,10 @@ class ClickEventCallback<P, T : ClickButtonEvent>(
     fun handle(vararg types: ClickType, callback: T.() -> Unit) =
         handle(types.toList(), callback)
 
+    @JvmName("handle1")
+    fun handle(types: Array<ClickType>, callback: T.() -> Unit) =
+        handle(types.toList(), callback)
+
     fun handle(types: Collection<ClickType>, callback: T.() -> Unit): P {
         for (type in types) {
             callbacks.computeIfAbsent(type) { EventCallback() }.invoke(callback)

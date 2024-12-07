@@ -199,6 +199,45 @@ class VelocityKtGuiImpl @Inject constructor(
 
                     SINGLE_SUCCESS
                 })
+            .then(BrigadierCommand.literalArgumentBuilder("buttons")
+                .executes { invoc ->
+                    val player = invoc.source as? Player ?: return@executes SINGLE_SUCCESS
+
+                    gui(!"Buttons", GuiType.ofRows(3)) {
+                        booleanButton(true).apply {
+
+                            ifTrue {
+                                named(!"<green>True")
+                                material = ItemTypes.LIME_CANDLE
+                            }
+
+                            ifFalse {
+                                named(!"<red>False")
+                                material = ItemTypes.RED_CANDLE
+                            }
+
+                            click.handle(ClickTypes.LEFT) {
+                                state = !state
+                            }
+
+                            click.handle(ClickTypes.ANY_DROP) {
+                                button(ItemTypes.ARROW) {
+                                    named(!"<white>Houdini!")
+                                } slot guiType.last
+                            }
+
+                            click.handle(ClickTypes.SHIFT_LEFT) {
+                                remove(guiType.last)
+                            }
+
+                        } slot guiType.middle
+
+                        updateOnModify(true)
+
+                    }.open(player)
+
+                    SINGLE_SUCCESS
+                })
 
         proxyServer.commandManager.register(
             proxyServer.commandManager
