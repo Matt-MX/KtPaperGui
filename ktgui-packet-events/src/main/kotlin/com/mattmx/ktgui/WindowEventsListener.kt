@@ -6,6 +6,10 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindowButton
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerAbilities
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerInput
 
 class WindowEventsListener : PacketListenerAbstract() {
 
@@ -18,6 +22,10 @@ class WindowEventsListener : PacketListenerAbstract() {
                     ?: return
                 gui.handleClick(event.getPlayer(), packet)
                 event.isCancelled = true
+            }
+
+            PacketType.Play.Client.PLAYER_DIGGING -> {
+                val packet = WrapperPlayClientPlayerDigging(event)
             }
 
             PacketType.Play.Client.CLOSE_WINDOW -> {
