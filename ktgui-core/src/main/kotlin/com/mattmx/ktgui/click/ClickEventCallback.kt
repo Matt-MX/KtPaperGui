@@ -17,9 +17,15 @@ class ClickEventCallback<P, T : ClickButtonEvent>(
 
     operator fun Collection<ClickType>.invoke(block: T.() -> Unit) = handle(this, block)
 
+    @JvmName("invokeClickTypeArray")
     operator fun Array<ClickType>.invoke(block: T.() -> Unit) = handle(this.toList(), block)
 
+    @JvmName("invokeClickType")
     operator fun ClickType.invoke(block: T.() -> Unit) = handle(listOf(this), block)
+
+    operator fun invoke(clickType: ClickType, callback: T.() -> Unit) = handle(arrayOf(clickType), callback)
+
+    operator fun invoke(clickType: Array<ClickType>, callback: T.() -> Unit) = handle(clickType, callback)
 
     fun handle(vararg types: ClickType, callback: T.() -> Unit) =
         handle(types.toList(), callback)

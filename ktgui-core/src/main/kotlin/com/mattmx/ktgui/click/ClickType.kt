@@ -27,7 +27,7 @@ object ClickTypes {
     val MIDDLE = ClickType(3, 2)
 
     val DROP = ClickType(4, 0)
-    val DROP_ALL = ClickType(4, 0)
+    val DROP_ALL = ClickType(4, 1)
 
     val DRAG_START_LEFT = ClickType(5, 0, -999)
     val DRAG_START_RIGHT = ClickType(5, 4, -999)
