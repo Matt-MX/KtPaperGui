@@ -11,6 +11,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems
 import com.mattmx.ktgui.click.ClickEventCallback
+import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
@@ -62,14 +63,18 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
             PacketEvents.getAPI()
                 .playerManager
                 .sendPacket(player, setCursorItemPacket)
+
+            if (event.getClickType() in ClickTypes.ANY_SHIFT) {
+                // Resend inventory contents
+                GuiManager.getInstance<PacketEventsGuiManager>()
+                    .inventoryTracker
+                    .resetPlayerInventory(player)
+            }
         }
     }
 
     fun handleClose(player: Any, packet: WrapperPlayClientCloseWindow) {
-//        if (packet.windowId != windowId) {
-//            return
-//        }
-
+        // What if window id is not this window's id?
         unsetActiveGui(player)
         close.apply(player)
     }
