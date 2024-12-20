@@ -43,8 +43,6 @@ class VelocityKtGuiImpl @Inject constructor(
     val proxyServer: ProxyServer,
     val logger: Logger
 ) {
-    private val tellMattMXHesFatTaskKeyed = Key.key("ktgui:fattmx")
-    private val tasks = proxyServer.keyedTaskTracker(this)
     private val manager = PacketEventsGuiManagerImpl(this, proxyServer)
 
     @Subscribe
@@ -52,18 +50,9 @@ class VelocityKtGuiImpl @Inject constructor(
         manager.trackPlayerLocations()
         manager.registerListeners()
 
-        tasks.runAsyncRepeat(tellMattMXHesFatTaskKeyed, 1.seconds) {
-            proxyServer.getPlayer("MattMX").ifPresent { mattmx ->
-                mattmx.sendActionBar(!"You're fat")
-            }
-        }
-
         val node = BrigadierCommand.literalArgumentBuilder("ktgui")
             .executes { invoc ->
                 if (invoc.source !is Player) return@executes SINGLE_SUCCESS
-
-                tasks.cancel(tellMattMXHesFatTaskKeyed)
-                    ?: invoc.source.sendMessage(!"No task running")
 
                 val g = gui(Component.text("Test GUI"), GuiType.ofRows(3)) {
 
