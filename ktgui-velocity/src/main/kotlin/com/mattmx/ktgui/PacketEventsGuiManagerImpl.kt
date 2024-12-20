@@ -1,8 +1,11 @@
 package com.mattmx.ktgui
 
 import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
-import com.mattmx.ktgui.tasks.*
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCloseWindow
+import com.mattmx.ktgui.tasks.KeyedTaskTracker
+import com.mattmx.ktgui.tasks.TaskTracker
+import com.mattmx.ktgui.tasks.VelocityKeyedTaskTrackerImpl
+import com.mattmx.ktgui.tasks.VelocityTaskTrackerImpl
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
@@ -51,7 +54,7 @@ class PacketEventsGuiManagerImpl(
 
         gui.close.apply(player)
 
-        val packet = WrapperPlayClientCloseWindow(gui.windowId)
+        val packet = WrapperPlayServerCloseWindow(gui.windowId)
 
         PacketEvents.getAPI()
             .playerManager

@@ -47,7 +47,7 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
                 windowId,
                 stateId,
                 packet.slot,
-                button?.buildItem() ?: ItemStack.EMPTY
+                items[packet.slot]?.buildItem() ?: ItemStack.EMPTY
             )
             PacketEvents.getAPI()
                 .playerManager

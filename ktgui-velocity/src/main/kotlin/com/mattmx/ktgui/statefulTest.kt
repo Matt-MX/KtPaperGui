@@ -1,8 +1,6 @@
 package com.mattmx.ktgui
 
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
-import com.github.retrooper.packetevents.protocol.world.MaterialType
-import com.mattmx.ktgui.click.ClickType
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.stateful
@@ -22,11 +20,13 @@ fun createStatefulGui(): PacketGuiScreen<*> {
     )
 
     return gui(!"Stateful", GuiType.ofRows(6)) {
+        updateOnModify(true)
+
         stateful(States.INITIAL) {
 
             state(States.INITIAL) {
                 button(ItemTypes.DIAMOND_SWORD) {
-                    named(!"Click to change")
+                    named(!"<blue>Click to change")
                     click(ClickTypes.LEFT) {
                         state = States.RANDOM
                     }
@@ -34,14 +34,20 @@ fun createStatefulGui(): PacketGuiScreen<*> {
             }
 
             state(States.RANDOM) {
-                for (slot in 0..gui.guiType.getTotalSlots()) {
+                for (slot in 0..<gui.guiType.getTotalSlots()) {
                     button(items.random()) {
-                        named(!"Meow")
+                        named(!"<light_purple>Meow")
+
+                        lore += !"<light_gray>Click to reset!"
+
+                        click(ClickTypes.ALL_CLICK_TYPES) {
+                            state = States.INITIAL
+                        }
                     } slot slot
                 }
 
                 button(ItemTypes.ARROW) {
-                    named(!"&cClose")
+                    named(!"<red>Close")
                     click(ClickTypes.LEFT) {
                         forcefullyClose(getPlayer())
                     }
