@@ -4,7 +4,6 @@ import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory
 import com.github.retrooper.packetevents.protocol.sound.Sounds
-import com.github.retrooper.packetevents.util.Vector3d
 import com.github.retrooper.packetevents.util.Vector3i
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSoundEffect
 import com.mattmx.ktgui.screen.GuiType
