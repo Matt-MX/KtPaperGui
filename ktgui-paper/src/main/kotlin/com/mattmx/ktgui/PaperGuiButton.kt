@@ -28,7 +28,7 @@ open class PaperGuiButton<T : PaperGuiButton<T>>(
         itemStack.amount = amount
 
         itemStack.editMeta { meta ->
-            meta.displayName(name.orElse(null))
+            meta.displayName(name)
             meta.lore(this.lore.toList())
 
             for ((e, l) in enchantments) {

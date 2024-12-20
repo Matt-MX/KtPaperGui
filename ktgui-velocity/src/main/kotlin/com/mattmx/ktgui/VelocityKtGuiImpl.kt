@@ -3,7 +3,6 @@ package com.mattmx.ktgui
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemRarity
-import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.util.Dummy
 import com.google.inject.Inject
@@ -22,6 +21,7 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.key.Key
+import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import org.slf4j.Logger
 import java.time.Duration
@@ -43,15 +43,27 @@ class VelocityKtGuiImpl @Inject constructor(
     val proxyServer: ProxyServer,
     val logger: Logger
 ) {
+    private val tellMattMXHesFatTaskKeyed = Key.key("ktgui:fattmx")
+    private val tasks = proxyServer.keyedTaskTracker(this)
     private val manager = PacketEventsGuiManagerImpl(this, proxyServer)
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
+        manager.trackPlayerLocations()
         manager.registerListeners()
+
+        tasks.runAsyncRepeat(tellMattMXHesFatTaskKeyed, 1.seconds) {
+            proxyServer.getPlayer("MattMX").ifPresent { mattmx ->
+                mattmx.sendActionBar(!"You're fat")
+            }
+        }
 
         val node = BrigadierCommand.literalArgumentBuilder("ktgui")
             .executes { invoc ->
                 if (invoc.source !is Player) return@executes SINGLE_SUCCESS
+
+                tasks.cancel(tellMattMXHesFatTaskKeyed)
+                    ?: invoc.source.sendMessage(!"No task running")
 
                 val g = gui(Component.text("Test GUI"), GuiType.ofRows(3)) {
 
@@ -108,6 +120,7 @@ class VelocityKtGuiImpl @Inject constructor(
                                 getPlayer<Player>().sendMessage(!"Clicked!")
                             }
                         }
+
                     gui[Slots.ofRow(2).middle] = button
 
                     gui.openAsAny(invoc.source)
@@ -202,6 +215,7 @@ class VelocityKtGuiImpl @Inject constructor(
             .then(BrigadierCommand.literalArgumentBuilder("buttons")
                 .executes { invoc ->
                     val player = invoc.source as? Player ?: return@executes SINGLE_SUCCESS
+                    var hidden: PacketGuiButton<*>? = null
 
                     gui(!"Buttons", GuiType.ofRows(3)) {
                         booleanButton(true).apply {
@@ -218,16 +232,21 @@ class VelocityKtGuiImpl @Inject constructor(
 
                             click.handle(ClickTypes.LEFT) {
                                 state = !state
+                                player.tryPlaySound(Sound.sound(Key.key("minecraft:ui.toast.in"), Sound.Source.MASTER, 1f, 1f))
                             }
 
-                            click.handle(ClickTypes.ANY_DROP) {
-                                button(ItemTypes.ARROW) {
+                            click.handle(ClickTypes.DROP) {
+                                hidden = button(ItemTypes.ARROW) {
                                     named(!"<white>Houdini!")
+                                    click(ClickTypes.LEFT) {
+                                        remove(this@button)
+                                    }
                                 } slot guiType.last
                             }
 
-                            click.handle(ClickTypes.SHIFT_LEFT) {
-                                remove(guiType.last)
+                            click.handle(ClickTypes.DROP_ALL) {
+                                hidden?.let { remove(it) }
+                                hidden = null
                             }
 
                         } slot guiType.middle
