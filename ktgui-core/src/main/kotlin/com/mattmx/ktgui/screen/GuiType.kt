@@ -11,6 +11,9 @@ class GuiType(
     val last = getTotalSlots() - 1
     val first = 0
 
+    infix fun row(n: Int) = rows?.let { Slots.ofRow(n) }
+        ?: error("Can only get rows of a row gui type!")
+
     fun getTotalSlots(): Int {
         return if (rows != null) {
             rows * 9

@@ -9,3 +9,6 @@ fun <T : GuiScreen<*, *>> T.refresh(duration: Duration, block: () -> Unit) =
 
 infix fun <T : GuiScreen<*, *>> T.updatable(block: UpdateBlock.() -> Unit) =
     UpdateBlock(block, this)
+
+fun <T : GuiScreen<*, *>, E> T.stateful(initial: E, block: StatefulGui<T, E>.() -> Unit) =
+    StatefulGui(this, initial).apply(block)

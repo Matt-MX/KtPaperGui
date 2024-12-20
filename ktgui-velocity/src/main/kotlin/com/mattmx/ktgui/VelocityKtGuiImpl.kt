@@ -54,25 +54,7 @@ class VelocityKtGuiImpl @Inject constructor(
             .executes { invoc ->
                 if (invoc.source !is Player) return@executes SINGLE_SUCCESS
 
-                val g = gui(Component.text("Test GUI"), GuiType.ofRows(3)) {
-
-                    button(ItemTypes.DIAMOND_SWORD) {
-                        named(!"<aqua>Custom Item")
-
-                        lore {
-                            +!"<light_purple>Meow :3"
-                        }
-
-                        component(ComponentTypes.RARITY, ItemRarity.EPIC)
-                        component(ComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Dummy.DUMMY)
-
-                        click.handle(ClickTypes.LEFT) {
-                            getPlayer<Player>().sendMessage(Component.text("Clicked!"))
-                        }
-                    } slot 0
-
-                }
-                g.open(invoc.source)
+                createStatefulGui().open(invoc.source)
 
                 SINGLE_SUCCESS
             }

@@ -1,5 +1,7 @@
 package com.mattmx.ktgui
 
+import com.github.retrooper.packetevents.PacketEvents
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
 import com.mattmx.ktgui.tasks.*
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
@@ -42,6 +44,18 @@ class PacketEventsGuiManagerImpl(
         super.unregisterListeners()
 
         proxy.eventManager.unregisterListener(plugin, this)
+    }
+
+    override fun forcefullyClose(player: Any) {
+        val gui = removeActiveGui(player) ?: return
+
+        gui.close.apply(player)
+
+        val packet = WrapperPlayClientCloseWindow(gui.windowId)
+
+        PacketEvents.getAPI()
+            .playerManager
+            .sendPacket(player, packet)
     }
 
     override fun createRepeatingTask(repeat: Duration, task: () -> Unit): TaskWrapper {

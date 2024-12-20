@@ -195,15 +195,29 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     fun refreshAsAny(player: Any) = (player as? P)?.let { refresh(it) }
     fun refreshTitleAsAny(player: Any) = (player as? P)?.let { refreshTitle(it) }
 
+    fun forcefullyClose(player: Any) {
+        GuiManager.getInstance().forcefullyClose(player)
+    }
+
+    fun forcefullyCloseAll() {
+        for ((player, _) in getAllWatchingInstance()) {
+            forcefullyClose(player)
+        }
+    }
+
     fun refresh() {
-        for ((player, _) in GuiManager.getInstance().getActiveOfInstance(this)) {
+        for ((player, _) in getAllWatchingInstance()) {
             refreshAsAny(player)
         }
     }
 
     fun refreshTitle() {
-        for ((player, _) in GuiManager.getInstance().getActiveOfInstance(this)) {
+        for ((player, _) in getAllWatchingInstance()) {
             refreshTitleAsAny(player)
         }
+    }
+
+    fun getAllWatchingInstance(): Map<out Any, GuiScreen<*, *>> {
+        return GuiManager.getInstance().getActiveOfInstance(this)
     }
 }

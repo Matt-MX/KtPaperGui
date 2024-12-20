@@ -47,6 +47,8 @@ abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B
         return activeSessions.filterValues { gui -> gui == g }
     }
 
+    abstract fun forcefullyClose(player: Any)
+
     abstract fun createPlatformButtonOfType(typeKeyed: Key): B
 
     abstract fun createPlatformButton(type: Any): B
