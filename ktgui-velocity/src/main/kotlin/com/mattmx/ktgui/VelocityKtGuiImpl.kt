@@ -7,6 +7,8 @@ import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.util.Dummy
 import com.google.inject.Inject
 import com.mattmx.ktgui.click.ClickTypes
+import com.mattmx.ktgui.example.PlayerSettingsSchema
+import com.mattmx.ktgui.example.createOptionsGui
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.Slots
 import com.mattmx.ktgui.screen.refresh
@@ -186,45 +188,8 @@ class VelocityKtGuiImpl @Inject constructor(
             .then(BrigadierCommand.literalArgumentBuilder("buttons")
                 .executes { invoc ->
                     val player = invoc.source as? Player ?: return@executes SINGLE_SUCCESS
-                    var hidden: PacketGuiButton<*>? = null
 
-                    gui(!"Buttons", GuiType.ofRows(3)) {
-                        booleanButton(true).apply {
-
-                            ifTrue {
-                                named(!"<green>True")
-                                material = ItemTypes.LIME_CANDLE
-                            }
-
-                            ifFalse {
-                                named(!"<red>False")
-                                material = ItemTypes.RED_CANDLE
-                            }
-
-                            click.handle(ClickTypes.LEFT) {
-                                state = !state
-                                player.tryPlaySound(Sound.sound(Key.key("minecraft:ui.toast.in"), Sound.Source.MASTER, 1f, 1f))
-                            }
-
-                            click.handle(ClickTypes.DROP) {
-                                hidden = button(ItemTypes.ARROW) {
-                                    named(!"<white>Houdini!")
-                                    click(ClickTypes.LEFT) {
-                                        remove(this@button)
-                                    }
-                                } slot guiType.last
-                            }
-
-                            click.handle(ClickTypes.DROP_ALL) {
-                                hidden?.let { remove(it) }
-                                hidden = null
-                            }
-
-                        } slot guiType.middle
-
-                        updateOnModify(true)
-
-                    }.open(player)
+                    createOptionsGui(PlayerSettingsSchema()).open(player)
 
                     SINGLE_SUCCESS
                 })

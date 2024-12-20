@@ -22,6 +22,7 @@ dependencies {
 
     implementation(project(":ktgui-core"))
     implementation(project(":ktgui-packet-events"))
+    implementation(kotlin("reflect"))
 }
 
 kotlin {
