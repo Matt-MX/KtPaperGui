@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.example
 
-data class PlayerSettingsSchema(
+class PlayerSettingsSchema(
     @BooleanOption(
         name = "Some Value",
         icon = "minecraft:ender_pearl"

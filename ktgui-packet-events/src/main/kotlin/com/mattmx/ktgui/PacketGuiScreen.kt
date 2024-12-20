@@ -42,16 +42,19 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
         }
 
         if (event.cancelled) {
-            // Keep clicked item as was
-            val setItemPacket = WrapperPlayServerSetSlot(
-                windowId,
-                stateId,
-                packet.slot,
-                items[packet.slot]?.buildItem() ?: ItemStack.EMPTY
-            )
-            PacketEvents.getAPI()
-                .playerManager
-                .sendPacket(player, setItemPacket)
+
+            if (packet.slot in (0..<guiType.getTotalSlots())) {
+                // Keep clicked item as was
+                val setItemPacket = WrapperPlayServerSetSlot(
+                    windowId,
+                    stateId,
+                    packet.slot,
+                    items[packet.slot]?.buildItem() ?: ItemStack.EMPTY
+                )
+                PacketEvents.getAPI()
+                    .playerManager
+                    .sendPacket(player, setItemPacket)
+            }
 
             // Set held item to nothing todo(matt): maybe we should track their held item in manager?
             val setCursorItemPacket = WrapperPlayServerSetSlot(
@@ -64,7 +67,7 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
                 .playerManager
                 .sendPacket(player, setCursorItemPacket)
 
-            if (event.getClickType() in ClickTypes.ANY_SHIFT) {
+            if (event.getClickType() in ClickTypes.ANY_OTHER_INVENTORY) {
                 // Resend inventory contents
                 GuiManager.getInstance<PacketEventsGuiManager>()
                     .inventoryTracker
@@ -154,7 +157,7 @@ open class PacketGuiScreen<T : PacketGuiScreen<T>>(
         if (packets.isEmpty()) return
 
         val playerManager = PacketEvents.getAPI().playerManager
-        for ((player, _) in GuiManager.getInstance().getActiveOfInstance(this)) {
+        for ((player, _) in getAllWatchingInstance()) {
             for (packet in packets) {
                 playerManager.sendPacket(player, packet)
             }

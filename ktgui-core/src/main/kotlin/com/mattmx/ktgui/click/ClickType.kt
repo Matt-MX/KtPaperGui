@@ -48,6 +48,7 @@ object ClickTypes {
 
     val ANY_NUMBER_KEY = NUMBER_KEY_RANGE.map { numberKey(it) }
     val ANY_DROP = arrayOf(DROP, DROP_ALL)
+    val ANY_OTHER_INVENTORY = ANY_SHIFT + ANY_NUMBER_KEY + OFFHAND
 
     val ANY_DRAG = arrayOf(
         DRAG_START_LEFT,

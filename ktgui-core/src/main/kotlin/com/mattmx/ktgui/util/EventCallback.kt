@@ -11,5 +11,7 @@ class EventCallback<T> {
         this.registered.forEach { callback -> callback.invoke(value) }
     }
 
+    fun remove(callback: (T) -> Unit) = registered.remove(callback)
+
     fun clear() = this.registered.clear()
 }

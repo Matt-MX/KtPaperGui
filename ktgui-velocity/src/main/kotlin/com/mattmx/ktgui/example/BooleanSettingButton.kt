@@ -1,9 +1,9 @@
 package com.mattmx.ktgui.example
 
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes
+import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes.MENDING
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.util.Dummy
-import com.mattmx.ktgui.GuiButton
 import com.mattmx.ktgui.PacketGuiButton
 import com.mattmx.ktgui.PacketGuiScreen
 import com.mattmx.ktgui.button
@@ -28,21 +28,34 @@ class BooleanSettingButton(
             property.setter.call(!get())
             applyChanges(button)
             applyChanges(switch)
+
             refresh(parent)
+            switch.refresh(parent)
         }
 
         applyChanges(this)
         applyChanges(switch)
     }
 
+    infix fun slot(slot: Int) {
+        parent[slot] = this
+        parent[slot + 9] = switch
+    }
+
     fun applyChanges(button: PacketGuiButton<*>) = button.apply {
         val state = get()
-        named(if (state) !"<green>${meta.name}" else !"<red>${meta.name}")
+        named(if (state) !"<green>${meta.name}" else !"<gray>${meta.name}")
 
         material = if (button == switch) {
             if (get()) ItemTypes.LIME_CANDLE else ItemTypes.GRAY_CANDLE
         } else {
             ItemTypes.getByName(meta.icon) ?: material
+        }
+
+        if (state) {
+            component(ComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)
+        } else {
+            component(ComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, false)
         }
 
         component(ComponentTypes.HIDE_ADDITIONAL_TOOLTIP, Dummy.DUMMY)
@@ -51,7 +64,7 @@ class BooleanSettingButton(
             clear()
 
             +Component.empty()
-            +if (state) !"<green>Enabled" else !"<red>Disabled"
+            +if (state) !"<green>Enabled" else !"<gray>Disabled"
             +Component.empty()
         }
     }
@@ -60,6 +73,8 @@ class BooleanSettingButton(
 
 }
 
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.PROPERTY)
 annotation class BooleanOption(
     val name: String,
     val icon: String

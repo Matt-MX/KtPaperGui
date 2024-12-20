@@ -107,7 +107,9 @@ class VelocityKtGuiImpl @Inject constructor(
                     val timeOpened = LocalDateTime.now()
                     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                     gui(!"Refreshing", GuiType.ofRows(1)) {
-                        val refreshing = refresh(1.seconds) {
+                        updateOnModify(true)
+
+                        refresh(1.seconds) {
                             val now = LocalDateTime.now()
                             val timeOpen = Duration.between(timeOpened, now)
 
