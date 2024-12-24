@@ -13,7 +13,7 @@ import net.kyori.adventure.text.Component
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-abstract class PacketEventsGuiManager : GuiManager<Any, PacketGuiButton<*>, PacketGuiScreen<*>>() {
+abstract class PacketEventsGuiManager : GuiManager<Any, PacketGuiButton<*>, PacketGuiInventoryScreen<*>>() {
     private val windowIdCounter = AtomicInteger(1)
     private val listener = WindowEventsListener()
     val inventoryTracker = InventoryTracker()
@@ -52,7 +52,7 @@ abstract class PacketEventsGuiManager : GuiManager<Any, PacketGuiButton<*>, Pack
         return PacketGuiButton(itemType)
     }
 
-    override fun createPlatformGui(title: Component, type: GuiType): PacketGuiScreen<*> {
-        return PacketGuiScreen(type, title)
+    override fun createPlatformGui(title: Component, type: GuiType): PacketGuiInventoryScreen<*> {
+        return PacketGuiInventoryScreen(type, title)
     }
 }

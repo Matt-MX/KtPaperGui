@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.example
 
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
-import com.mattmx.ktgui.impl.PacketGuiScreen
+import com.mattmx.ktgui.impl.PacketGuiInventoryScreen
 import com.mattmx.ktgui.button
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.gui
@@ -14,7 +14,7 @@ private enum class States {
     RANDOM
 }
 
-fun createStatefulGui(): PacketGuiScreen<*> {
+fun createStatefulGui(): PacketGuiInventoryScreen<*> {
 
     val items = listOf(
         ItemTypes.DIRT,

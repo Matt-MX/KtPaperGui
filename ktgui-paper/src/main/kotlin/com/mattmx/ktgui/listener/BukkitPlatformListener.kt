@@ -20,7 +20,7 @@ class BukkitPlatformListener(
         val activeGui = manager.getActiveGui(player)
             ?: return
 
-        activeGui.handleClick(event)
+//        activeGui.handleClick(event)
     }
 
     @EventHandler
@@ -36,7 +36,7 @@ class BukkitPlatformListener(
     fun onInventoryClose(event: InventoryCloseEvent) {
         val player = event.player as? Player ?: return
 
-        manager.getActiveGui(player)?.handleClose(event)
+//        manager.getActiveGui(player)?.handleClose(event)
     }
 
     @EventHandler

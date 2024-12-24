@@ -19,7 +19,7 @@ import net.kyori.adventure.text.Component
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
-open class PacketGuiScreen<T : PacketGuiScreen<T>>(
+open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
     guiType: GuiType,
     title: Component
 ) : GuiScreen<Any, PacketGuiButton<*>>(guiType, title) {

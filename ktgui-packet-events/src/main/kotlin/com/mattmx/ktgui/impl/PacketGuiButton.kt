@@ -44,7 +44,7 @@ open class PacketGuiButton<T : PacketGuiButton<T>>(
     }
 
     override fun <G : GuiScreen<*, *>> refresh(parent: G) {
-        if (parent !is PacketGuiScreen<*>) error("Must be an instance of PacketGuiScreen<*>!")
+        if (parent !is PacketGuiInventoryScreen<*>) error("Must be an instance of PacketGuiScreen<*>!")
 
         val slots = parent.getSlots(this)
 

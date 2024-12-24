@@ -6,7 +6,7 @@ import com.github.retrooper.packetevents.util.Dummy
 import com.mattmx.ktgui.button
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.impl.PacketGuiButton
-import com.mattmx.ktgui.impl.PacketGuiScreen
+import com.mattmx.ktgui.impl.PacketGuiInventoryScreen
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.util.not
 import net.kyori.adventure.text.Component
@@ -79,5 +79,5 @@ annotation class BooleanOption(
     val icon: String
 )
 
-fun PacketGuiScreen<*>.booleanButton(property: KMutableProperty<Boolean>) =
+fun PacketGuiInventoryScreen<*>.booleanButton(property: KMutableProperty<Boolean>) =
     BooleanSettingButton(property, this)
