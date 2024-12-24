@@ -1,12 +1,13 @@
 package com.mattmx.ktgui.tasks
 
+import kotlin.time.Duration
 import java.util.*
 
-data class TaskSpec<T, D : Any>(
+data class TaskSpec<T>(
     val callback: (T) -> Unit,
-    val async: Boolean,
-    val period: Optional<D> = Optional.empty<D>(),
-    val delay: Optional<D> = Optional.empty<D>(),
+    val async: Boolean = true,
+    val period: Optional<Duration> = Optional.empty<Duration>(),
+    val delay: Optional<Duration> = Optional.empty<Duration>(),
 ) {
     fun isRepeating() = period.isPresent
 }

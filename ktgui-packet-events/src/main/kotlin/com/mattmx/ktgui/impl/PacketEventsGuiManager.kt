@@ -1,11 +1,13 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.impl
 
 import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPlayerInventory
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.listener.WindowEventsListener
 import com.mattmx.ktgui.screen.GuiType
+import com.mattmx.ktgui.listener.InventoryTracker
+import com.mattmx.ktgui.listener.PlayerLocationTracker
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import java.util.*

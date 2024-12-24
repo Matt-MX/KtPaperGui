@@ -1,4 +1,4 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.listener
 
 import com.github.retrooper.packetevents.event.PacketListenerAbstract
 import com.github.retrooper.packetevents.event.PacketReceiveEvent
@@ -6,10 +6,9 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindowButton
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerAbilities
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerInput
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.impl.PacketEventsGuiManager
 
 class WindowEventsListener : PacketListenerAbstract() {
 

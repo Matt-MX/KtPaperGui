@@ -1,4 +1,4 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.impl
 
 import com.github.retrooper.packetevents.protocol.component.ComponentType
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes
@@ -8,6 +8,7 @@ import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
+import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
 import com.mattmx.ktgui.screen.GuiScreen

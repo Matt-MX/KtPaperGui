@@ -1,12 +1,12 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.button
 
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.screen.GuiScreen
+import com.mattmx.ktgui.trait.TraitHolder
 import com.mattmx.ktgui.util.EnchantmentMap
 import com.mattmx.ktgui.util.ParentEventCallback
 import com.mattmx.ktgui.util.UnaryOperatorList
 import net.kyori.adventure.text.Component
-import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
@@ -15,7 +15,8 @@ abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
     var lore = mutableListOf<Component>()
     var amount: Int = 1
     var enchantments = mutableMapOf<E, Int>()
-    val postBuild = ParentEventCallback<I, S>(this as S)
+    val postBuild by lazy { ParentEventCallback<I, S>(this as S) }
+    val traits by lazy { TraitHolder(this as S) }
     abstract val click: ClickEventCallback<S, *>
 
     infix fun named(name: Component?): S = apply {

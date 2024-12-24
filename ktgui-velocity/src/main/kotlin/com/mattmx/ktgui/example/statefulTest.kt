@@ -1,7 +1,10 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.example
 
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
+import com.mattmx.ktgui.impl.PacketGuiScreen
+import com.mattmx.ktgui.button
 import com.mattmx.ktgui.click.ClickTypes
+import com.mattmx.ktgui.gui
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.stateful
 import com.mattmx.ktgui.util.not
@@ -19,7 +22,7 @@ fun createStatefulGui(): PacketGuiScreen<*> {
         ItemTypes.COD
     )
 
-    return gui(!"Stateful", GuiType.ofRows(6)) {
+    return gui(!"Stateful", GuiType.ofRows(5)) {
         updateOnModify(true)
 
         stateful(States.INITIAL) {

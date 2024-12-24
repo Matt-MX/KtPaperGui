@@ -2,6 +2,8 @@ package com.mattmx.ktgui
 
 import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
+import com.mattmx.ktgui.impl.PacketGuiButton
+import com.mattmx.ktgui.impl.PacketGuiScreen
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.util.ParentEventCallback
 

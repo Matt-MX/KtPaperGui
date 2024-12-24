@@ -1,17 +1,16 @@
 package com.mattmx.ktgui
 
 import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.protocol.component.ComponentTypes
-import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemRarity
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
-import com.github.retrooper.packetevents.util.Dummy
 import com.google.inject.Inject
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.example.PlayerSettingsSchema
 import com.mattmx.ktgui.example.createOptionsGui
+import com.mattmx.ktgui.example.createStatefulGui
+import com.mattmx.ktgui.impl.PacketEventsGuiManager
+import com.mattmx.ktgui.impl.VelocityGuiManagerImpl
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.Slots
-import com.mattmx.ktgui.screen.refresh
 import com.mattmx.ktgui.util.not
 import com.mojang.brigadier.Command.SINGLE_SUCCESS
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -23,7 +22,6 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import org.slf4j.Logger
 import java.time.Duration
@@ -31,7 +29,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.random.Random
-import kotlin.time.Duration.Companion.seconds
 
 @Plugin(
     id = "ktgui",
@@ -41,11 +38,15 @@ import kotlin.time.Duration.Companion.seconds
         Dependency(id = "packetevents", optional = false)
     ]
 )
-class VelocityKtGuiImpl @Inject constructor(
+class VelocityKtGuiPlugin @Inject constructor(
     val proxyServer: ProxyServer,
     val logger: Logger
 ) {
-    private val manager = PacketEventsGuiManagerImpl(this, proxyServer)
+    private val manager = VelocityGuiManagerImpl(this, proxyServer)
+
+    init {
+        instance = this
+    }
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
@@ -100,31 +101,45 @@ class VelocityKtGuiImpl @Inject constructor(
 
                     SINGLE_SUCCESS
                 })
+            .then(BrigadierCommand.literalArgumentBuilder("multi-platform")
+                .executes { invoc ->
+                    val player = invoc.source as? Player ?: return@executes SINGLE_SUCCESS
+
+                    createMultiPlatformGui().openAsAny(player)
+
+                    SINGLE_SUCCESS
+                })
             .then(BrigadierCommand.literalArgumentBuilder("refresh")
                 .executes { invoc ->
                     val player = invoc.source as? Player ?: return@executes SINGLE_SUCCESS
 
                     val timeOpened = LocalDateTime.now()
                     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                    gui(!"Refreshing", GuiType.ofRows(1)) {
+                    renderingGui(!"Refreshing", GuiType.ofRows(1)) {
                         updateOnModify(true)
 
-                        refresh(1.seconds) {
-                            val now = LocalDateTime.now()
-                            val timeOpen = Duration.between(timeOpened, now)
+                        val now = LocalDateTime.now()
+                        val timeOpen = Duration.between(timeOpened, now)
 
-                            title = !"Refreshing ${timeOpen.seconds}"
+                        title = !"Refreshing ${timeOpen.seconds}"
 
-                            button(ItemTypes.CLOCK) {
-                                named(!"<white>${now.format(formatter)}")
-                                lore {
-                                    +!"<gray>Open for ${timeOpen.seconds}s"
+                        button(ItemTypes.CLOCK) {
+                            named(!"<white>${now.format(formatter)}")
+                            lore {
+                                +!"<gray>Open for ${timeOpen.seconds}s"
 
-                                    +!"<dark_gray><i>Italic</i> :3"
-                                }
-                                click {
-                                    ClickTypes.LEFT {
-                                        player.sendMessage(!"Clicked")
+                                +!"<dark_gray><i>Italic</i> :3"
+                            }
+                            click {
+                                ClickTypes.LEFT {
+                                    val refresh = this@renderingGui
+                                        .traits[RefreshBlock::class.java]
+                                        .orElseThrow()
+
+                                    if (refresh.isActive()) {
+                                        refresh.stop()
+                                    } else {
+                                        refresh.resume()
                                     }
                                 }
                             } slot guiType.middle
@@ -206,4 +221,9 @@ class VelocityKtGuiImpl @Inject constructor(
     }
 
     fun getGuiManager() = manager
+
+    companion object {
+        private lateinit var instance: VelocityKtGuiPlugin
+        fun getInstance() = instance
+    }
 }

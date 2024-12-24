@@ -1,4 +1,4 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.listener
 
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.event.PacketListenerAbstract

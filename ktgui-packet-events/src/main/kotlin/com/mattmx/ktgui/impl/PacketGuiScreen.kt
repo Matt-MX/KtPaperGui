@@ -1,15 +1,14 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.impl
 
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.item.ItemStack
-import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.wrapper.PacketWrapper
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenWindow
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetCursorItem
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems
+import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
@@ -17,7 +16,7 @@ import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.util.ParentEventCallback
 import net.kyori.adventure.text.Component
-import java.util.Optional
+import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 open class PacketGuiScreen<T : PacketGuiScreen<T>>(

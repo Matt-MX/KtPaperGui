@@ -1,7 +1,16 @@
 package com.mattmx.ktgui.tasks
 
-abstract class TaskProvider<T, D : Any> {
+import com.mattmx.ktgui.TaskWrapper
 
-    abstract fun createTask(spec: TaskSpec<T, D>): T
+abstract class TaskProvider<T : TaskWrapper> {
+
+    fun createTaskAny(spec: TaskSpec<Any>): T {
+        val specCast = spec as? TaskSpec<T>
+            ?: error("Invalid TaskSpec type.")
+
+        return createTask(specCast)
+    }
+
+    abstract fun createTask(spec: TaskSpec<T>): T
 
 }

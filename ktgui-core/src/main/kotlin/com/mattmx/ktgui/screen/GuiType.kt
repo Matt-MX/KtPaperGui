@@ -6,8 +6,9 @@ class GuiType(
     val rows: Int?,
     val type: InventoryType
 ) {
-    val middle = rows?.let { Slots.ofRow(floor(rows / 2.0).toInt()).middle }
-        ?: error("Can only get middle slot of a row gui type!")
+    val middle: Int
+        get() = rows?.let { Slots.ofRow(floor(rows / 2.0 + 1).toInt()).middle }
+            ?: (type.slots / 2)
     val last = getTotalSlots() - 1
     val first = 0
 
@@ -53,7 +54,7 @@ object InventoryTypes {
     val ENCHANTMENT_TABLE = InventoryType(13, -1)
     val FURNACE = InventoryType(14, -1)
     val GRINDSTONE = InventoryType(15, -1)
-    val HOPPER = InventoryType(16, -1)
+    val HOPPER = InventoryType(16, 5)
     val LECTERN = InventoryType(17, -1)
     val LOOM = InventoryType(18, -1)
     val VILLAGER = InventoryType(19, -1)
@@ -62,6 +63,8 @@ object InventoryTypes {
     val SMOKER = InventoryType(22, -1)
     val CARTOGRAPHY_TABLE = InventoryType(23, -1)
     val STONECUTTER = InventoryType(24, -1)
+
+    val CUSTOM_HOTBAR = InventoryType(-1, 9)
 
     val GENERICS = arrayOf(
         GENERIC_9x1,

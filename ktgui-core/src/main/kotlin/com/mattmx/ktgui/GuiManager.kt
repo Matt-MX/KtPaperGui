@@ -1,12 +1,13 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.tasks.KeyedTaskTracker
+import com.mattmx.ktgui.tasks.TaskProvider
 import com.mattmx.ktgui.tasks.TaskTracker
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
-import java.time.Duration
 import java.util.*
 
 abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B>> {
@@ -55,11 +56,11 @@ abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B
 
     abstract fun createPlatformGui(title: Component, type: GuiType): G
 
-    abstract fun createRepeatingTask(repeat: Duration, task: () -> Unit): TaskWrapper
+    abstract fun getTaskProvider() : TaskProvider<*>
 
-    abstract fun <T, D : Any> createTaskTracker(plugin: Any): TaskTracker<T, D>
+    abstract fun <T : TaskWrapper> createTaskTracker(plugin: Any): TaskTracker<T>
 
-    abstract fun <T, D : Any> createKeyedTaskTracker(plugin: Any): KeyedTaskTracker<T, D>
+    abstract fun <T : TaskWrapper> createKeyedTaskTracker(plugin: Any): KeyedTaskTracker<T>
 
     companion object {
         private lateinit var instance: GuiManager<*, *, *>

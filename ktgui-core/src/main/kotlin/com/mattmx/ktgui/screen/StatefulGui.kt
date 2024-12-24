@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.screen
 
-import com.mattmx.ktgui.GuiButton
-import com.mattmx.ktgui.event.SlotUpdatedEvent
+import com.mattmx.ktgui.button.GuiButton
 import java.util.*
 
 class StatefulGui<P : GuiScreen<*, *>, E>(

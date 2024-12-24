@@ -1,6 +1,10 @@
 package com.mattmx.ktgui
 
-fun interface TaskWrapper {
+import com.mattmx.ktgui.tasks.TaskSpec
+
+interface TaskWrapper {
+
+    fun getSpec() : TaskSpec<Any>
 
     fun cancel()
 

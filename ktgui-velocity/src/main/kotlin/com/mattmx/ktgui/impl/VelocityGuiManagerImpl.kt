@@ -1,21 +1,19 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.impl
 
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCloseWindow
-import com.mattmx.ktgui.tasks.KeyedTaskTracker
-import com.mattmx.ktgui.tasks.TaskTracker
-import com.mattmx.ktgui.tasks.VelocityKeyedTaskTrackerImpl
-import com.mattmx.ktgui.tasks.VelocityTaskTrackerImpl
+import com.mattmx.ktgui.TaskWrapper
+import com.mattmx.ktgui.tasks.*
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
 import com.velocitypowered.api.proxy.ProxyServer
-import java.time.Duration
 
-class PacketEventsGuiManagerImpl(
+class VelocityGuiManagerImpl(
     private val plugin: Any,
     private val proxy: ProxyServer
 ) : PacketEventsGuiManager() {
+    private val velocityTaskProvider = VelocityTaskProvider(plugin, proxy) {}
 
     init {
         setInstance(this)
@@ -26,6 +24,8 @@ class PacketEventsGuiManagerImpl(
         inventoryTracker.remove(event.player)
         playerLocationTracker.ifPresent { it.remove(event.player) }
         removeActiveGui(event.player)
+            ?.close
+            ?.apply(event.player)
     }
 
     @Subscribe
@@ -35,6 +35,7 @@ class PacketEventsGuiManagerImpl(
             inventoryTracker.remove(event.player)
             playerLocationTracker.ifPresent { it.remove(event.player) }
         }
+        // TODO(matt): reopen gui when they switch servers??
     }
 
     override fun registerListeners() {
@@ -61,22 +62,15 @@ class PacketEventsGuiManagerImpl(
             .sendPacket(player, packet)
     }
 
-    override fun createRepeatingTask(repeat: Duration, task: () -> Unit): TaskWrapper {
-
-        val scheduledTask = proxy.scheduler
-            .buildTask(plugin, task)
-            .repeat(repeat)
-            .delay(Duration.ZERO)
-            .schedule()
-
-        return TaskWrapper { scheduledTask.cancel() }
+    override fun getTaskProvider(): TaskProvider<*> {
+        return this.velocityTaskProvider
     }
 
-    override fun <T, D : Any>  createTaskTracker(plugin: Any): TaskTracker<T, D> {
-        return VelocityTaskTrackerImpl(plugin, proxy) as TaskTracker<T, D>
+    override fun <T : TaskWrapper> createTaskTracker(plugin: Any): TaskTracker<T> {
+        return VelocityTaskTrackerImpl(plugin, proxy) as TaskTracker<T>
     }
 
-    override fun <T, D : Any>  createKeyedTaskTracker(plugin: Any): KeyedTaskTracker<T, D> {
-        return VelocityKeyedTaskTrackerImpl(plugin, proxy) as KeyedTaskTracker<T, D>
+    override fun <T : TaskWrapper> createKeyedTaskTracker(plugin: Any): KeyedTaskTracker<T> {
+        return VelocityKeyedTaskTrackerImpl(plugin, proxy) as KeyedTaskTracker<T>
     }
 }

@@ -1,8 +1,10 @@
 package com.mattmx.ktgui.tasks
 
+import com.mattmx.ktgui.TaskWrapper
 import java.util.*
+import kotlin.time.Duration
 
-abstract class TaskTracker<T, D : Any> : TaskProvider<T, D>() {
+abstract class TaskTracker<T : TaskWrapper> : TaskProvider<T>() {
     protected val tasks = Collections.synchronizedSet(mutableSetOf<T>())
 
     fun track(task: T) = tasks.add(task)
@@ -27,25 +29,29 @@ abstract class TaskTracker<T, D : Any> : TaskProvider<T, D>() {
         return createTask(TaskSpec(callback, async = true))
     }
 
-    fun runSyncDelayed(delay: D, callback: (T) -> Unit): T {
+    fun runSyncDelayed(delay: Duration, callback: (T) -> Unit): T {
         return createTask(TaskSpec(callback, async = false, delay = Optional.of(delay)))
     }
 
-    fun runAsyncDelayed(delay: D, callback: (T) -> Unit): T {
+    fun runAsyncDelayed(delay: Duration, callback: (T) -> Unit): T {
         return createTask(TaskSpec(callback, async = true, delay = Optional.of(delay)))
     }
 
-    fun runSyncRepeat(period: D, delay: D = period, callback: (T) -> Unit): T {
+    fun runSyncRepeat(period: Duration, delay: Duration = period, callback: (T) -> Unit): T {
         return createTask(
             TaskSpec(callback, async = false, period = Optional.of(period), delay = Optional.of(delay))
         )
     }
 
-    fun runAsyncRepeat(period: D, delay: D = period, callback: (T) -> Unit): T {
+    fun runAsyncRepeat(period: Duration, delay: Duration = period, callback: (T) -> Unit): T {
         return createTask(
             TaskSpec(callback, async = true, period = Optional.of(period), delay = Optional.of(delay))
         )
     }
+
+    inline fun <reified K : T> cancelIfInstance() = cancelIfInstanceOf(K::class.java)
+
+    fun <K : T> cancelIfInstanceOf(clazz: Class<K>) = cancelIf { clazz.isInstance(it) }
 
     fun cancelIf(predicate: (T) -> Boolean): List<T> = synchronized(tasks) {
         val removed = mutableListOf<T>()

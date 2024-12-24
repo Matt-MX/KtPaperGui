@@ -1,8 +1,9 @@
 package com.mattmx.ktgui.screen
 
-import com.mattmx.ktgui.GuiButton
+import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.event.SlotUpdatedEvent
+import com.mattmx.ktgui.trait.TraitHolder
 import com.mattmx.ktgui.util.EventCallback
 import com.mattmx.ktgui.util.ParentEventCallback
 import net.kyori.adventure.text.Component
@@ -19,6 +20,7 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     var windowIdentifier: String = GuiButton.EMPTY_ID
     var items = hashMapOf<Int, B>()
     val slotUpdated = EventCallback<SlotUpdatedEvent<B>>()
+    val traits = TraitHolder<GuiScreen<*, *>>(this)
     abstract val open: ParentEventCallback<P, *>
     abstract val close: ParentEventCallback<P, *>
 
@@ -183,7 +185,7 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
         GuiManager.getInstance().removeActiveGui(player)
     }
 
-    abstract fun getVisibleGuiButtons(): IntRange
+    open fun getVisibleGuiButtons(): IntRange = (guiType.first..guiType.last)
 
     abstract fun open(player: P): GuiScreen<P, B>
 

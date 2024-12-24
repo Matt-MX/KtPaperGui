@@ -1,38 +1,33 @@
-package com.mattmx.ktgui
+package com.mattmx.ktgui.trait.impl
 
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.TaskWrapper
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.tasks.TaskSpec
 import com.mattmx.ktgui.trait.AbstractTrait
 import java.util.*
 import kotlin.time.Duration
 
-// TODO: convert to trait
-open class RefreshBlock(
-    protected val block: (RefreshBlock) -> Unit,
+class RefreshableTrait(
+    protected val block: (RefreshableTrait) -> Unit,
     protected val refreshDuration: Duration,
-    protected val owner: GuiScreen<*, *>
+    owner: GuiScreen<*, *>
 ) : AbstractTrait<GuiScreen<*, *>>(owner) {
     protected var task: TaskWrapper? = null
 
     override fun onEnable() {
-        block(this)
-
-        owner.open {
+        getOwner().open {
             if (task == null) {
                 task = createTask()
             }
         }
 
-        owner.close {
-            if (GuiManager.getInstance().getActiveOfInstance(owner).isEmpty()) {
+        getOwner().close {
+            if (GuiManager.getInstance().getActiveOfInstance(getOwner()).isEmpty()) {
                 task?.cancel()
                 task = null
             }
         }
-    }
-
-    override fun onDisable() {
-        stop()
     }
 
     fun createTask(): TaskWrapper {
@@ -40,7 +35,6 @@ open class RefreshBlock(
         val spec = TaskSpec<Any>(
             callback = {
                 block(this)
-                owner.refresh()
             },
             true,
             Optional.of(refreshDuration),
@@ -64,4 +58,5 @@ open class RefreshBlock(
     }
 
     fun isActive() = task != null
+
 }

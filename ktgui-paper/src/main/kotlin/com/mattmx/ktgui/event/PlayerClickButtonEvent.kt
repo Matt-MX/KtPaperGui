@@ -1,23 +1,19 @@
 package com.mattmx.ktgui.event
 
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
+import com.mattmx.ktgui.impl.PaperGuiButton
 import com.mattmx.ktgui.click.ClickButtonEvent
 import com.mattmx.ktgui.click.ClickTypes
-import com.mattmx.ktgui.impl.PacketGuiButton
+import org.bukkit.event.inventory.InventoryClickEvent
 
-class PlayerClickButtonEvent<T : PacketGuiButton<T>>(
+class PlayerClickButtonEvent<T : PaperGuiButton<T>>(
     private val player: Any,
-    private val clickedButton: PacketGuiButton<T>?,
-    val packet: WrapperPlayClientClickWindow
+    private val clickedButton: PaperGuiButton<T>?,
+    val event: InventoryClickEvent
 ) : ClickButtonEvent {
-    private val clickType = ClickTypes.match(
-        packet.windowClickType.ordinal,
-        packet.button,
-        packet.actionNumber.orElse(0)
-    )
+    private val clickType = ClickTypes.LEFT // TODO
     var cancelled = true
     var continueEventCallback: Boolean = true
-    val button: PacketGuiButton<T>
+    val button: PaperGuiButton<T>
         get() = clickedButton!!
 
     fun isEmpty() = clickedButton == null

@@ -1,9 +1,11 @@
 package com.mattmx.ktgui.tasks
 
+import com.mattmx.ktgui.TaskWrapper
 import net.kyori.adventure.key.Key
 import java.util.*
+import kotlin.time.Duration
 
-abstract class KeyedTaskTracker<T, D : Any> : TaskProvider<T, D>() {
+abstract class KeyedTaskTracker<T : TaskWrapper> : TaskProvider<T>() {
     protected val tasks = Collections.synchronizedMap(hashMapOf<Key, T>())
 
     fun track(key: Key, task: T) = tasks.put(key, task)
@@ -20,15 +22,15 @@ abstract class KeyedTaskTracker<T, D : Any> : TaskProvider<T, D>() {
         return tasks.getOrPut(key) { createTask(TaskSpec(callback, async = true)) }
     }
 
-    fun runSyncDelayed(key: Key, delay: D, callback: (T) -> Unit): T {
+    fun runSyncDelayed(key: Key, delay: Duration, callback: (T) -> Unit): T {
         return tasks.getOrPut(key) { createTask(TaskSpec(callback, async = false, delay = Optional.of(delay))) }
     }
 
-    fun runAsyncDelayed(key: Key, delay: D, callback: (T) -> Unit): T {
+    fun runAsyncDelayed(key: Key, delay: Duration, callback: (T) -> Unit): T {
         return tasks.getOrPut(key) { createTask(TaskSpec(callback, async = true, delay = Optional.of(delay))) }
     }
 
-    fun runSyncRepeat(key: Key, period: D, delay: D = period, callback: (T) -> Unit): T {
+    fun runSyncRepeat(key: Key, period: Duration, delay: Duration = period, callback: (T) -> Unit): T {
         return tasks.getOrPut(key) {
             createTask(
                 TaskSpec(callback, async = false, period = Optional.of(period), delay = Optional.of(delay))
@@ -36,13 +38,17 @@ abstract class KeyedTaskTracker<T, D : Any> : TaskProvider<T, D>() {
         }
     }
 
-    fun runAsyncRepeat(key: Key, period: D, delay: D = period, callback: (T) -> Unit): T {
+    fun runAsyncRepeat(key: Key, period: Duration, delay: Duration = period, callback: (T) -> Unit): T {
         return tasks.getOrPut(key) {
             createTask(
                 TaskSpec(callback, async = true, period = Optional.of(period), delay = Optional.of(delay))
             )
         }
     }
+
+    inline fun <reified K : T> cancelIfInstance() = cancelIfInstanceOf(K::class.java)
+
+    fun <K : T> cancelIfInstanceOf(clazz: Class<K>) = cancelIf { _, v -> clazz.isInstance(v) }
 
     fun cancelIf(predicate: (Key, T) -> Boolean): List<T> = synchronized(tasks) {
         val removed = mutableListOf<T>()

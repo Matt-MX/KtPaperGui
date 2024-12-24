@@ -1,27 +1,30 @@
 package com.mattmx.ktgui.tasks
 
 import com.velocitypowered.api.proxy.ProxyServer
-import com.velocitypowered.api.scheduler.ScheduledTask
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
 class VelocityTaskProvider(
     private val plugin: Any,
     private val proxyServer: ProxyServer,
-    private val after: (ScheduledTask) -> Unit
-) : TaskProvider<ScheduledTask, Duration>() {
-    override fun createTask(spec: TaskSpec<ScheduledTask, Duration>): ScheduledTask {
-        return proxyServer.scheduler
+    private val completedCallback: (VelocityTaskWrapper) -> Unit
+) : TaskProvider<VelocityTaskWrapper>() {
+    override fun createTask(spec: TaskSpec<VelocityTaskWrapper>): VelocityTaskWrapper {
+        val wrapper = VelocityTaskWrapper(spec)
+
+        wrapper.instance = proxyServer.scheduler
             .buildTask(this.plugin) { task ->
-                spec.callback.invoke(task)
+                spec.callback.invoke(wrapper)
 
                 // If not a repeating task then we are done
                 if (!spec.isRepeating()) {
-                    after(task)
+                    completedCallback(wrapper)
                 }
             }
             .repeat(spec.period.orElse(Duration.ZERO).toJavaDuration())
             .delay(spec.delay.orElse(Duration.ZERO).toJavaDuration())
             .schedule()
+
+        return wrapper
     }
 }

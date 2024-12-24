@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.event
 
-import com.mattmx.ktgui.GuiButton
+import com.mattmx.ktgui.button.GuiButton
 
 class SlotUpdatedEvent<B : GuiButton<*, *, *, *>>(
     val old: B?,
