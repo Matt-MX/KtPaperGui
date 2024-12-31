@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.argument
 
+import com.mattmx.ktgui.ArgumentConsumer
 import com.mattmx.ktgui.command.CommandInvocation
 import com.mattmx.ktgui.command.context.RunnableCommandContext
 
@@ -22,6 +23,8 @@ class IntegerArgument(
     infix fun incorrectRange(handle: RunnableCommandContext<*>.() -> Unit) {
         this.incorrectRange = handle
     }
+
+    override var consumer = ArgumentConsumer.single()
 
     override fun parse(invocation: CommandInvocation<*>, value: String): Result<Int> {
         val intResult = runCatching { value.toInt() }

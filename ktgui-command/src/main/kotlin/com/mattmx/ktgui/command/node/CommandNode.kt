@@ -1,11 +1,29 @@
 package com.mattmx.ktgui.command.node
 
 import com.mattmx.ktgui.ArgumentProcessor
+import com.mattmx.ktgui.Flag
+import com.mattmx.ktgui.Option
+import com.mattmx.ktgui.argument.Argument
 import com.mattmx.ktgui.command.CommandInvocation
 import com.mattmx.ktgui.command.context.RunnableCommandContext
 
 open class CommandNode<T : CommandNode<T>> : ChildNodeHolder() {
     val runs = mutableMapOf<Class<*>, (RunnableCommandContext<*>) -> Unit>()
+    val options = mutableSetOf<Option<*>>()
+    val flags = mutableSetOf<Flag>()
+
+    operator fun <T, A : Argument<T>> A.unaryPlus() =
+        Option(this).also { options.add(it) }
+
+    infix fun withOption(option: Option<*>) = apply {
+        this.options.add(option)
+    }
+
+    operator fun Flag.unaryPlus() = flags.add(this)
+
+    infix fun withFlag(flag: Flag) = apply {
+        flags.add(flag)
+    }
 
     @Suppress("UNCHECKED_CAST")
     inline fun <reified T> runs(noinline block: RunnableCommandContext<T>.() -> Unit) = apply {

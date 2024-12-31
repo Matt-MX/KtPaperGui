@@ -2,6 +2,6 @@ package com.mattmx.ktgui.command.node
 
 import com.mattmx.ktgui.argument.Argument
 
-class ArgumentNode<T>(
-    val argument: Argument<T>
-) : CommandNode<ArgumentNode<T>>()
+abstract class ArgumentNode<T> : CommandNode<ArgumentNode<T>>() {
+    abstract val argument: Argument<T>
+}

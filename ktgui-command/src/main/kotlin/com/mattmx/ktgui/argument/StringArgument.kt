@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.argument
 
+import com.mattmx.ktgui.ArgumentConsumer
 import com.mattmx.ktgui.command.CommandInvocation
 import com.mattmx.ktgui.command.context.RunnableCommandContext
 
@@ -8,6 +9,7 @@ class StringArgument(
     var range: IntRange = (Int.MIN_VALUE..Int.MAX_VALUE),
     var regex: Regex? = null
 ) : Argument<String>(name) {
+    override var consumer = ArgumentConsumer.single()
     var max
         get() = range.max()
         set(value) {

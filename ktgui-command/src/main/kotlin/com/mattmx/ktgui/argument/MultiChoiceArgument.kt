@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.argument
 
+import com.mattmx.ktgui.ArgumentConsumer
 import com.mattmx.ktgui.command.CommandInvocation
 import kotlin.properties.ReadOnlyProperty
 
@@ -7,6 +8,7 @@ open class MultiChoiceArgument<T>(
     name: String,
     val mapProvider: () -> Map<String, T>
 ) : Argument<T>(name) {
+    override var consumer = ArgumentConsumer.single()
 
     override fun parse(invocation: CommandInvocation<*>, value: String): Result<T> {
         val values = mapProvider()

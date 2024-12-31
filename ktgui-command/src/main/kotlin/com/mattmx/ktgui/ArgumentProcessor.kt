@@ -3,11 +3,11 @@ package com.mattmx.ktgui
 import com.mattmx.ktgui.argument.Argument
 import com.mattmx.ktgui.argument.ArgumentContext
 import com.mattmx.ktgui.command.CommandInvocation
-import com.mattmx.ktgui.command.DeclarativeCommand
 import com.mattmx.ktgui.command.node.ArgumentNode
-import com.mattmx.ktgui.command.node.ChainNode
 import com.mattmx.ktgui.command.node.CommandNode
 import com.mattmx.ktgui.command.node.LiteralNode
+import kotlin.math.max
+import kotlin.math.min
 
 class ArgumentProcessor(
     val command: CommandNode<*>,
@@ -17,12 +17,12 @@ class ArgumentProcessor(
     var node: CommandNode<*>? = null
     var lastVisitedNode: CommandNode<*>? = null
     private val args = invocation.args.toList()
-    private var start = 0
-    private var end = 1
+    var start = 0
+    var end = 1
 
     fun process() {
         while (!isComplete()) {
-            val substr = args.subList(start, end).joinToString(" ")
+            val substr = currentString()
             var matchingChild: CommandNode<*>? = null
 
             val childIterator = currentNode().children().iterator()
@@ -66,5 +66,25 @@ class ArgumentProcessor(
     fun isComplete() = end > args.size
 
     fun currentNode() = lastVisitedNode ?: command
+
+    fun currentString(): String {
+        return peekAdditional(0)
+    }
+
+    fun peek(i: Int) : String = args[end + i]
+    fun peekStart(i: Int) : String = args[start + i]
+
+    fun peekAdditional(i: Int) : String {
+        return args.subList(start, min(args.size, end + i)).joinToString(" ")
+    }
+
+    fun peekOffset(a: Int, b: Int = args.size) : String {
+        return args.subList(max(0, start + a), min(args.size, end + b)).joinToString(" ")
+    }
+
+    fun next() {
+        start = end
+        end++
+    }
 
 }

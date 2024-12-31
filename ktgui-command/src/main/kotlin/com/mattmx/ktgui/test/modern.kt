@@ -21,7 +21,7 @@ fun main() {
         "BoxArena" to true
     )
     val command = command("iris") {
-        sub("feature" / +feature) {
+        sub("feature" / feature) {
             runs<FakePlayer> {
                 sender.sendMessage("Info for ${feature.getContext()}")
             }
@@ -39,7 +39,7 @@ fun main() {
             }
 
             val t by intArgument()
-            sub("test-inner" / +t).runs<FakePlayer> {
+            sub("test-inner" / t).runs<FakePlayer> {
                 sender.sendMessage("t = ${feature.getContext()} ${t()}")
             }
         }
