@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/api" />
+            <option value="$PROJECT_DIR$/ktgui-command" />
             <option value="$PROJECT_DIR$/ktgui-core" />
             <option value="$PROJECT_DIR$/ktgui-packet-events" />
             <option value="$PROJECT_DIR$/ktgui-paper" />

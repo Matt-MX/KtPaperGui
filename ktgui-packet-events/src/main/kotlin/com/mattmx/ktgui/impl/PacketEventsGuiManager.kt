@@ -8,6 +8,7 @@ import com.mattmx.ktgui.listener.WindowEventsListener
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.listener.InventoryTracker
 import com.mattmx.ktgui.listener.PlayerLocationTracker
+import com.mattmx.ktgui.screen.InventoryTypes
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import java.util.*
@@ -53,6 +54,10 @@ abstract class PacketEventsGuiManager : GuiManager<Any, PacketGuiButton<*>, Pack
     }
 
     override fun createPlatformGui(title: Component, type: GuiType): PacketGuiInventoryScreen<*> {
+        if (type.type == InventoryTypes.CUSTOM_HOTBAR) {
+//            return PacketGuiHotbarScreen()
+        }
+
         return PacketGuiInventoryScreen(type, title)
     }
 }

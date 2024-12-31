@@ -10,6 +10,7 @@ pluginManagement {
 
 plugins {
     id("com.gradle.enterprise") version("3.15")
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
 include("api")
@@ -29,3 +30,4 @@ include("ktgui-core")
 include("ktgui-paper")
 include("ktgui-packet-events")
 include("ktgui-velocity")
+include("ktgui-command")
