@@ -26,21 +26,26 @@ fun main() {
                 sender.sendMessage("Info for ${feature.getContext()}")
             }
 
-            sub("enable") {
-                runs<FakePlayer> {
-                    sender.sendMessage("Enable ${feature.getContext()}")
-                }
+            "enable".runs<FakePlayer> {
+                sender.sendMessage("Enable ${feature.getContext()}")
             }
 
-            sub("disable") {
-                runs<FakePlayer> {
-                    sender.sendMessage("Disable ${feature.getContext()}")
-                }
+            "disable".runs<FakePlayer> {
+                sender.sendMessage("Disable ${feature.getContext()}")
+            }
+
+            "reload".runs<FakePlayer> {
+                sender.sendMessage("Reload ${feature.getContext()}")
+            }
+
+            val t by intArgument()
+            sub("test-inner" / +t).runs<FakePlayer> {
+                sender.sendMessage("t = ${feature.getContext()} ${t()}")
             }
         }
     }
 
-    val invocation = CommandInvocation(mattMx, "feature BoxArena enable".split(" ").toTypedArray(), "foo")
+    val invocation = CommandInvocation(mattMx, "feature BoxArena test-inner 3".split(" ").toTypedArray(), "foo")
 
     command.run(invocation)
 }

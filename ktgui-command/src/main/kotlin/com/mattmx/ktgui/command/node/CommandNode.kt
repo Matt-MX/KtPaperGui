@@ -42,6 +42,14 @@ open class CommandNode<T : CommandNode<T>> : ChildNodeHolder() {
 
     fun sub(node: String) = LiteralNode(node).also { addChild(it) }
 
+    inline fun <reified T> String.runs(noinline block: RunnableCommandContext<T>.() -> Unit): CommandNode<LiteralNode> {
+        return sub(this).runs(block)
+    }
+
+    inline fun <reified T> String.executes(noinline block: (RunnableCommandContext<T>) -> Unit): CommandNode<LiteralNode> {
+        return sub(this).executes(block)
+    }
+
     fun sub(orderedCommandNode: OrderedCommandNode): CommandNode<*> {
         val (root, end) = orderedCommandNode.build()
 
