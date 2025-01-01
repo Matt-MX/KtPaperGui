@@ -7,6 +7,7 @@ import com.mattmx.ktgui.trait.TraitHolder
 import com.mattmx.ktgui.util.EventCallback
 import com.mattmx.ktgui.util.ParentEventCallback
 import net.kyori.adventure.text.Component
+import java.util.*
 
 abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     var guiType: GuiType,
@@ -23,6 +24,7 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     val traits = TraitHolder<GuiScreen<*, *>>(this)
     abstract val open: ParentEventCallback<P, *>
     abstract val close: ParentEventCallback<P, *>
+    var visiblePagesOverride: Optional<() -> List<Int>> = Optional.empty()
 
     /**
      * Register a button to a slot.
@@ -185,7 +187,11 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
         GuiManager.getInstance().removeActiveGui(player)
     }
 
-    open fun getVisibleGuiButtons(): IntRange = (guiType.first..guiType.last)
+    open fun getVisibleGuiButtons(): List<Int> {
+        return visiblePagesOverride.orElse {
+            (0..guiType.getTotalSlots()).toList()
+        }.invoke()
+    }
 
     abstract fun open(player: P): GuiScreen<P, B>
 

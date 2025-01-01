@@ -28,7 +28,6 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
     val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<*>>(this as T) }
     override val close by lazy { ParentEventCallback<Any, T>(this as T) }
     override val open by lazy { ParentEventCallback<Any, T>(this as T) }
-    var visiblePagesOverride: Optional<() -> IntRange> = Optional.empty()
 
     fun handleClick(player: Any, packet: WrapperPlayClientClickWindow) {
         val button = items[packet.slot]
@@ -90,7 +89,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
 
         val contents = mutableListOf<ItemStack>()
         for (i in (0..<guiType.getTotalSlots())) {
-            val offsetSlot = visibleSlots.first + i
+            val offsetSlot = visibleSlots.first() + i
             val itemStack = items[offsetSlot]?.buildItem() ?: ItemStack.EMPTY
             contents.add(itemStack)
         }
@@ -106,12 +105,6 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
         playerManager.sendPacket(player, createOpenWindowPacket())
         playerManager.sendPacket(player, createWindowContentsPacket())
     } as T
-
-    override fun getVisibleGuiButtons(): IntRange {
-        return visiblePagesOverride.orElse {
-            (0..guiType.getTotalSlots())
-        }.invoke()
-    }
 
     override fun refresh(player: Any) {
         val contents = createWindowContentsPacket()

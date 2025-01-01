@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.command.context
 
 import com.mattmx.ktgui.Flag
+import com.mattmx.ktgui.Option
 import com.mattmx.ktgui.argument.Argument
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
@@ -21,6 +22,6 @@ fun RunnableCommandContext<*>.runWithFlags(vararg flags: Flag, block: () -> Unit
     TODO()
 }
 
-fun RunnableCommandContext<*>.runWithOptions(vararg options: Flag, block: () -> Unit) : Unit? {
+fun RunnableCommandContext<*>.runWithOptions(vararg options: Option<*>, block: () -> Unit) : Unit? {
     TODO()
 }

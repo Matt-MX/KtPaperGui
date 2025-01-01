@@ -27,13 +27,17 @@ fun main() {
         "test"
     )
 
-    val processor = ArgumentProcessor(cmd, invocation)
+    repeat(2) {
+        timeAndLog("processing") {
+            val processor = ArgumentProcessor(cmd, invocation)
 
-    val usernameResult = ArgumentConsumer.single().consume(processor)
-    processor.next()
-    val pageResult = ArgumentConsumer.option(pageOption).consume(processor)
-    processor.next()
-    val flagPresent = ArgumentConsumer.flag(flag).consume(processor)
+            val usernameResult = ArgumentConsumer.single().consume(processor)
+            processor.next()
+            val pageResult = ArgumentConsumer.option(pageOption).consume(processor)
+            processor.next()
+            val flagPresent = ArgumentConsumer.flag(flag).consume(processor)
 
-    println("$usernameResult $pageResult $flagPresent")
+            println("$usernameResult $pageResult $flagPresent")
+        }
+    }
 }
