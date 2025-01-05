@@ -16,5 +16,5 @@ fun button(type: Material, block: PaperGuiButton<*>.() -> Unit) =
 val InventoryType.bukkit
     get() = org.bukkit.event.inventory.InventoryType
         .entries
-        .firstOrNull { bukkitType -> TODO() }
+        .firstOrNull { bukkitType -> bukkitType.menuType?.key()?.asString() == key }
         ?: error("No Bukkit type of InventoryType found for $this")

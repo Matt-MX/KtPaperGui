@@ -63,5 +63,19 @@ class YourPluginClass : JavaPlugin() {
                 sender.sendMessage(!"You -> ${player.name}: $msg")
             }
         }.register(this).unregister()
+
+        val user by player()
+        command("fly") {
+            runs<Player> {
+                sender.allowFlight = !sender.allowFlight
+            }
+
+            sub(user) {
+                runs<Player> {
+                    val otherPlayer: Player = user()
+                    otherPlayer.allowFlight = !otherPlayer.allowFlight
+                }
+            }
+        }.register(this)
     }
 }

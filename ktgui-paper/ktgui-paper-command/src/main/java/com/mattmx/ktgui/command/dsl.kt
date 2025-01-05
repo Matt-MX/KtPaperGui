@@ -17,15 +17,22 @@ fun command(args: CommandArgumentBuilder, block: (LiteralArgumentBuilder<Command
 fun ArgumentBuilder<CommandSourceStack, *>.sub(
     other: String,
     block: (LiteralArgumentBuilder<CommandSourceStack>.() -> Unit)?
-): ArgumentBuilder<*, *> {
-    return then(command(other, block))
+) = apply {
+    then(command(other, block))
+}
+
+fun ArgumentBuilder<CommandSourceStack, *>.sub(
+    other: ArgumentBuilder<CommandSourceStack, *>,
+    block: (ArgumentBuilder<CommandSourceStack, *>.() -> Unit)?
+) = apply {
+    then(other.also { block?.invoke(it) })
 }
 
 fun ArgumentBuilder<CommandSourceStack, *>.sub(
     other: CommandArgumentBuilder,
     block: (LiteralArgumentBuilder<CommandSourceStack>.() -> Unit)?
-): ArgumentBuilder<*, *> {
-    return then(command(other, block))
+) = apply {
+    then(command(other, block))
 }
 
 inline fun <reified S : CommandSender> LiteralArgumentBuilder<CommandSourceStack>.runs(

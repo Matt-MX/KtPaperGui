@@ -34,17 +34,18 @@ class GuiType(
 
 data class InventoryType(
     val id: Int,
-    val slots: Int
+    val slots: Int,
+    val key: String? = null
 )
 
 object InventoryTypes {
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Inventory#:~:text=Smithing%20Table-,Types,-%5Bedit%20source
-    val GENERIC_9x1 = InventoryType(0, 9)
-    val GENERIC_9x2 = InventoryType(1, 9 * 2)
-    val GENERIC_9x3 = InventoryType(2, 9 * 3)
-    val GENERIC_9x4 = InventoryType(3, 9 * 4)
-    val GENERIC_9x5 = InventoryType(4, 9 * 5)
-    val GENERIC_9x6 = InventoryType(5, 9 * 6)
+    val GENERIC_9x1 = InventoryType(0, 9, "generic_9x1")
+    val GENERIC_9x2 = InventoryType(1, 9 * 2, "generic_9x2")
+    val GENERIC_9x3 = InventoryType(2, 9 * 3, "generic_9x3")
+    val GENERIC_9x4 = InventoryType(3, 9 * 4, "generic_9x4")
+    val GENERIC_9x5 = InventoryType(4, 9 * 5, "generic_9x5")
+    val GENERIC_9x6 = InventoryType(5, 9 * 6, "generic_9x6")
 
     val ANVIL = InventoryType(8, 3)
     val BEACON = InventoryType(9, -1)
