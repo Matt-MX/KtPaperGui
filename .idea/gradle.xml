@@ -9,10 +9,12 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/api" />
+            <option value="$PROJECT_DIR$/ktgui-brigadier" />
             <option value="$PROJECT_DIR$/ktgui-command" />
             <option value="$PROJECT_DIR$/ktgui-core" />
             <option value="$PROJECT_DIR$/ktgui-packet-events" />
             <option value="$PROJECT_DIR$/ktgui-paper" />
+            <option value="$PROJECT_DIR$/ktgui-paper/ktgui-paper-command" />
             <option value="$PROJECT_DIR$/ktgui-velocity" />
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/plugin/reobf" />

@@ -3,6 +3,8 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
       <module name="KtBukkitGui.ktgui.main" target="21" />
+      <module name="ktgui.ktgui-brigadier.main" target="21" />
+      <module name="ktgui.ktgui-brigadier.test" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
