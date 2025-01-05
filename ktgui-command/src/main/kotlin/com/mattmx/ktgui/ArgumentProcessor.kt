@@ -25,6 +25,10 @@ class ArgumentProcessor(
             val substr = currentString()
             var matchingChild: CommandNode<*>? = null
 
+            if (currentNode().children().size == 1) {
+                // TODO try child node directly
+            }
+
             val childIterator = currentNode().children().iterator()
             while (childIterator.hasNext() && matchingChild == null) {
                 when (val child = childIterator.next()) {

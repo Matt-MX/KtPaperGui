@@ -11,6 +11,7 @@ dependencies {
     compileOnly(libs.adventure)
     compileOnly(libs.adventure.minimessage)
 
+    implementation(project(":ktgui-core"))
     implementation("com.google.code.gson:gson:2.11.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")

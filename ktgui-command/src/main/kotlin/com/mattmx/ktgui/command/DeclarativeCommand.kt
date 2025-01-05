@@ -7,12 +7,17 @@ class DeclarativeCommand(
     name: String
 ) : LiteralNode(name) {
 
-    fun run(invocation: CommandInvocation<*>) {
+    fun process(invocation: CommandInvocation<*>) : ArgumentProcessor {
         val processor = ArgumentProcessor(this, invocation)
+            .also(ArgumentProcessor::process)
 
-        processor.process()
+        return processor
+    }
 
-        processor.node?.invokeRunBlock(processor, invocation)
+    fun run(invocation: CommandInvocation<*>) {
+        process(invocation).let { processor ->
+            processor.node?.invokeRunBlock(processor, invocation)
+        }
     }
 
 }

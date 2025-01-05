@@ -2,6 +2,9 @@ package com.mattmx.ktgui.test
 
 import com.mattmx.ktgui.argument.*
 import com.mattmx.ktgui.command.CommandInvocation
+import com.mattmx.ktgui.command.command
+import com.mattmx.ktgui.command.node.ArgumentNode
+import com.mattmx.ktgui.command.node.LiteralNode
 
 class FakePlayer(val name: String) {
     fun sendMessage(line: String) {
@@ -45,7 +48,13 @@ fun main() {
         }
     }
 
-    val invocation = CommandInvocation(mattMx, "feature BoxArena test-inner 3".split(" ").toTypedArray(), "foo")
+    val invocation = CommandInvocation(mattMx, "feature BoxArena".split(" ").toTypedArray(), "foo")
 
-    command.run(invocation)
+    command.process(invocation).let { processor ->
+        val lastNode = processor.lastVisitedNode ?: return@let
+        when (lastNode) {
+            is LiteralNode -> println(lastNode.name)
+            is ArgumentNode<*> -> println(lastNode.argument.name)
+        }
+    }
 }

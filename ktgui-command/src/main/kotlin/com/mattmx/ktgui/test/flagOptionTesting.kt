@@ -7,6 +7,7 @@ import com.mattmx.ktgui.Option
 import com.mattmx.ktgui.argument.intArgument
 import com.mattmx.ktgui.argument.stringArgument
 import com.mattmx.ktgui.command.CommandInvocation
+import com.mattmx.ktgui.command.command
 
 fun main() {
     val username by stringArgument()

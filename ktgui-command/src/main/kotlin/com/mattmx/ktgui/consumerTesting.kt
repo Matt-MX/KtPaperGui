@@ -3,7 +3,7 @@ package com.mattmx.ktgui
 import com.google.gson.JsonParser
 import com.mattmx.ktgui.argument.stringArgument
 import com.mattmx.ktgui.command.CommandInvocation
-import com.mattmx.ktgui.test.command
+import com.mattmx.ktgui.command.command
 
 fun main() {
     val invocation = CommandInvocation(

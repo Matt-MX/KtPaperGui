@@ -1,6 +1,4 @@
-package com.mattmx.ktgui.test
-
-import com.mattmx.ktgui.command.DeclarativeCommand
+package com.mattmx.ktgui.command
 
 fun command(name: String, block: DeclarativeCommand.() -> Unit) =
     DeclarativeCommand(name).apply(block)
