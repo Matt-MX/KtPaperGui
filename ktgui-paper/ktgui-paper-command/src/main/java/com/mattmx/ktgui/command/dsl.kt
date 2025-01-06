@@ -1,9 +1,11 @@
 package com.mattmx.ktgui.command
 
+import com.mattmx.ktgui.command.arg.ArgumentWrapper
 import com.mattmx.ktgui.command.arg.CommandArgumentBuilder
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import org.bukkit.command.CommandSender
@@ -11,8 +13,10 @@ import org.bukkit.command.CommandSender
 fun command(name: String, block: (LiteralArgumentBuilder<CommandSourceStack>.() -> Unit)? = null) =
     Commands.literal(name).also { block?.invoke(it) }
 
-fun command(args: CommandArgumentBuilder, block: (LiteralArgumentBuilder<CommandSourceStack>.() -> Unit)? = null) =
-    args.root.also { block?.invoke(it) }
+fun command(args: CommandArgumentBuilder, block: (ArgumentBuilder<CommandSourceStack, *>.() -> Unit)? = null): LiteralArgumentBuilder<CommandSourceStack> {
+    block?.let { args(it) }
+    return args.root
+}
 
 fun ArgumentBuilder<CommandSourceStack, *>.sub(
     other: String,
@@ -22,31 +26,32 @@ fun ArgumentBuilder<CommandSourceStack, *>.sub(
 }
 
 fun ArgumentBuilder<CommandSourceStack, *>.sub(
-    other: ArgumentBuilder<CommandSourceStack, *>,
+    other: ArgumentWrapper<*>,
     block: (ArgumentBuilder<CommandSourceStack, *>.() -> Unit)?
 ) = apply {
-    then(other.also { block?.invoke(it) })
+    val nodeInstance = other.supplier()
+    then(nodeInstance.also { block?.invoke(it) })
 }
 
 fun ArgumentBuilder<CommandSourceStack, *>.sub(
     other: CommandArgumentBuilder,
-    block: (LiteralArgumentBuilder<CommandSourceStack>.() -> Unit)?
+    block: (ArgumentBuilder<CommandSourceStack, *>.() -> Unit)?
 ) = apply {
     then(command(other, block))
 }
 
-inline fun <reified S : CommandSender> LiteralArgumentBuilder<CommandSourceStack>.runs(
+inline fun <reified S : CommandSender> ArgumentBuilder<CommandSourceStack, *>.runs(
     crossinline block: CommandContextWrapper<CommandSourceStack, S>.() -> Unit
 ) = apply {
-    val existingExecution = this.command
+//    val existingExecution = this.command
     val senderClass = S::class.java
 
     executes { invocation ->
         val wrapper = CommandContextWrapper(invocation, invocation.source.sender)
 
-        existingExecution.run(invocation)
+//        existingExecution?.run(invocation)
 
-        if (senderClass.isInstance(invocation.source.sender)) {
+        if (senderClass.isInstance(wrapper.sender)) {
             block.invoke(wrapper as CommandContextWrapper<CommandSourceStack, S>)
         }
 

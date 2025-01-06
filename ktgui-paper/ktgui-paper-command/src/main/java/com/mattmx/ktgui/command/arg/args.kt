@@ -2,14 +2,27 @@ package com.mattmx.ktgui.command.arg
 
 import com.mojang.brigadier.arguments.*
 import com.mojang.brigadier.builder.ArgumentBuilder
-import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.registry.RegistryKey
+import org.bukkit.entity.Player
 import kotlin.properties.ReadOnlyProperty
 
-fun <T> custom(argumentType: ArgumentType<T>) = delegate(argumentType)
+fun <T : Any> custom(argumentType: ArgumentType<T>) = delegate(argumentType)
+
+fun <T : Any> mapped(vararg pairs: Pair<String, T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
+    return mapped(pairs.toMap())
+}
+fun <T : Any> mapped(map: Map<String, T>) = custom(
+    customArgument<T, String>(StringArgumentType.word()) {
+        suggests { context, builder ->
+            map.keys.forEach(builder::suggest)
+            builder.buildFuture()
+        }
+        convert { map[it] ?: error("Invalid input!") }
+    }
+)
 
 fun player() = delegate(ArgumentTypes.player())
 fun players() = delegate(ArgumentTypes.players())
@@ -43,6 +56,7 @@ fun <T : Any> resource(registryKey: RegistryKey<T>) = delegate(ArgumentTypes.res
 fun <T : Any> resourceKey(registryKey: RegistryKey<T>) = delegate(ArgumentTypes.resourceKey(registryKey))
 
 fun boolean() = delegate(BoolArgumentType.bool())
+fun prettyBoolean() = mapped<Boolean>(mapOf("on" to true, "off" to false))
 
 fun string() = delegate(StringArgumentType.string())
 fun word() = delegate(StringArgumentType.word())
@@ -54,13 +68,18 @@ fun float(min: Float = Float.MIN_VALUE, max: Float = Float.MAX_VALUE) = delegate
 fun double(min: Double = Double.MIN_VALUE, max: Double = Double.MAX_VALUE) =
     delegate(DoubleArgumentType.doubleArg(min, max))
 
-fun <T, A : ArgumentBuilder<CommandSourceStack, A>> delegate(type: ArgumentType<T>): ReadOnlyProperty<Any?, RequiredArgumentBuilder<CommandSourceStack, A>> {
-    var instance: RequiredArgumentBuilder<CommandSourceStack, A>? = null
+fun <T : Any> delegate(type: ArgumentType<T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
+    var instance: ArgumentWrapper<T>? = null
 
     return ReadOnlyProperty { thisRef, property ->
-        if (instance == null) {
-            instance = Commands.argument(property.name, type) as RequiredArgumentBuilder<CommandSourceStack, A>
+
+        synchronized(property) {
+            if (instance == null) {
+                println("CREATING INSTANCE FOR ${property.name}")
+                instance = ArgumentWrapper(property.name, type) { Commands.argument(property.name, type) }
+            }
         }
+
         instance!!
     }
 }

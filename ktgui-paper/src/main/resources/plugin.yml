@@ -1,0 +1,9 @@
+main: com.mattmx.ktgui.PaperKtGuiPlugin
+name: PaperKtGui
+version: -SNAPSHOT
+api-version: 1.21
+load: STARTUP
+prefix: PaperKtGui
+authors: [ MattMX ]
+website: https://github.com/Matt-MX/KtPaperGui
+description: Declarative GUI Library for Paper.

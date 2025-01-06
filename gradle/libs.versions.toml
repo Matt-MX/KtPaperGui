@@ -21,7 +21,6 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paperApi" }
 placeholder-api = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
-protocolLib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocolLib" }
 adventure = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
 packet-events-api = { module = "com.github.retrooper:packetevents-api", version.ref = "packetEvents" }

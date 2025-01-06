@@ -1,11 +1,16 @@
 package com.mattmx.ktgui.command
 
+import com.mattmx.ktgui.command.arg.ArgumentWrapper
 import com.mattmx.ktgui.util.not
 import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
+import io.papermc.paper.command.brigadier.CommandSourceStack
+import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolver
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver
+import io.papermc.paper.math.FinePosition
 import net.kyori.adventure.text.Component
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 class CommandContextWrapper<S, H : CommandSender>(
     val context: CommandContext<S>,
@@ -18,7 +23,24 @@ class CommandContextWrapper<S, H : CommandSender>(
     val input: String
         get() = context.input
 
-    inline operator fun <reified T> RequiredArgumentBuilder<S, *>.invoke(): T = context.getArgument(name, T::class.java)
+    fun ArgumentWrapper<PlayerSelectorArgumentResolver>.resolve() =
+        context.getArgument(name, PlayerSelectorArgumentResolver::class.java)
+            .resolve(source as? CommandSourceStack)
+
+    fun ArgumentWrapper<PlayerSelectorArgumentResolver>.first() = resolve().first()
+    fun ArgumentWrapper<PlayerSelectorArgumentResolver>.forEach(block: (Player) -> Unit) = resolve().forEach(block)
+    fun ArgumentWrapper<PlayerSelectorArgumentResolver>.get() = resolve()
+
+    operator fun ArgumentWrapper<FinePositionResolver>.invoke(): FinePosition =
+        context.getArgument(name, FinePositionResolver::class.java)
+            .resolve(source as? CommandSourceStack)
+
+
+    inline fun <reified T> ArgumentWrapper<T>.orElse(default: T): T =
+        runCatching { context.getArgument(name, T::class.java) }
+            .getOrElse { default }
+
+    inline operator fun <reified T> ArgumentWrapper<T>.invoke(): T = context.getArgument(name, T::class.java)
 
     fun reply(messageString: String) {
         reply(!messageString)

@@ -1,8 +1,7 @@
 plugins {
-    alias(libs.plugins.runPaper)
+    alias(libs.plugins.paperweight) apply false
 }
 
-runPaper.folia.registerTask()
 rootProject.version = "2.4.4-alpha"
 
 subprojects {
@@ -15,23 +14,6 @@ subprojects {
             maven("https://repo.dmulloy2.net/repository/public/")
             maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
             maven("https://jitpack.io")
-        }
-    }
-}
-
-tasks {
-    runServer {
-        dependsOn(":plugin:assemble")
-        val mcVersion = libs.versions.paperApi.get().split("-")[0]
-        minecraftVersion(mcVersion)
-
-        pluginJars("./plugin/build/libs/ktgui-plugin-${rootProject.version}-dev-all.jar")
-
-        downloadPlugins {
-            hangar("ViaVersion", "5.0.1")
-            hangar("ViaBackwards", "5.0.1")
-            hangar("PlaceholderAPI", "2.11.6")
-            url("https://download.luckperms.net/1552/bukkit/loader/LuckPerms-Bukkit-5.4.137.jar")
         }
     }
 }

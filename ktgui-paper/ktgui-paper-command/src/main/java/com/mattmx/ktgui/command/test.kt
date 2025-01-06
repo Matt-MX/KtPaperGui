@@ -33,7 +33,7 @@ class YourPluginClass : JavaPlugin() {
         })
     }
 
-    fun createIrisPlayerType(): CustomArgumentTypeBuilder<*, *> {
+    fun createIrisPlayerType(): CustomArgumentTypeBuilder<Player, String> {
         return customArgument<Player, String>(StringArgumentType.string()) {
             convert { string ->
                 TODO("Implement iris provider for thie player by username")
@@ -56,11 +56,8 @@ class YourPluginClass : JavaPlugin() {
 
         command("msg" / globalPlayer / msg) {
             runs<Player> {
-                val player: Player = globalPlayer()
-                val msg: String = msg()
-
-                player.sendMessage(!"${sender.name} -> You: $msg")
-                sender.sendMessage(!"You -> ${player.name}: $msg")
+                globalPlayer().sendMessage(!"${sender.name} -> You: ${msg()}")
+                sender.sendMessage(!"You -> ${globalPlayer().name}: ${msg()}")
             }
         }.register(this).unregister()
 
@@ -72,17 +69,10 @@ class YourPluginClass : JavaPlugin() {
 
             sub(user) {
                 runs<Player> {
-                    val otherPlayer: Player = user()
+                    val otherPlayer: Player = user.first()
                     otherPlayer.allowFlight = !otherPlayer.allowFlight
                 }
             }
         }.register(this)
-
-        command("optionalTest" / -user) {
-            runs<Player> {
-                // TODO(matt): make this nullable
-                val player: Player = user()
-            }
-        }
     }
 }

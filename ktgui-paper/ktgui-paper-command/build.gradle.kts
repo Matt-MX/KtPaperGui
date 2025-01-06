@@ -11,11 +11,12 @@ repositories {
 
 dependencies {
     paperweight.paperDevBundle(libs.versions.paperApi.get())
+//    compileOnly(libs.paper.api)
     compileOnly(libs.placeholder.api)
 
     compileOnly(libs.kotlin.stdlib)
-    implementation(libs.kotlin.reflect)
-    implementation(project(":ktgui-core"))
+    compileOnly(libs.kotlin.reflect)
+    compileOnly(project(":ktgui-core"))
 }
 
 kotlin {

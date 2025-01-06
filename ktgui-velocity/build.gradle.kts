@@ -1,17 +1,16 @@
 plugins {
     alias(libs.plugins.kotlinJvm) apply true
     alias(libs.plugins.shadow) apply true
-    id(libs.plugins.runVelocity.get().pluginId)
-    alias(libs.plugins.runPaper)
+    alias(libs.plugins.runVelocity)
+//    alias(libs.plugins.runPaper)
     kotlin("kapt") version "2.1.0"
     `maven-publish`
 }
 
-runPaper.disablePluginJarDetection()
-runPaper.detectPluginJar = false
+//runPaper.disablePluginJarDetection()
+//runPaper.detectPluginJar = false
 
 repositories {
-    mavenCentral()
     maven("https://repo.codemc.io/repository/maven-releases/")
 }
 
@@ -43,17 +42,17 @@ tasks {
         }
     }
 
-    runServer {
-        val mcVersion = libs.versions.paperApi.get().split("-")[0]
-        minecraftVersion(mcVersion)
-
-        runDirectory(file("runBackend"))
-
-        downloadPlugins {
-            hangar("ViaVersion", "5.0.1")
-            hangar("ViaBackwards", "5.0.1")
-        }
-    }
+//    runServer {
+//        val mcVersion = libs.versions.paperApi.get().split("-")[0]
+//        minecraftVersion(mcVersion)
+//
+//        runDirectory(file("runBackend"))
+//
+//        downloadPlugins {
+//            hangar("ViaVersion", "5.2.0")
+//            hangar("ViaBackwards", "5.2.0")
+//        }
+//    }
 
     test {
         useJUnitPlatform()
