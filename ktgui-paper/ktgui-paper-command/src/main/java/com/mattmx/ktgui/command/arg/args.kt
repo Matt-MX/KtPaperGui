@@ -24,6 +24,8 @@ fun <T : Any> mapped(map: Map<String, T>) = custom(
     }
 )
 
+fun options(vararg option: ArgumentWrapper<*>) = delegate(OptionHolderArgumentType(option.toList()))
+
 fun player() = delegate(ArgumentTypes.player())
 fun players() = delegate(ArgumentTypes.players())
 fun entity() = delegate(ArgumentTypes.entity())
@@ -75,7 +77,6 @@ fun <T : Any> delegate(type: ArgumentType<T>): ReadOnlyProperty<Any?, ArgumentWr
 
         synchronized(property) {
             if (instance == null) {
-                println("CREATING INSTANCE FOR ${property.name}")
                 instance = ArgumentWrapper(property.name, type) { Commands.argument(property.name, type) }
             }
         }

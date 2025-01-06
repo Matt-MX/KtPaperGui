@@ -5,6 +5,7 @@ import com.mattmx.ktgui.command.arg.*
 import com.mattmx.ktgui.util.not
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.math.max
 
 class PaperKtGuiPlugin : JavaPlugin() {
     private val commands = mutableListOf<RegisteredPaperCommand>()
@@ -71,10 +72,23 @@ class PaperKtGuiPlugin : JavaPlugin() {
 
             val player by player()
             val test by string()
+            // TODO(matt): doesn't work !!!!
             commands += command("ping" / player / -test) {
                 runs<Player> {
                     val message = test.orElse("Ping!")
                     player.first().sendMessage(!message)
+                }
+            }.register(this)
+
+            // TODO flags arg type
+            val username by string()
+
+            val page by int(0, 5)
+            val maxResults by int(0, 1000)
+            val flags by options(page, maxResults)
+            commands += command("history" / username / flags) {
+                runs<Player> {
+                    reply(!"History page = ${flags[page] ?: 1}, maxResults = ${flags[maxResults] ?: 10}")
                 }
             }.register(this)
         }

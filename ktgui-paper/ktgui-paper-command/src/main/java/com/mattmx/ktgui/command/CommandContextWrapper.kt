@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.command
 
 import com.mattmx.ktgui.command.arg.ArgumentWrapper
+import com.mattmx.ktgui.command.arg.OptionHolderArgumentType
 import com.mattmx.ktgui.util.not
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.context.CommandContext
@@ -35,6 +36,8 @@ class CommandContextWrapper<S, H : CommandSender>(
         context.getArgument(name, FinePositionResolver::class.java)
             .resolve(source as? CommandSourceStack)
 
+    operator fun <T> ArgumentWrapper<OptionHolderArgumentType.Result>.get(option: ArgumentWrapper<T>) =
+        context.getArgument(name, OptionHolderArgumentType.Result::class.java).map[option] as? T
 
     inline fun <reified T> ArgumentWrapper<T>.orElse(default: T): T =
         runCatching { context.getArgument(name, T::class.java) }
