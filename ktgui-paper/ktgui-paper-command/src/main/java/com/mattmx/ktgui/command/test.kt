@@ -77,5 +77,12 @@ class YourPluginClass : JavaPlugin() {
                 }
             }
         }.register(this)
+
+        command("optionalTest" / -user) {
+            runs<Player> {
+                // TODO(matt): make this nullable
+                val player: Player = user()
+            }
+        }
     }
 }
