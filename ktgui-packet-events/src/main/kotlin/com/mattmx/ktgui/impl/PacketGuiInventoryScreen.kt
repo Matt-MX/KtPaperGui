@@ -76,6 +76,11 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
     fun handleClose(player: Any, packet: WrapperPlayClientCloseWindow) {
         // What if window id is not this window's id?
         unsetActiveGui(player)
+
+        GuiManager.getInstance<PacketEventsGuiManager>()
+            .inventoryTracker
+            .resetPlayerInventory(player)
+
         close.apply(player)
     }
 
