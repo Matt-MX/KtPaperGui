@@ -69,6 +69,7 @@ class OptionFlagArgumentType(
             }
 
             if (indexOfOption == lastIndex) {
+                val lastArgument = args.getOrNull(lastIndex) ?: ""
                 var remainingWithoutLast = args.subList(0, lastIndex).joinToString(" ")
 
                 if (remainingWithoutLast.isNotBlank()) {
@@ -76,6 +77,13 @@ class OptionFlagArgumentType(
                 }
 
                 for (option in expected) {
+
+                    // Make sure it starts with this arg
+                    val appendedArgName = "$prefix${option.name}"
+                    if (!appendedArgName.startsWith(lastArgument, true)) {
+                        continue
+                    }
+
                     builder.suggest(remainingWithoutLast + prefix + option.name + if (isBoolean(option)) "" else " ")
                 }
             } else {
