@@ -84,7 +84,8 @@ class PaperKtGuiPlugin : JavaPlugin() {
             val page by int(0, 5)
             val maxResults by int(0, 1000)
             val verbose by boolean()
-            val flags by options(page, maxResults, verbose)
+            val iceCreamFlavour by stringChoice("vanilla", "chocolate", "honeycomb", "mint")
+            val flags by options(page, maxResults, verbose, iceCreamFlavour)
 
             commands += command("history" / username) {
                 runs<Player> {
@@ -94,6 +95,7 @@ class PaperKtGuiPlugin : JavaPlugin() {
                 sub(flags) {
                     runs<Player> {
                         reply(!"History page = ${flags[page] ?: 1}, maxResults = ${flags[maxResults] ?: 10}, verbose = ${flags[verbose] ?: false}")
+                        reply(!"tmp: ${flags[iceCreamFlavour]}")
                     }
                 }
             }.register(this)

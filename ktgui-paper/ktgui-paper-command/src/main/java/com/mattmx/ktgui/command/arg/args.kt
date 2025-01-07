@@ -8,6 +8,9 @@ import kotlin.properties.ReadOnlyProperty
 
 inline fun <reified T : Any> custom(argumentType: ArgumentType<T>) = delegate(argumentType)
 
+fun stringChoice(vararg pairs: String): ReadOnlyProperty<Any?, ArgumentWrapper<String>> {
+    return mapped(pairs.associateWith { it })
+}
 inline fun <reified T : Any> mapped(vararg pairs: Pair<String, T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
     return mapped(pairs.toMap())
 }

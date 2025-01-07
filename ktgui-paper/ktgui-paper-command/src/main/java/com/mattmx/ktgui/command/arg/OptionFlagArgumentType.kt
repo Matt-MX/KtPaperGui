@@ -3,6 +3,7 @@ package com.mattmx.ktgui.command.arg
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.Suggestion
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType
@@ -68,14 +69,14 @@ class OptionFlagArgumentType(
                 }
             }
 
+            val lastArgument = args.getOrNull(lastIndex) ?: ""
+            var remainingWithoutLast = args.subList(0, lastIndex).joinToString(" ")
+
+            if (remainingWithoutLast.isNotBlank()) {
+                remainingWithoutLast += " "
+            }
+
             if (indexOfOption == lastIndex) {
-                val lastArgument = args.getOrNull(lastIndex) ?: ""
-                var remainingWithoutLast = args.subList(0, lastIndex).joinToString(" ")
-
-                if (remainingWithoutLast.isNotBlank()) {
-                    remainingWithoutLast += " "
-                }
-
                 for (option in expected) {
 
                     // Make sure it starts with this arg
@@ -93,7 +94,22 @@ class OptionFlagArgumentType(
                     expectedArg.name == optionName.replaceFirst(prefix, "")
                 } ?: return@supplyAsync builder.buildFuture().join()
 
-                return@supplyAsync option.argumentType.listSuggestions(context, builder).join()
+                return@supplyAsync option.argumentType.listSuggestions(context, builder)
+                    .thenApply { suggestions ->
+                        Suggestions.create(
+                            context.input,
+                            suggestions.list
+                                .filter { suggestion ->
+                                    suggestion.text.startsWith(lastArgument, true)
+                                }
+                                .map { suggestion ->
+                                    Suggestion(
+                                        suggestion.range,
+                                        remainingWithoutLast + suggestion.text,
+                                        suggestion.tooltip
+                                    )
+                                })
+                    }.join()
             }
 
             builder.build()
