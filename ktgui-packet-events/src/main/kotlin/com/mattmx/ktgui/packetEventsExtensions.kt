@@ -18,7 +18,7 @@ fun <T : Audience> T.tryPlaySound(sound: Sound) {
             val packet = WrapperPlayServerSoundEffect(
                 key,
                 SoundCategory.fromId(sound.source().ordinal),
-                playerLocationTracker.getCachedLocation(this)
+                playerLocationTracker.getLocation(this)
                     ?.pos
                     ?.toVector3i()
                     ?: Vector3i.zero(),
