@@ -16,18 +16,22 @@ open class PacketScoreboard(initialTitle: Component) : Scoreboard(initialTitle) 
     val id = UUID.randomUUID().toString()
     private val packetEvents = PacketEvents.getAPI()
 
-    override fun addViewer(uuid: UUID) {
+    override fun addViewer(uuid: UUID) : Boolean {
         if (viewers.add(uuid)) {
             sendPacket(uuid, createScoreboardCreatePacket(ObjectiveMode.CREATE))
             sendPacket(uuid, createShowScoreboardPacket())
             createScoreboardContentPacket().forEach { packet -> sendPacket(uuid, packet) }
+            return true
         }
+        return false
     }
 
-    override fun removeViewer(uuid: UUID) {
+    override fun removeViewer(uuid: UUID): Boolean {
         if (viewers.remove(uuid)) {
             sendPacket(uuid, createScoreboardCreatePacket(ObjectiveMode.REMOVE))
+            return true
         }
+        return false
     }
 
     override fun update() {

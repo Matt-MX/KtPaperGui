@@ -18,9 +18,9 @@ abstract class Scoreboard(
         content.apply(block)
     }
 
-    abstract fun addViewer(uuid: UUID)
+    abstract fun addViewer(uuid: UUID) : Boolean
 
-    abstract fun removeViewer(uuid: UUID)
+    abstract fun removeViewer(uuid: UUID) : Boolean
 
     abstract fun update()
 
