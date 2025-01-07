@@ -14,9 +14,8 @@ import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
-import com.mattmx.ktgui.util.ParentEventCallback
+import com.mattmx.ktgui.event.ParentEventCallback
 import net.kyori.adventure.text.Component
-import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
@@ -29,7 +28,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
     override val close by lazy { ParentEventCallback<Any, T>(this as T) }
     override val open by lazy { ParentEventCallback<Any, T>(this as T) }
 
-    fun handleClick(player: Any, packet: WrapperPlayClientClickWindow) {
+    fun handleClick(player: Any, packet: WrapperPlayClientClickWindow) = runCatching {
         val button = items[packet.slot]
         val event = PlayerClickButtonEvent(player, button, packet)
 
@@ -72,7 +71,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
                     .resetPlayerInventory(player)
             }
         }
-    }
+    }.exceptionOrNull()?.printStackTrace()
 
     fun handleClose(player: Any, packet: WrapperPlayClientCloseWindow) {
         // What if window id is not this window's id?
@@ -149,7 +148,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
         if (packets.isEmpty()) return
 
         val playerManager = PacketEvents.getAPI().playerManager
-        for ((player, _) in getAllWatchingInstance()) {
+        for ((player, _) in getWatchingInstance()) {
             for (packet in packets) {
                 playerManager.sendPacket(player, packet)
             }

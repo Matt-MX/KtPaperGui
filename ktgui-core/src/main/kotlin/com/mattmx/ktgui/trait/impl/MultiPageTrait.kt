@@ -3,7 +3,7 @@ package com.mattmx.ktgui.trait.impl
 import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.trait.AbstractTrait
-import com.mattmx.ktgui.util.EventCallback
+import com.mattmx.ktgui.event.EventCallback
 
 class MultiPageTrait(owner: GuiScreen<*, *>) : AbstractTrait<GuiScreen<*, *>>(owner) {
     var isAutoUpdate: Boolean = true

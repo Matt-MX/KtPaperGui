@@ -8,19 +8,31 @@ import kotlin.properties.ReadOnlyProperty
 
 inline fun <reified T : Any> custom(argumentType: ArgumentType<T>) = delegate(argumentType)
 
-fun stringChoice(vararg pairs: String): ReadOnlyProperty<Any?, ArgumentWrapper<String>> {
-    return mapped(pairs.associateWith { it })
+val DEFAULT_INVALID_INPUT = { input: String -> "Invalid input '${input}'" }
+fun stringChoice(
+    vararg pairs: String,
+    invalid: (String) -> String = DEFAULT_INVALID_INPUT
+): ReadOnlyProperty<Any?, ArgumentWrapper<String>> {
+    return mapped(pairs.associateWith { it }, invalid = invalid)
 }
-inline fun <reified T : Any> mapped(vararg pairs: Pair<String, T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
-    return mapped(pairs.toMap())
+
+inline fun <reified T : Any> mapped(
+    vararg pairs: Pair<String, T>,
+    noinline invalid: (String) -> String = DEFAULT_INVALID_INPUT
+): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
+    return mapped(pairs.toMap(), invalid = invalid)
 }
-inline fun <reified T : Any> mapped(map: Map<String, T>) = custom(
+
+inline fun <reified T : Any> mapped(
+    map: Map<String, T>,
+    noinline invalid: (String) -> String = DEFAULT_INVALID_INPUT
+) = custom(
     customArgument<T, String>(StringArgumentType.word()) {
         suggests { context, builder ->
             map.keys.forEach(builder::suggest)
             builder.buildFuture()
         }
-        convert { map[it] ?: error("Invalid input!") }
+        convert { map[it] ?: error(invalid(it)) }
     }
 )
 
@@ -77,7 +89,8 @@ inline fun <reified T : Any> delegate(type: ArgumentType<T>): ReadOnlyProperty<A
 
         synchronized(property) {
             if (instance == null) {
-                instance = ArgumentWrapper(property.name, T::class.java, type) { Commands.argument(property.name, type) }
+                instance =
+                    ArgumentWrapper(property.name, T::class.java, type) { Commands.argument(property.name, type) }
             }
         }
 

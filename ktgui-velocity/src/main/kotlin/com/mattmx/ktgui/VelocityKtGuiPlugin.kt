@@ -50,7 +50,7 @@ class VelocityKtGuiPlugin @Inject constructor(
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-        manager.trackPlayerLocations()
+        manager.withDefaultLocationTracker()
         manager.registerListeners()
 
         val node = BrigadierCommand.literalArgumentBuilder("ktgui")
@@ -162,7 +162,7 @@ class VelocityKtGuiPlugin @Inject constructor(
                             val size = guiType.getTotalSlots()
                             val start = size * page
                             val end = start + size
-                            (start..<end)
+                            (start..<end).toList()
                         }
 
                         var slot = 0

@@ -4,8 +4,8 @@ import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.event.SlotUpdatedEvent
 import com.mattmx.ktgui.trait.TraitHolder
-import com.mattmx.ktgui.util.EventCallback
-import com.mattmx.ktgui.util.ParentEventCallback
+import com.mattmx.ktgui.event.EventCallback
+import com.mattmx.ktgui.event.ParentEventCallback
 import net.kyori.adventure.text.Component
 import java.util.*
 
@@ -208,24 +208,39 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     }
 
     fun forcefullyCloseAll() {
-        for ((player, _) in getAllWatchingInstance()) {
+        for ((player, _) in getWatchingInstance()) {
             forcefullyClose(player)
         }
     }
 
     fun refresh() {
-        for ((player, _) in getAllWatchingInstance()) {
+        for ((player, _) in getWatchingInstance()) {
             refreshAsAny(player)
         }
     }
 
     fun refreshTitle() {
-        for ((player, _) in getAllWatchingInstance()) {
+        for ((player, _) in getWatchingInstance()) {
             refreshTitleAsAny(player)
         }
     }
 
-    fun getAllWatchingInstance(): Map<out Any, GuiScreen<*, *>> {
+    fun getWatchingInstance(): Map<out Any, GuiScreen<*, *>> {
         return GuiManager.getInstance().getActiveOfInstance(this)
+    }
+
+    fun <P : Any> getAllPlayersWatchingInstance(): List<P> {
+        return GuiManager.getInstance()
+            .getActiveOfInstance(this)
+            .keys
+            .mapNotNull { player -> player as? P }
+    }
+
+    fun <P : Any> getAllWatchingInstance(): Map<P, GuiScreen<*, *>> {
+        return GuiManager.getInstance()
+            .getActiveOfInstance(this)
+            .mapNotNull { (player, gui) ->
+                (player as? P)?.let { player to gui }
+            }.toMap()
     }
 }

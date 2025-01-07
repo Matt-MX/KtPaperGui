@@ -1,17 +1,101 @@
 package com.mattmx.ktgui
 
-import com.mattmx.ktgui.impl.PaperGuiButton
-import com.mattmx.ktgui.impl.PaperGuiScreen
+import com.github.retrooper.packetevents.protocol.item.type.ItemType
+import com.mattmx.ktgui.impl.*
+import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.InventoryType
+import com.mattmx.ktgui.tasks.PaperKeyedTaskTrackerImpl
+import com.mattmx.ktgui.tasks.PaperTaskTrackerImpl
+import io.github.retrooper.packetevents.util.SpigotConversionUtil
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.event.Event
+import org.bukkit.event.EventPriority
+import org.bukkit.event.HandlerList
+import org.bukkit.event.Listener
+import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.EventExecutor
+import org.bukkit.plugin.java.JavaPlugin
+import kotlin.reflect.*
 
-fun gui(title: Component, type: GuiType, block: PaperGuiScreen<*>.() -> Unit) =
-    PaperGuiScreen(type, title).apply(block)
+fun JavaPlugin.taskTracker(plugin: JavaPlugin) = PaperTaskTrackerImpl(plugin)
+fun JavaPlugin.keyedTaskTracker(plugin: JavaPlugin) = PaperKeyedTaskTrackerImpl(plugin)
 
-fun button(type: Material, block: PaperGuiButton<*>.() -> Unit) =
-    PaperGuiButton(type).apply(block)
+inline fun <reified E : Event> GuiScreen<*, *>.onEventByPlayer(
+    playerSupplier: KFunction1<E, Player>,
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false,
+    noinline callback: (E) -> Unit
+) {
+    return onEvent<E>(priority, ignoreCancelled) { event: E ->
+        val player = playerSupplier.call(event)
+
+        val isThisOpen = GuiManager.getInstance<PacketEventsGuiManager>().getActiveGui(player) == this
+
+        if (isThisOpen) {
+            callback(event)
+        }
+    }
+}
+
+inline fun <reified E : Event> GuiScreen<*, *>.onEvent(
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false,
+    noinline callback: (E) -> Unit
+) {
+    val plugin = PaperKtGuiPlugin.getInstance()
+
+    return onEvent<E>(plugin, priority, ignoreCancelled, callback)
+}
+
+class KListener : Listener
+
+inline fun <reified E : Event> GuiScreen<*, *>.onEvent(
+    plugin: JavaPlugin,
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false,
+    noinline callback: (E) -> Unit
+) {
+    val listener = plugin.event<E>(priority, ignoreCancelled, callback)
+
+    this.close {
+        if (getWatchingInstance().isEmpty()) {
+            HandlerList.unregisterAll(listener)
+        }
+    }
+}
+
+inline fun <reified E : Event> JavaPlugin.event(
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false,
+    crossinline callback: (E) -> Unit
+): KListener {
+    val handler = EventExecutor { _, event ->
+        if (E::class.java.isInstance(event)) {
+            callback(E::class.java.cast(event))
+        }
+    }
+
+    val listener = KListener()
+
+    Bukkit.getPluginManager().registerEvent(
+        E::class.javaObjectType,
+        listener,
+        EventPriority.LOW,
+        handler,
+        this,
+        true
+    )
+
+    return listener
+}
+
+fun button(item: ItemStack, block: PacketGuiButton<*>.() -> Unit): BukkitConvertedButton<*> {
+    return BukkitConvertedButton(item).apply(block)
+}
 
 val InventoryType.bukkit
     get() = org.bukkit.event.inventory.InventoryType

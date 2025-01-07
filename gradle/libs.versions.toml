@@ -24,6 +24,7 @@ placeholder-api = { module = "me.clip:placeholderapi", version.ref = "placeholde
 adventure = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
 packet-events-api = { module = "com.github.retrooper:packetevents-api", version.ref = "packetEvents" }
+packet-events-spigot = { module = "com.github.retrooper:packetevents-spigot", version.ref = "packetEvents" }
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity"}
 
 [plugins]

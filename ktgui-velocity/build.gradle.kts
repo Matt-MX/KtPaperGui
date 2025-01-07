@@ -38,7 +38,7 @@ tasks {
         runDirectory(file("runVelocity"))
 
         downloadPlugins {
-            github("retrooper", "packetevents", "v2.6.0", "packetevents-velocity-2.6.0.jar")
+            github("retrooper", "packetevents", "v2.7.0", "packetevents-velocity-2.7.0.jar")
         }
     }
 

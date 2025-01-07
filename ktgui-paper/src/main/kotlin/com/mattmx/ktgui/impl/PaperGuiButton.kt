@@ -38,7 +38,7 @@ open class PaperGuiButton<T : PaperGuiButton<T>>(
         val slots = parent.getSlots(this)
         val itemStack = buildItem()
 
-        val viewers = parent.getAllWatchingInstance()
+        val viewers = parent.getWatchingInstance()
             .mapKeys { it as Player }
 
         for ((viewer, _) in viewers) {

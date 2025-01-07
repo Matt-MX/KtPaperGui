@@ -12,7 +12,7 @@ import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
 import com.mattmx.ktgui.screen.GuiScreen
-import com.mattmx.ktgui.util.ParentEventCallback
+import com.mattmx.ktgui.event.ParentEventCallback
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.format.TextDecoration

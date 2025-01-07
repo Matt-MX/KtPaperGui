@@ -1,4 +1,4 @@
-package com.mattmx.ktgui.util
+package com.mattmx.ktgui.event
 
 class ParentEventCallback<T, P>(
     private val owner: P

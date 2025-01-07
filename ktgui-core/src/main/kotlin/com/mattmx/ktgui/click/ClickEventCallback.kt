@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.click
 
-import com.mattmx.ktgui.util.EventCallback
+import com.mattmx.ktgui.event.EventCallback
 
 class ClickEventCallback<P, T : ClickButtonEvent>(
     private val parent: P

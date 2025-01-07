@@ -7,8 +7,20 @@ import com.github.retrooper.packetevents.util.Vector3d
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerPositionAndLook
 import java.util.*
 
-class PlayerLocationTracker : PacketListenerAbstract() {
-    private val locations = Collections.synchronizedMap(hashMapOf<Any, CachedLocation>())
+interface PlayerLocationTracker {
+    fun getLocation(player: Any): CachedLocation?
+
+    fun remove(player: Any) : CachedLocation?
+
+    class CachedLocation(
+        var pos: Vector3d = Vector3d.zero(),
+        var yaw: Float = 0f,
+        var pitch: Float = 0f
+    )
+}
+
+class PlayerLocationTrackerImpl : PacketListenerAbstract(), PlayerLocationTracker {
+    private val locations = Collections.synchronizedMap(hashMapOf<Any, PlayerLocationTracker.CachedLocation>())
 
     override fun onPacketSend(event: PacketSendEvent) {
         val player = event.getPlayer<Any>()
@@ -16,7 +28,7 @@ class PlayerLocationTracker : PacketListenerAbstract() {
             PacketType.Play.Server.PLAYER_POSITION_AND_LOOK -> {
                 val packet = WrapperPlayServerPlayerPositionAndLook(event)
 
-                val cache = locations.getOrPut(player) { CachedLocation() }
+                val cache = locations.getOrPut(player) { PlayerLocationTracker.CachedLocation() }
                 cache.pos = packet.position
                 cache.yaw = packet.yaw
                 cache.pitch = packet.pitch
@@ -24,18 +36,12 @@ class PlayerLocationTracker : PacketListenerAbstract() {
         }
     }
 
-    fun remove(player: Any): CachedLocation? {
+    override fun remove(player: Any): PlayerLocationTracker.CachedLocation? {
         return locations.remove(player)
     }
 
-    fun getCachedLocation(player: Any): CachedLocation? {
+    override fun getLocation(player: Any): PlayerLocationTracker.CachedLocation? {
         return locations[player]
     }
-
-    class CachedLocation(
-        var pos: Vector3d = Vector3d.zero(),
-        var yaw: Float = 0f,
-        var pitch: Float = 0f
-    )
 
 }

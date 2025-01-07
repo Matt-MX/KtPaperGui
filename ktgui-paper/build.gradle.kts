@@ -15,7 +15,7 @@ val mcVersion = libs.versions.paperApi.get()
 dependencies {
     paperweight.paperDevBundle(mcVersion)
     compileOnly(libs.placeholder.api)
-    compileOnly(libs.packet.events.api)
+    compileOnly(libs.packet.events.spigot)
 
     implementation(project(":ktgui-core"))
     implementation(project(":ktgui-packet-events"))
@@ -34,6 +34,7 @@ tasks {
         downloadPlugins {
             hangar("ViaVersion", "5.2.0")
             hangar("ViaBackwards", "5.2.0")
+            github("retrooper", "packetevents", "v2.7.0", "packetevents-spigot-2.7.0.jar")
         }
     }
 

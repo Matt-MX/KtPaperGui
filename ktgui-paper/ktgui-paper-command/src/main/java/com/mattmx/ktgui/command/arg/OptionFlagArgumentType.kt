@@ -85,7 +85,7 @@ class OptionFlagArgumentType(
                         continue
                     }
 
-                    builder.suggest(remainingWithoutLast + prefix + option.name + if (isBoolean(option)) "" else " ")
+                    builder.suggest(remainingWithoutLast + prefix + option.name)
                 }
             } else {
                 val optionName = args.getOrNull(indexOfOption)

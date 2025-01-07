@@ -5,7 +5,7 @@ package com.mattmx.ktgui.impl
 import com.mattmx.ktgui.bukkit
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
-import com.mattmx.ktgui.util.ParentEventCallback
+import com.mattmx.ktgui.event.ParentEventCallback
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit

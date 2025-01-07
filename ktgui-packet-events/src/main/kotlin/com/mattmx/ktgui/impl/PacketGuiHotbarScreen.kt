@@ -6,7 +6,7 @@ import com.mattmx.ktgui.event.PlayerScrollHotbarEvent
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.InventoryTypes
-import com.mattmx.ktgui.util.ParentEventCallback
+import com.mattmx.ktgui.event.ParentEventCallback
 import net.kyori.adventure.text.Component
 
 class PacketGuiHotbarScreen<T : PacketGuiHotbarScreen<T>> : GuiScreen<Any, PacketGuiButton<*>>(

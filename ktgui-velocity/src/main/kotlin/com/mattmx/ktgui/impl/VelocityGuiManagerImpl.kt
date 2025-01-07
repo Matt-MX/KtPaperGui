@@ -50,18 +50,6 @@ class VelocityGuiManagerImpl(
         proxy.eventManager.unregisterListener(plugin, this)
     }
 
-    override fun forcefullyClose(player: Any) {
-        val gui = removeActiveGui(player) ?: return
-
-        gui.close.apply(player)
-
-        val packet = WrapperPlayServerCloseWindow(gui.windowId)
-
-        PacketEvents.getAPI()
-            .playerManager
-            .sendPacket(player, packet)
-    }
-
     override fun getTaskProvider(): TaskProvider<*> {
         return this.velocityTaskProvider
     }

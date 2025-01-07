@@ -4,7 +4,7 @@ import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.trait.TraitHolder
 import com.mattmx.ktgui.util.EnchantmentMap
-import com.mattmx.ktgui.util.ParentEventCallback
+import com.mattmx.ktgui.event.ParentEventCallback
 import com.mattmx.ktgui.util.UnaryOperatorList
 import net.kyori.adventure.text.Component
 
