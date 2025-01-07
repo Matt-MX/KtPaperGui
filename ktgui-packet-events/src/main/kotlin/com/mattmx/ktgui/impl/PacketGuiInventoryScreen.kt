@@ -24,7 +24,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
 ) : GuiScreen<Any, PacketGuiButton<*>>(guiType, title) {
     var windowId = GuiManager.getInstance<PacketEventsGuiManager>().getWindowId()
     var stateId: Int = 0
-    val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<*>>(this as T) }
+    open val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<*>>(this as T) }
     override val close by lazy { ParentEventCallback<Any, T>(this as T) }
     override val open by lazy { ParentEventCallback<Any, T>(this as T) }
 

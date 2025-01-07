@@ -49,6 +49,14 @@ open class InventoryTracker : PacketListenerAbstract() {
         }
     }
 
+    fun setTrackingState(player: Any, state: Boolean) {
+        inventory[player]?.isTracking = state
+    }
+
+    fun isCurrentlyTracking(player: Any): Boolean {
+        return inventory[player]?.isTracking == true
+    }
+
     fun resetPlayerSlot(player: Any, slot: Int) {
         val inventory = inventory[player] ?: return
 
@@ -98,6 +106,7 @@ open class InventoryTracker : PacketListenerAbstract() {
 
     class TrackedInventory(
         var contents: Array<ItemStack?>,
-        var stateId: Int
+        var stateId: Int,
+        var isTracking: Boolean = true
     )
 }
