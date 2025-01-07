@@ -1,20 +1,17 @@
 package com.mattmx.ktgui.command.arg
 
 import com.mojang.brigadier.arguments.*
-import com.mojang.brigadier.builder.ArgumentBuilder
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.registry.RegistryKey
-import org.bukkit.entity.Player
 import kotlin.properties.ReadOnlyProperty
 
-fun <T : Any> custom(argumentType: ArgumentType<T>) = delegate(argumentType)
+inline fun <reified T : Any> custom(argumentType: ArgumentType<T>) = delegate(argumentType)
 
-fun <T : Any> mapped(vararg pairs: Pair<String, T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
+inline fun <reified T : Any> mapped(vararg pairs: Pair<String, T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
     return mapped(pairs.toMap())
 }
-fun <T : Any> mapped(map: Map<String, T>) = custom(
+inline fun <reified T : Any> mapped(map: Map<String, T>) = custom(
     customArgument<T, String>(StringArgumentType.word()) {
         suggests { context, builder ->
             map.keys.forEach(builder::suggest)
@@ -24,7 +21,7 @@ fun <T : Any> mapped(map: Map<String, T>) = custom(
     }
 )
 
-fun options(vararg option: ArgumentWrapper<*>) = delegate(OptionHolderArgumentType(option.toList()))
+fun options(vararg option: ArgumentWrapper<*>) = delegate(OptionFlagArgumentType(option.toList()))
 
 fun player() = delegate(ArgumentTypes.player())
 fun players() = delegate(ArgumentTypes.players())
@@ -54,7 +51,7 @@ fun time(min: Int = 0) = delegate(ArgumentTypes.time(min))
 fun templateMirror() = delegate(ArgumentTypes.templateMirror())
 fun templateRotation() = delegate(ArgumentTypes.templateRotation())
 
-fun <T : Any> resource(registryKey: RegistryKey<T>) = delegate(ArgumentTypes.resource(registryKey))
+inline fun <reified T : Any> resource(registryKey: RegistryKey<T>) = delegate(ArgumentTypes.resource(registryKey))
 fun <T : Any> resourceKey(registryKey: RegistryKey<T>) = delegate(ArgumentTypes.resourceKey(registryKey))
 
 fun boolean() = delegate(BoolArgumentType.bool())
@@ -70,14 +67,14 @@ fun float(min: Float = Float.MIN_VALUE, max: Float = Float.MAX_VALUE) = delegate
 fun double(min: Double = Double.MIN_VALUE, max: Double = Double.MAX_VALUE) =
     delegate(DoubleArgumentType.doubleArg(min, max))
 
-fun <T : Any> delegate(type: ArgumentType<T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
+inline fun <reified T : Any> delegate(type: ArgumentType<T>): ReadOnlyProperty<Any?, ArgumentWrapper<T>> {
     var instance: ArgumentWrapper<T>? = null
 
     return ReadOnlyProperty { thisRef, property ->
 
         synchronized(property) {
             if (instance == null) {
-                instance = ArgumentWrapper(property.name, type) { Commands.argument(property.name, type) }
+                instance = ArgumentWrapper(property.name, T::class.java, type) { Commands.argument(property.name, type) }
             }
         }
 

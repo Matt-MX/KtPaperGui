@@ -6,6 +6,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 
 class ArgumentWrapper<S>(
     val name: String,
+    val clazz: Class<S>,
     val argumentType: ArgumentType<S>,
     val supplier: () -> ArgumentBuilder<CommandSourceStack, *>
 ) {
