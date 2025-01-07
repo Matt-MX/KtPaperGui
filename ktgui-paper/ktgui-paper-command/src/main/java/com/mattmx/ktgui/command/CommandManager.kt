@@ -8,9 +8,11 @@ import org.bukkit.plugin.java.JavaPlugin
 object CommandManager {
     private val commands = mutableSetOf<RegisteredPaperCommand>()
     private lateinit var paperCommands: PaperCommands
+    private lateinit var rootNode: CommandNode<*>
 
     fun inject() {
         paperCommands = PaperCommands.INSTANCE
+        rootNode = paperCommands.dispatcherInternal.root as CommandNode<*>
     }
 
     fun register(command: RegisteredPaperCommand) {
@@ -18,15 +20,18 @@ object CommandManager {
         command.enabledStatus.set(true)
 
         if (::paperCommands.isInitialized) {
-            paperCommands.setCurrentContext(command.plugin)
-            paperCommands.setValid()
+            synchronized(rootNode) {
+                paperCommands.setCurrentContext(command.plugin)
+                paperCommands.setValid()
 
-            paperCommands.register(command.root)
+                paperCommands.register(command.root)
 
-            paperCommands.setCurrentContext(null)
-            paperCommands.invalidate()
+                paperCommands.setCurrentContext(null)
+                paperCommands.invalidate()
 
-            Bukkit.getOnlinePlayers().forEach { player -> player.updateCommands() }
+
+                Bukkit.getOnlinePlayers().forEach { player -> player.updateCommands() }
+            }
         }
     }
 
@@ -36,8 +41,10 @@ object CommandManager {
         command.enabledStatus.set(false)
 
         if (::paperCommands.isInitialized) {
-            (paperCommands.dispatcherInternal.root as CommandNode<*>).removeCommand(command.root.name)
-            Bukkit.getOnlinePlayers().forEach { player -> player.updateCommands() }
+            synchronized(rootNode) {
+                rootNode.removeCommand(command.root.name)
+                Bukkit.getOnlinePlayers().forEach { player -> player.updateCommands() }
+            }
         }
     }
 
