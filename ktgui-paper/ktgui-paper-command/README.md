@@ -1,5 +1,7 @@
 <h1 align="center">Paper Command Dsl</h1>
 
+**TODO(Matt): This should be implemented into core to be multi-platform.**
+
 ---
 
 This is a **Wrapper** for the [Paper Command API](https://docs.papermc.io/paper/dev/command-api/commands). It provides 

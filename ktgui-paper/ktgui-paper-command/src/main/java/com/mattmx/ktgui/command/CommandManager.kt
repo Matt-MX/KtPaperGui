@@ -2,6 +2,7 @@ package com.mattmx.ktgui.command
 
 import com.mojang.brigadier.tree.CommandNode
 import io.papermc.paper.command.brigadier.PaperCommands
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
 object CommandManager {
@@ -24,6 +25,8 @@ object CommandManager {
 
             paperCommands.setCurrentContext(null)
             paperCommands.invalidate()
+
+            Bukkit.getOnlinePlayers().forEach { player -> player.updateCommands() }
         }
     }
 
@@ -34,6 +37,7 @@ object CommandManager {
 
         if (::paperCommands.isInitialized) {
             (paperCommands.dispatcherInternal.root as CommandNode<*>).removeCommand(command.root.name)
+            Bukkit.getOnlinePlayers().forEach { player -> player.updateCommands() }
         }
     }
 
