@@ -8,7 +8,10 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerRe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective.ObjectiveMode
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore
+import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.TaskWrapper
 import com.mattmx.ktgui.scoreboard.Scoreboard
+import com.mattmx.ktgui.tasks.TaskTracker
 import net.kyori.adventure.text.Component
 import java.util.*
 
@@ -37,8 +40,16 @@ open class PacketScoreboard(initialTitle: Component) : Scoreboard(initialTitle) 
         sendPacketToViewers(*createScoreboardContentPacket().toTypedArray())
     }
 
+    override fun updateLine(index: Int) {
+        sendPacketToViewers(createScoreboardEntryPacket(index))
+    }
+
     override fun updateTitle() {
         sendPacketToViewers(createScoreboardCreatePacket(ObjectiveMode.UPDATE))
+    }
+
+    override fun updating(plugin: Any) = apply {
+        this.tasks = GuiManager.getInstance().createTaskTracker<TaskWrapper>(plugin)
     }
 
     /**
@@ -48,23 +59,27 @@ open class PacketScoreboard(initialTitle: Component) : Scoreboard(initialTitle) 
         val list = mutableListOf<PacketWrapper<*>>()
 
         for (i in (0..<16)) {
-            val component = content.content.getOrNull(i)
-
-            if (component != null) {
-                list += WrapperPlayServerUpdateScore(
-                    "$id$i",
-                    WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
-                    id,
-                    16 - i,
-                    component,
-                    ScoreFormat.blankScore()
-                )
-            } else {
-                list += WrapperPlayServerResetScore("$id$i", this.id)
-            }
+            list += createScoreboardEntryPacket(i)
         }
 
         return list
+    }
+
+    fun createScoreboardEntryPacket(line: Int) : PacketWrapper<*> {
+        val component = content.content.getOrNull(line)
+
+        return if (component != null) {
+            WrapperPlayServerUpdateScore(
+                "$id$line",
+                WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
+                id,
+                16 - line,
+                component.getComponent(),
+                ScoreFormat.blankScore()
+            )
+        } else {
+            WrapperPlayServerResetScore("$id$line", this.id)
+        }
     }
 
     /**

@@ -7,10 +7,13 @@ import com.mattmx.ktgui.impl.PacketScoreboard.Companion.scoreboard
 import com.mattmx.ktgui.impl.PaperGuiManagerImpl
 import com.mattmx.ktgui.util.not
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 
 class PaperKtGuiPlugin : JavaPlugin() {
     val manager = PaperGuiManagerImpl(this)
@@ -22,11 +25,16 @@ class PaperKtGuiPlugin : JavaPlugin() {
         manager.registerListeners()
 
         val board = scoreboard(!"<green>Test") {
+            updating(this@PaperKtGuiPlugin)
+
             lines {
                 +!"<red>First Line"
                 +!"<gray>Second Line"
+
                 +Component.empty()
+
                 +!"<#e352a6><bold>RGB color!"
+                +{ !"Time: ${Date()}" } updateEvery 1.seconds
 
                 this[1] = !"Overriden Line"
             }
