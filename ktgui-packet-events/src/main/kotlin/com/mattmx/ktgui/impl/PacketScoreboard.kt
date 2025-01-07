@@ -14,7 +14,6 @@ import java.util.*
 
 open class PacketScoreboard(initialTitle: Component) : Scoreboard(initialTitle) {
     val id = UUID.randomUUID().toString()
-    private val packetEvents = PacketEvents.getAPI()
 
     override fun addViewer(uuid: UUID) : Boolean {
         if (viewers.add(uuid)) {
@@ -94,6 +93,7 @@ open class PacketScoreboard(initialTitle: Component) : Scoreboard(initialTitle) 
     }
 
     fun sendPacket(uuid: UUID, packetWrapper: PacketWrapper<*>) {
+        val packetEvents = PacketEvents.getAPI()
         val channel = packetEvents.protocolManager.getChannel(uuid)
             ?: return
 
