@@ -2,11 +2,15 @@
 <p align="center">
     <img src="./ProjectBanner.png" width="512px" title="Logo* Not final">
 </p>
-<h2 align="center">Declarative guis for Paper!</h2>
+<h2 align="center">Multi-Platform Library for Minecraft development!</h2>
 
 <div align="center">
 <p>
-The KtGUI library provides a plethora of utilities to help speed up the development of your PaperMC plugins.
+    The KtGui library is available for usage on your Velocity proxy and your backend Paper servers!
+    Easily create reactive and flexible GUIs, with little to no code changes when switching platforms.
+
+    The library aims to give you utilities to make your plugins feel responsive and custom, at little to no
+    performance impact. **See just some of the feature below!**
 </p>
 </div>
 
@@ -32,8 +36,8 @@ The KtGUI library provides a plethora of utilities to help speed up the developm
 <h1>GUI DSL</h1>
 <p>
 
-With Kotlin's amazing DSL, you can create guis in a declarative style. Simply stating exactly what you want, where you want it.
-With KtGUI, you can speed up development of guis tenfold.
+Create your GUIs with a declarative pattern, making use of Kotlin's powerul DSL, it's never been easier to create fluent Inventory-based
+GUIs, while keeping your code readable and maintainable.
 
 </p>
 
@@ -49,9 +53,8 @@ With KtGUI, you can speed up development of guis tenfold.
 <h1>Signals</h1>
 <p>
 
-Recently we introduced Signals into the library. They allow you to dynamically update components with absolute ease.
-Simply change your variables, and the components that mention it will update for your users.
-Making dynamic GUIs has never been easier.
+Signals are similar to `useState` hooks in React, allowing you to listen for state changes and react to the accordingly!
+If you're using buttons to display variable values, you'll find this very useful.
 
 </p>
 
@@ -63,13 +66,13 @@ Making dynamic GUIs has never been easier.
 </div>
 
 <div align="left">
-<h1>Command DSL</h1>
+<h1>Brigadier Command DSL</h1>
 <p>
 
-KtGUI provides two types of command DSL: Declarative and Simple.
-Simple gives you complete control and responsibility over how the command executes, and arguments are processed.
-Meanwhile Declarative commands use Delegated properties to allow for easy argument handling - simply state
-your arguments and their datatype, and KtGUI will do the rest under the hood. 
+KtGUI now comes with a strong wrapper for the Brigadier Command framework that is now exposed in the Paper and Velocity API.
+Create subcommands with different executions dependant on the sender type, variables and more!
+
+Now with flags and options!
  
 </p>
 <h3>
@@ -83,8 +86,7 @@ your arguments and their datatype, and KtGUI will do the rest under the hood.
 <h1>Events DSL</h1>
 <p>
 
-We also provide a way to easily create handlers for **Bukkit Events**, so you don't always need to make a whole
-new class just for your EventListeners.
+Create singleton listeners that can be registered and unregistered when you choose!
 
 </p>
 <h3>
@@ -98,10 +100,9 @@ new class just for your EventListeners.
 <h1>GUI Hooks</h1>
 <p>
 
-We also provide some events to allow you to change any GUI just before it is opened, essentially hooking into
-a gui and adding or modifying whatever you want.
-    
-This can prove very useful for making extensions to other plugins.
+Listen to events to modify any GUIs just before they get sent to a client!
+
+Super useful if you want to modify a plugin's GUI without forking it!
 
 </p>
 <h3>
@@ -116,7 +117,37 @@ This can prove very useful for making extensions to other plugins.
 <p>
 
 Making scoreboards has never been easier with our lightweight scoreboard DSL.
-With the ability to define and animate your personalized scoreboards however you like.
+Now with the ability to define and animate your personalized scoreboards however you like!
+
+</p>
+<h3>
+
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/AnimatedScoreboardExample.kt)
+
+</h3>
+</div>
+
+<div align="left">
+<h1>Hot Bar GUIs</h1>
+<p>
+
+Now you can create GUIs using the player inventory and hotbar interactions!
+
+</p>
+<h3>
+
+[« View Examples](https://github.com/Matt-MX/KtBukkitGui/blob/refactor/plugin/src/main/kotlin/com/mattmx/ktgui/examples/AnimatedScoreboardExample.kt)
+
+</h3>
+</div>
+
+<div align="right">
+<h1>Configurable GUIs</h1>
+<p>
+
+Read your GUIs from a JSON file format, using `action` hooks to delegate your click callbacks!
+
+Give your plugins ultimate customization capabilities!
 
 </p>
 <h3>
