@@ -4,15 +4,11 @@
 </p>
 <h2 align="center">Multi-Platform Library for Minecraft development!</h2>
 
-<div align="center">
-<p>
-    The KtGui library is available for usage on your Velocity proxy and your backend Paper servers!
-    Easily create reactive and flexible GUIs, with little to no code changes when switching platforms.
+The KtGui library is available for usage on your Velocity proxy and your backend Paper servers!
+Easily create reactive and flexible GUIs, with little to no code changes when switching platforms.
 
-    The library aims to give you utilities to make your plugins feel responsive and custom, at little to no
-    performance impact. **See just some of the feature below!**
-</p>
-</div>
+The library aims to give you utilities to make your plugins feel responsive and custom, at little to no
+performance impact. **See just some of the feature below!**
 
 <div align="center">
 
@@ -126,7 +122,7 @@ Now with the ability to define and animate your personalized scoreboards however
 
 </h3>
 </div>
-
+<!--
 <div align="left">
 <h1>Hot Bar GUIs</h1>
 <p>
@@ -156,3 +152,4 @@ Give your plugins ultimate customization capabilities!
 
 </h3>
 </div>
+-->
