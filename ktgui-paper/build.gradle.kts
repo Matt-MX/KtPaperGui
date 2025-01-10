@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":ktgui-core"))
     implementation(project(":ktgui-packet-events"))
     implementation(project(":ktgui-paper:ktgui-paper-command"))
+    implementation(project(":ktgui-core:ktgui-core-brigadier"))
     implementation(kotlin("reflect"))
 }
 

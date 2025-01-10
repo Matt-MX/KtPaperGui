@@ -16,7 +16,7 @@ dependencies {
 
     compileOnly(libs.kotlin.stdlib)
     compileOnly(libs.kotlin.reflect)
-    compileOnly(project(":ktgui-core"))
+    implementation(project(":ktgui-core:ktgui-core-brigadier"))
 }
 
 kotlin {

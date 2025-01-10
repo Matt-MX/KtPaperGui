@@ -1,18 +1,17 @@
 package com.mattmx.ktgui.command.arg
 
 import com.mojang.brigadier.StringReader
-import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestion
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import io.papermc.paper.command.brigadier.argument.CustomArgumentType
 import java.util.concurrent.CompletableFuture
 
 class OptionFlagArgumentType(
     private val expected: List<ArgumentWrapper<*>>,
     private val prefix: String = "--"
-) : CustomArgumentType<OptionFlagArgumentType.Result, String> {
+) : ArgumentType<OptionFlagArgumentType.Result> {
     private val optionPrefixSyntax = "$prefix[\\w-]*".toRegex()
 
     override fun parse(reader: StringReader): Result {
@@ -115,8 +114,6 @@ class OptionFlagArgumentType(
             builder.build()
         }
     }
-
-    override fun getNativeType() = StringArgumentType.greedyString()
 
     class Result(
         val map: Map<ArgumentWrapper<*>, Any>

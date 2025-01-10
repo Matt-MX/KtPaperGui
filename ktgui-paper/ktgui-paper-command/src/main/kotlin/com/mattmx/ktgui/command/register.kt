@@ -9,7 +9,7 @@ import org.bukkit.plugin.Plugin
 import java.util.concurrent.atomic.AtomicBoolean
 
 class RegisteredPaperCommand(
-    val root: LiteralCommandNode<CommandSourceStack>,
+    val root: LiteralCommandNode<Any>,
     val enabledStatus: AtomicBoolean,
     val plugin: Plugin
 ) {
@@ -31,7 +31,7 @@ fun unregisterCommand(command: RegisteredPaperCommand, registrar: PaperCommands)
     (registrar.dispatcher.root as CommandNode<*>).removeCommand(command.root.name)
 }
 
-fun LiteralArgumentBuilder<CommandSourceStack>.register(plugin: Plugin): RegisteredPaperCommand {
+fun LiteralArgumentBuilder<Any>.register(plugin: Plugin): RegisteredPaperCommand {
     val node = build()
     val status = AtomicBoolean(true)
 

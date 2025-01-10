@@ -2,14 +2,11 @@ package com.mattmx.ktgui.command.arg
 
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import io.papermc.paper.command.brigadier.CommandSourceStack
-import io.papermc.paper.command.brigadier.Commands
 
 class CommandArgumentBuilder(
-    val root: LiteralArgumentBuilder<CommandSourceStack>
+    val root: LiteralArgumentBuilder<Any>
 ) {
-    val stack = mutableListOf<Pair<ArgumentBuilder<CommandSourceStack, *>, ArgumentWrapper<*>?>>(
+    val stack = mutableListOf<Pair<ArgumentBuilder<Any, *>, ArgumentWrapper<*>?>>(
         root to null
     )
 
@@ -20,25 +17,25 @@ class CommandArgumentBuilder(
     }
 
     operator fun div(other: String): CommandArgumentBuilder {
-        val nodeInstance = Commands.literal(other)
+        val nodeInstance = LiteralArgumentBuilder.literal<Any>(other)
         stack.add(nodeInstance to null)
         return this
     }
 
-    operator fun invoke(block: ArgumentBuilder<CommandSourceStack, *>.() -> Unit) = apply {
+    operator fun invoke(block: ArgumentBuilder<Any, *>.() -> Unit) = apply {
         // Apply the block to the deepest child that is required
         stack.last { it.second == null || it.second?.isOptional == false }.first.apply(block)
-        stack.map { it.first }.reduceRightOrNull { a, b -> a.then(b) as ArgumentBuilder<CommandSourceStack, *> }
+        stack.map { it.first }.reduceRightOrNull { a, b -> a.then(b) as ArgumentBuilder<Any, *> }
     }
 }
 
 operator fun <T : Any> String.div(arg: ArgumentWrapper<T>): CommandArgumentBuilder {
-    return CommandArgumentBuilder(Commands.literal(this)).also { it.div(arg) }
+    return CommandArgumentBuilder(LiteralArgumentBuilder.literal(this)).also { it.div(arg) }
 }
 
-operator fun String.div(other: String): LiteralArgumentBuilder<CommandSourceStack>? {
-    val sub = LiteralArgumentBuilder.literal<CommandSourceStack>(other)
-    return Commands.literal(this).then(sub)
+operator fun String.div(other: String): LiteralArgumentBuilder<Any> {
+    val sub = LiteralArgumentBuilder.literal<Any>(other)
+    return LiteralArgumentBuilder.literal<Any>(this).then(sub)
 }
 
 operator fun <T> ArgumentWrapper<T>.unaryMinus() = apply {

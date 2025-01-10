@@ -1,16 +1,13 @@
 package com.mattmx.ktgui
 
-import com.github.retrooper.packetevents.protocol.item.type.ItemType
-import com.mattmx.ktgui.impl.*
+import com.mattmx.ktgui.impl.BukkitConvertedButton
+import com.mattmx.ktgui.impl.PacketEventsGuiManager
+import com.mattmx.ktgui.impl.PacketGuiButton
 import com.mattmx.ktgui.screen.GuiScreen
-import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.InventoryType
 import com.mattmx.ktgui.tasks.PaperKeyedTaskTrackerImpl
 import com.mattmx.ktgui.tasks.PaperTaskTrackerImpl
-import io.github.retrooper.packetevents.util.SpigotConversionUtil
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
@@ -19,7 +16,7 @@ import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.reflect.*
+import kotlin.reflect.KFunction1
 
 fun JavaPlugin.taskTracker(plugin: JavaPlugin) = PaperTaskTrackerImpl(plugin)
 fun JavaPlugin.keyedTaskTracker(plugin: JavaPlugin) = PaperKeyedTaskTrackerImpl(plugin)

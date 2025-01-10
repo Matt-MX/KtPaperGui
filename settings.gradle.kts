@@ -34,3 +34,6 @@ include("ktgui-command")
 include("ktgui-brigadier")
 include("ktgui-paper:ktgui-paper-command")
 findProject(":ktgui-paper:ktgui-paper-command")?.name = "ktgui-paper-command"
+include("ktgui-json")
+include("ktgui-core:ktgui-core-brigadier")
+findProject(":ktgui-core:ktgui-core-brigadier")?.name = "ktgui-core-brigadier"

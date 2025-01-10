@@ -13,7 +13,10 @@ dependencies {
     compileOnly(libs.adventure)
     compileOnly(libs.packet.events.api)
 
+    compileOnly(libs.gson)
+
     implementation(project(":ktgui-core"))
+    implementation(project(":ktgui-json"))
 }
 
 kotlin {

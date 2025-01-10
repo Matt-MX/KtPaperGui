@@ -1,22 +1,24 @@
 package com.mattmx.ktgui.command
 
 import com.mojang.brigadier.tree.CommandNode
+import com.mojang.brigadier.tree.LiteralCommandNode
+import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.PaperCommands
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
-object CommandManager {
-    private val commands = mutableSetOf<RegisteredPaperCommand>()
+object CommandManager : AbstractCommandManager<RegisteredPaperCommand>() {
     private lateinit var paperCommands: PaperCommands
     private lateinit var rootNode: CommandNode<*>
 
     fun inject() {
+        setInstance(this)
         paperCommands = PaperCommands.INSTANCE
         rootNode = paperCommands.dispatcherInternal.root as CommandNode<*>
     }
 
-    fun register(command: RegisteredPaperCommand) {
-        this.commands.add(command)
+    override fun register(command: RegisteredPaperCommand) {
+        super.register(command)
         command.enabledStatus.set(true)
 
         if (::paperCommands.isInitialized) {
@@ -24,7 +26,7 @@ object CommandManager {
                 paperCommands.setCurrentContext(command.plugin)
                 paperCommands.setValid()
 
-                paperCommands.register(command.root)
+                paperCommands.register(command.root as LiteralCommandNode<CommandSourceStack>)
 
                 paperCommands.setCurrentContext(null)
                 paperCommands.invalidate()
@@ -37,7 +39,7 @@ object CommandManager {
 
     fun findByPlugin(plugin: JavaPlugin) = commands.filter { it.plugin == plugin }
 
-    fun unregister(command: RegisteredPaperCommand) {
+    override fun unregister(command: RegisteredPaperCommand) {
         command.enabledStatus.set(false)
 
         if (::paperCommands.isInitialized) {
@@ -46,10 +48,5 @@ object CommandManager {
                 Bukkit.getOnlinePlayers().forEach { player -> player.updateCommands() }
             }
         }
-    }
-
-    fun dispose(command: RegisteredPaperCommand) {
-        unregister(command)
-        commands.remove(command)
     }
 }

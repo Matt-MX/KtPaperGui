@@ -7,7 +7,6 @@ import com.mattmx.ktgui.impl.PacketScoreboard.Companion.scoreboard
 import com.mattmx.ktgui.impl.PaperGuiManagerImpl
 import com.mattmx.ktgui.util.not
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
