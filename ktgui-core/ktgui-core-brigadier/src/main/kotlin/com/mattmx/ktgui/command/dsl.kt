@@ -26,9 +26,11 @@ fun ArgumentBuilder<Any, *>.sub(
 fun ArgumentBuilder<Any, *>.sub(
     other: ArgumentWrapper<*>,
     block: (ArgumentBuilder<Any, *>.() -> Unit)?
-) = apply {
+): ArgumentBuilder<Any, *> {
     val nodeInstance = other.supplier()
     then(nodeInstance.also { block?.invoke(it) })
+
+    return nodeInstance
 }
 
 fun ArgumentBuilder<Any, *>.sub(

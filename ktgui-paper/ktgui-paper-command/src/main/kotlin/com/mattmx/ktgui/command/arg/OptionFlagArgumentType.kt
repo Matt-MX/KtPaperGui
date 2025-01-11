@@ -2,16 +2,18 @@ package com.mattmx.ktgui.command.arg
 
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestion
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import io.papermc.paper.command.brigadier.argument.CustomArgumentType
 import java.util.concurrent.CompletableFuture
 
 class OptionFlagArgumentType(
     private val expected: List<ArgumentWrapper<*>>,
     private val prefix: String = "--"
-) : ArgumentType<OptionFlagArgumentType.Result> {
+) : CustomArgumentType<OptionFlagArgumentType.Result, String> {
     private val optionPrefixSyntax = "$prefix[\\w-]*".toRegex()
 
     override fun parse(reader: StringReader): Result {
@@ -26,12 +28,18 @@ class OptionFlagArgumentType(
                 reader.skipWhitespace()
 
                 if (isBoolean(option)) {
+                    val char = reader.peek()
+                    if (char == 't' || char == 'f') {
+                        values[option] = option.argumentType.parse(reader)
+                            ?: error("Invalid value for option '${optionName}'")
+
+                        continue
+                    }
+
                     values[option] = true
                 } else {
-                    val value = option.argumentType.parse(reader)
+                    values[option] = option.argumentType.parse(reader)
                         ?: error("Invalid value for option '${optionName}'")
-
-                    values[option] = value
                 }
             }
         }
@@ -42,6 +50,8 @@ class OptionFlagArgumentType(
     override fun getExamples(): MutableCollection<String> {
         return expected.map { arg -> "$prefix${arg.name} ${arg.argumentType.examples}" }.toMutableSet()
     }
+
+    override fun getNativeType() = StringArgumentType.greedyString()
 
     fun isBoolean(arg: ArgumentWrapper<*>): Boolean {
         return Boolean::class.javaObjectType.isAssignableFrom(arg.clazz)
@@ -76,6 +86,7 @@ class OptionFlagArgumentType(
             }
 
             if (indexOfOption == lastIndex) {
+                val subBuilder = builder.createOffset(builder.start + remainingWithoutLast.length)
                 for (option in expected) {
 
                     // Make sure it starts with this arg
@@ -84,16 +95,24 @@ class OptionFlagArgumentType(
                         continue
                     }
 
-                    builder.suggest(remainingWithoutLast + prefix + option.name)
+                    subBuilder.suggest(prefix + option.name)
                 }
+                subBuilder.build()
             } else {
                 val optionName = args.getOrNull(indexOfOption)
                     ?: return@supplyAsync builder.buildFuture().join()
+
                 val option = expected.firstOrNull { expectedArg ->
                     expectedArg.name == optionName.replaceFirst(prefix, "")
                 } ?: return@supplyAsync builder.buildFuture().join()
 
-                return@supplyAsync option.argumentType.listSuggestions(context, builder)
+                val indexOfValueStart = args.subList(0, indexOfOption + 1).sumOf(String::length)
+                println(indexOfValueStart)
+                val subBuilder = builder.createOffset(builder.start + indexOfValueStart - 1)
+
+                println(subBuilder.remaining)
+
+                return@supplyAsync option.argumentType.listSuggestions(context, subBuilder)
                     .thenApply { suggestions ->
                         Suggestions.create(
                             context.input,
@@ -104,14 +123,12 @@ class OptionFlagArgumentType(
                                 .map { suggestion ->
                                     Suggestion(
                                         suggestion.range,
-                                        remainingWithoutLast + suggestion.text,
+                                        suggestion.text,
                                         suggestion.tooltip
                                     )
                                 })
                     }.join()
             }
-
-            builder.build()
         }
     }
 

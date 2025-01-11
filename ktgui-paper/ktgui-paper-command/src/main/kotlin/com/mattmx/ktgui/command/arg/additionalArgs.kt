@@ -33,6 +33,8 @@ inline fun <reified T : Any> mapped(
     }
 )
 
+fun options(vararg option: ArgumentWrapper<*>) = delegate(OptionFlagArgumentType(option.toList()))
+
 fun player() = delegate(ArgumentTypes.player())
 fun players() = delegate(ArgumentTypes.players())
 fun entity() = delegate(ArgumentTypes.entity())

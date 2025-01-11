@@ -31,7 +31,7 @@ fun unregisterCommand(command: RegisteredPaperCommand, registrar: PaperCommands)
     (registrar.dispatcher.root as CommandNode<*>).removeCommand(command.root.name)
 }
 
-fun LiteralArgumentBuilder<Any>.register(plugin: Plugin): RegisteredPaperCommand {
+infix fun LiteralArgumentBuilder<Any>.register(plugin: Plugin): RegisteredPaperCommand {
     val node = build()
     val status = AtomicBoolean(true)
 
