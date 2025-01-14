@@ -8,8 +8,14 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.command.CommandSender
 import java.util.concurrent.CompletableFuture
 
-var ArgumentBuilder<CommandSourceStack, *>.permission: String
-    set(value) = requires { it.sender.hasPermission(value) }.let {  }
+fun ArgumentBuilderWrapper.requires(predicate: (CommandSourceStack) -> Boolean) = apply {
+    owner.requires { source ->
+        (source as? CommandSourceStack)?.let(predicate) == true
+    }
+}
+
+var ArgumentBuilder<Any, *>.permission: String
+    set(value) = requires { (it as CommandSourceStack).sender.hasPermission(value) }.let {  }
     get() = error("Cannot retrieve the permission string from a predicate.")
 
 inline fun <reified S : CommandSender> ArgumentBuilderWrapper.runsAsync(
