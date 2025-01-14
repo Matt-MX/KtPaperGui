@@ -1,5 +1,6 @@
 package com.mattmx.ktgui.command
 
+import com.mattmx.ktgui.command.arg.ArgumentBuilderWrapper
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
@@ -11,19 +12,19 @@ var ArgumentBuilder<CommandSourceStack, *>.permission: String
     set(value) = requires { it.sender.hasPermission(value) }.let {  }
     get() = error("Cannot retrieve the permission string from a predicate.")
 
-inline fun <reified S : CommandSender> ArgumentBuilder<Any, *>.runsAsync(
+inline fun <reified S : CommandSender> ArgumentBuilderWrapper.runsAsync(
     crossinline block: PaperCommandContextWrapper<S>.() -> Unit
 ) = runs<S> {
     CompletableFuture.supplyAsync { block(this) }
 }
 
-inline fun <reified S : CommandSender> ArgumentBuilder<Any, *>.runs(
+inline fun <reified S : CommandSender> ArgumentBuilderWrapper.runs(
     crossinline block: PaperCommandContextWrapper<S>.() -> Unit
 ) = apply {
 //    val existingExecution = this.command
     val senderClass = S::class.java
 
-    executes { invocation ->
+    owner.executes { invocation ->
         if (invocation.source !is CommandSourceStack) {
             return@executes 0
         }

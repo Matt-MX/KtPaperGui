@@ -4,6 +4,8 @@ plugins {
     `maven-publish`
 }
 
+version = rootProject.version
+
 repositories {
     mavenCentral()
     maven("https://repo.codemc.io/repository/maven-releases/")

@@ -38,7 +38,7 @@ inline fun <reified E> GuiScreen<*, *>.onEvent(plugin: Any, proxyServer: ProxySe
     proxyServer.eventManager.register(plugin, E::class.java, handler)
 
     this.close {
-        if (getAllWatchingInstance().isEmpty()) {
+        if (getAllWatchingInstance<Any>().isEmpty()) {
             proxyServer.eventManager.unregister(plugin, handler)
         }
     }

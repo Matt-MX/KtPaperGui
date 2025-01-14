@@ -4,7 +4,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
 class CommandArgumentBuilder(
-    val root: LiteralArgumentBuilder<Any>
+    val root: ArgumentBuilder<Any, *>
 ) {
     val stack = mutableListOf<Pair<ArgumentBuilder<Any, *>, ArgumentWrapper<*>?>>(
         root to null
@@ -22,9 +22,13 @@ class CommandArgumentBuilder(
         return this
     }
 
-    operator fun invoke(block: ArgumentBuilder<Any, *>.() -> Unit) = apply {
+    operator fun invoke(block: ArgumentBuilderWrapper.() -> Unit) = apply {
         // Apply the block to the deepest child that is required
-        stack.last { it.second == null || it.second?.isOptional == false }.first.apply(block)
+        stack.last { it.second == null || it.second?.isOptional == false }
+            .first
+            .let { ArgumentBuilderWrapper(it) }
+            .apply(block)
+
         stack.map { it.first }.reduceRightOrNull { a, b -> a.then(b) as ArgumentBuilder<Any, *> }
     }
 }

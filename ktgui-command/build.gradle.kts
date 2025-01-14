@@ -3,6 +3,8 @@ plugins {
     `maven-publish`
 }
 
+version = rootProject.version
+
 repositories {
     mavenCentral()
 }

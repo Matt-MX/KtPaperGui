@@ -1,7 +1,5 @@
 package com.mattmx.ktgui.impl
 
-import com.github.retrooper.packetevents.PacketEvents
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCloseWindow
 import com.mattmx.ktgui.TaskWrapper
 import com.mattmx.ktgui.tasks.*
 import com.velocitypowered.api.event.Subscribe

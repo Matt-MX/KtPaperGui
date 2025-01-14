@@ -9,6 +9,8 @@ repositories {
     mavenCentral()
 }
 
+version = rootProject.version
+
 dependencies {
     paperweight.paperDevBundle(libs.versions.paperApi.get())
 //    compileOnly(libs.paper.api)

@@ -59,7 +59,7 @@ class CustomGUI : GuiScreen(!"&8&l⤷ &#7f52ffK&#984fd8t&#b14bb1G&#c94889u&#e244
                     repeat(3) {
                         val offsetX = Random.nextDouble(-2.0, 2.0) * 2
                         val offsetZ = Random.nextDouble(-2.0, 2.0) * 2
-                        player.spawnParticle(Particle.FIREWORKS_SPARK, player.location.add(offsetX, 1.0, offsetZ), 20)
+                        player.spawnParticle(Particle.FIREWORK, player.location.add(offsetX, 1.0, offsetZ), 20)
                     }
                 }
                 ClickType.DROP {

@@ -31,7 +31,6 @@ include("ktgui-paper")
 include("ktgui-packet-events")
 include("ktgui-velocity")
 include("ktgui-command")
-include("ktgui-brigadier")
 include("ktgui-paper:ktgui-paper-command")
 findProject(":ktgui-paper:ktgui-paper-command")?.name = "ktgui-paper-command"
 include("ktgui-json")

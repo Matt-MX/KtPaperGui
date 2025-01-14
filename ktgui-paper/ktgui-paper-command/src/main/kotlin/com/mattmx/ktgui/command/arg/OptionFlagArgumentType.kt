@@ -108,8 +108,8 @@ class OptionFlagArgumentType(
 
                 val indexOfValueStart = args.subList(0, indexOfOption + 1).sumOf(String::length)
                 println(indexOfValueStart)
-                val subBuilder = builder.createOffset(builder.start + indexOfValueStart - 1)
 
+                val subBuilder = builder.createOffset(builder.start + indexOfValueStart - 1)
                 println(subBuilder.remaining)
 
                 return@supplyAsync option.argumentType.listSuggestions(context, subBuilder)

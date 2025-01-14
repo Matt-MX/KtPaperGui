@@ -3,9 +3,12 @@ plugins {
     alias(libs.plugins.shadow) apply true
     alias(libs.plugins.runVelocity)
 //    alias(libs.plugins.runPaper)
-    kotlin("kapt") version "2.1.0"
+    kotlin("kapt")
+
     `maven-publish`
 }
+
+version = rootProject.version
 
 //runPaper.disablePluginJarDetection()
 //runPaper.detectPluginJar = false
