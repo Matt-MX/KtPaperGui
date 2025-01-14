@@ -26,10 +26,10 @@ fun ArgumentBuilderWrapper.sub(
 
 fun ArgumentBuilderWrapper.sub(
     other: ArgumentWrapper<*>,
-    block: (ArgumentBuilder<Any, *>.() -> Unit)?
+    block: (ArgumentBuilderWrapper.() -> Unit)?
 ): ArgumentBuilder<Any, *> {
     val nodeInstance = other.supplier()
-    owner.then(nodeInstance.also { block?.invoke(it) })
+    owner.then(nodeInstance.also { block?.invoke(ArgumentBuilderWrapper(it)) })
 
     return nodeInstance
 }

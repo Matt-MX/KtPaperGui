@@ -92,6 +92,29 @@ class PaperKtGuiPlugin : JavaPlugin() {
             }
         } register this
 
+        command("gamemode") {
+            val gameModes by gameMode()
+
+            sub(gameModes) {
+                runs<Player> {
+                    sender.gameMode = gameModes()
+
+                    reply(!"Your game mode was set to ${gameModes().name.lowercase()}.")
+                }
+
+                val player by player()
+                sub(player) {
+                    runs<CommandSender> {
+                        val target = player.first()
+
+                        target.gameMode = gameModes()
+                        target.sendMessage(!"${sender.name} set your game mode to ${gameModes().name.lowercase()}.")
+                        reply(!"Set ${target.name}'s game mode to ${gameModes().name.lowercase()}")
+                    }
+                }
+            }
+        }.register(this)
+
         createInventorySeeCommand()
     }
 
