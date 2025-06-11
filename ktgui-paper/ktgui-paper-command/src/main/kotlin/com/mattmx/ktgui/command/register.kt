@@ -3,7 +3,6 @@ package com.mattmx.ktgui.command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.PaperCommands
 import org.bukkit.plugin.Plugin
 import java.util.concurrent.atomic.AtomicBoolean

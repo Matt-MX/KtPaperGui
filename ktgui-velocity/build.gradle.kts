@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.kotlinJvm) apply true
     alias(libs.plugins.shadow) apply true
     alias(libs.plugins.runVelocity)
-//    alias(libs.plugins.runPaper)
     kotlin("kapt")
 
     `maven-publish`
@@ -24,6 +23,8 @@ dependencies {
 
     implementation(project(":ktgui-core"))
     implementation(project(":ktgui-packet-events"))
+    implementation(project(":ktgui-velocity:ktgui-velocity-command"))
+    implementation(project(":ktgui-core:ktgui-core-brigadier"))
     implementation(kotlin("reflect"))
 }
 

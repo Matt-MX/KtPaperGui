@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/ktgui-paper" />
             <option value="$PROJECT_DIR$/ktgui-paper/ktgui-paper-command" />
             <option value="$PROJECT_DIR$/ktgui-velocity" />
+            <option value="$PROJECT_DIR$/ktgui-velocity/ktgui-velocity-command" />
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/plugin/reobf" />
           </set>

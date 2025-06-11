@@ -36,3 +36,5 @@ findProject(":ktgui-paper:ktgui-paper-command")?.name = "ktgui-paper-command"
 include("ktgui-json")
 include("ktgui-core:ktgui-core-brigadier")
 findProject(":ktgui-core:ktgui-core-brigadier")?.name = "ktgui-core-brigadier"
+include("ktgui-velocity:ktgui-velocity-command")
+findProject(":ktgui-velocity:ktgui-velocity-command")?.name = "ktgui-velocity-command"
