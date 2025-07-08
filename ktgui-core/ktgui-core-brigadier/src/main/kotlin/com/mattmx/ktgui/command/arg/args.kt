@@ -4,8 +4,6 @@ import com.mojang.brigadier.arguments.*
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import kotlin.properties.ReadOnlyProperty
 
-inline fun <reified T : Any> custom(argumentType: ArgumentType<T>) = delegate(argumentType)
-
 fun boolean() = delegate(BoolArgumentType.bool())
 fun string() = delegate(StringArgumentType.string())
 fun word() = delegate(StringArgumentType.word())

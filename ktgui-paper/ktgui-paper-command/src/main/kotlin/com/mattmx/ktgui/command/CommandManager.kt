@@ -26,7 +26,11 @@ object CommandManager : AbstractCommandManager<RegisteredPaperCommand>() {
                 paperCommands.setCurrentContext(command.plugin)
                 paperCommands.setValid()
 
-                paperCommands.register(command.root as LiteralCommandNode<CommandSourceStack>)
+                paperCommands.register(
+                    command.root as LiteralCommandNode<CommandSourceStack>,
+                    command.description,
+                    command.aliases
+                )
 
                 paperCommands.setCurrentContext(null)
                 paperCommands.invalidate()

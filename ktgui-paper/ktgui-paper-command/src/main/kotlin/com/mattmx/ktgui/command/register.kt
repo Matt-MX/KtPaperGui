@@ -10,7 +10,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 class RegisteredPaperCommand(
     val root: LiteralCommandNode<Any>,
     val enabledStatus: AtomicBoolean,
-    val plugin: Plugin
+    val plugin: Plugin,
+    val description: String? = null,
+    val aliases: Collection<String> = emptyList()
 ) {
 
     fun isRegistered(): Boolean {
@@ -30,9 +32,16 @@ fun unregisterCommand(command: RegisteredPaperCommand, registrar: PaperCommands)
     (registrar.dispatcher.root as CommandNode<*>).removeCommand(command.root.name)
 }
 
-infix fun LiteralArgumentBuilder<Any>.register(plugin: Plugin): RegisteredPaperCommand {
+fun LiteralArgumentBuilder<Any>.register(
+    plugin: Plugin,
+    description: String? = null,
+    aliases: Collection<String> = emptyList()
+): RegisteredPaperCommand {
     val node = build()
     val status = AtomicBoolean(true)
 
-    return RegisteredPaperCommand(node, status, plugin).also(CommandManager::register)
+    return RegisteredPaperCommand(
+        node, status, plugin,
+        description, aliases
+    ).also(CommandManager::register)
 }

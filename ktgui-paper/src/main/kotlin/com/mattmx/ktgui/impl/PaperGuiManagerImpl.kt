@@ -1,7 +1,6 @@
 package com.mattmx.ktgui.impl
 
 import com.mattmx.ktgui.TaskWrapper
-import com.mattmx.ktgui.listener.InventoryTracker
 import com.mattmx.ktgui.listener.PlayerLocationTracker
 import com.mattmx.ktgui.tasks.*
 import org.bukkit.Bukkit

@@ -3,7 +3,7 @@ package com.mattmx.ktgui.command.arg
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 
-class ArgumentWrapper<T>(
+open class ArgumentWrapper<T>(
     val name: String,
     val clazz: Class<T>,
     val argumentType: ArgumentType<T>,

@@ -23,7 +23,7 @@ inline fun <reified T : Any> mapped(
 inline fun <reified T : Any> mapped(
     map: Map<String, T>,
     noinline invalid: (String) -> String = DEFAULT_INVALID_INPUT
-) = custom(
+) = delegate(
     customArgument<T, String>(StringArgumentType.word()) {
         suggests { context, builder ->
             map.keys.forEach(builder::suggest)

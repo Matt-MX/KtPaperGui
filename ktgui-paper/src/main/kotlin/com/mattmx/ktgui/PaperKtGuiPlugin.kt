@@ -90,7 +90,7 @@ class PaperKtGuiPlugin : JavaPlugin() {
                     }
                 }
             }
-        } register this
+        }.register(this)
 
         command("gamemode") {
             val gameModes by gameMode()
