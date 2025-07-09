@@ -53,7 +53,7 @@ open class GuiScreen(
                 player.openInventory.title = value.legacy()
             }
         }
-    val slots = Slots(this)
+    val slots get() = Slots(this)
     val onRefresh = EventCallback<Unit>()
 
     // Can be used to identify dsl guis
@@ -118,7 +118,8 @@ open class GuiScreen(
 
     open fun <T : GuiButton<T>> findButton(id: String, block: T.() -> Unit) = (findButton(id) as T?)?.apply(block)
 
-    open fun <T : GuiButton<T>> findButtons(id: String, block: T.() -> Unit) = findButtons(id).map { (it as T).apply(block) }
+    open fun <T : GuiButton<T>> findButtons(id: String, block: T.() -> Unit) =
+        findButtons(id).map { (it as T).apply(block) }
 
     open infix fun type(type: InventoryType) = apply { this.type = type }
 
@@ -302,6 +303,7 @@ open class GuiScreen(
     open infix fun onOpen(callback: Consumer<Player>) = apply {
         this.open { callback.accept(this) }
     }
+
     @JavaCompatibility
     open infix fun onClose(callback: Consumer<InventoryCloseEvent>) = apply {
         this.close { callback.accept(this) }
@@ -320,6 +322,7 @@ open class GuiScreen(
     override fun close(e: InventoryCloseEvent) {
         close.invoke(e)
     }
+
     override fun quit(e: PlayerQuitEvent) {
         quit.invoke(e)
     }

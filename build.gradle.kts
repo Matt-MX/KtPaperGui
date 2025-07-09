@@ -3,7 +3,7 @@ plugins {
 }
 
 runPaper.folia.registerTask()
-rootProject.version = "2.4.4-alpha"
+rootProject.version = "2.4.5-alpha"
 
 subprojects {
     allprojects {
