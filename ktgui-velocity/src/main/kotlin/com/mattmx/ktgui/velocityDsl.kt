@@ -1,6 +1,6 @@
 package com.mattmx.ktgui
 
-import com.mattmx.ktgui.impl.PacketEventsGuiManager
+import com.mattmx.ktgui.impl.PacketEventsKtGui
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.tasks.VelocityKeyedTaskTrackerImpl
 import com.mattmx.ktgui.tasks.VelocityTaskTrackerImpl
@@ -18,7 +18,7 @@ inline fun <reified E> GuiScreen<*, *>.onEventByPlayer(playerSupplier: KProperty
     return onEvent<E>(plugin, plugin.proxyServer) { event ->
         val player = playerSupplier.getter.call(event)
 
-        val isThisOpen = GuiManager.getInstance<PacketEventsGuiManager>().getActiveGui(player) == this
+        val isThisOpen = KtGui.getInstance<PacketEventsKtGui>().getActiveGui(player) == this
 
         if (isThisOpen) {
             callback(event)

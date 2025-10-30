@@ -4,12 +4,11 @@ import com.mattmx.ktgui.command.*
 import com.mattmx.ktgui.command.arg.*
 import com.mattmx.ktgui.example.createInventorySeeCommand
 import com.mattmx.ktgui.impl.PacketScoreboard.Companion.scoreboard
-import com.mattmx.ktgui.impl.PaperGuiManagerImpl
+import com.mattmx.ktgui.impl.PaperKtGuiImpl
 import com.mattmx.ktgui.util.minimessage
 import com.mattmx.ktgui.util.not
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
-import net.minecraft.advancements.critereon.EntityFlagsPredicate.Builder.flags
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -19,7 +18,7 @@ import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
 class PaperKtGuiPlugin : JavaPlugin() {
-    val manager = PaperGuiManagerImpl(this)
+    val manager = PaperKtGuiImpl(this)
 
     override fun onEnable() {
         instance = this

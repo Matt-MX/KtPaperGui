@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.impl
 
-import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.KtGui
 import com.mattmx.ktgui.TaskWrapper
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.tasks.*
@@ -13,9 +13,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-class BukkitGuiManager(
+class BukkitKtGui(
     private val plugin: JavaPlugin
-) : GuiManager<Player, PaperGuiButton<*>, PaperGuiScreen<*>>() {
+) : KtGui<Player, PaperGuiButton<*>, PaperGuiScreen<*>>() {
     private val paperTaskProvider = PaperTaskProviderImpl(plugin) {}
 
     override fun forcefullyClose(player: Any) {

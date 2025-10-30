@@ -8,8 +8,8 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCl
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientHeldItemChange
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging
-import com.mattmx.ktgui.GuiManager
-import com.mattmx.ktgui.impl.PacketEventsGuiManager
+import com.mattmx.ktgui.KtGui
+import com.mattmx.ktgui.impl.PacketEventsKtGui
 import com.mattmx.ktgui.impl.PacketGuiHotbarScreen
 
 class WindowEventsListener : PacketListenerAbstract() {
@@ -18,7 +18,7 @@ class WindowEventsListener : PacketListenerAbstract() {
         when (event.packetType) {
             PacketType.Play.Client.CLICK_WINDOW -> {
                 val packet = WrapperPlayClientClickWindow(event)
-                val gui = GuiManager.getInstance<PacketEventsGuiManager>()
+                val gui = KtGui.getInstance<PacketEventsKtGui>()
                     .getActiveGui(event.getPlayer())
                     ?: return
                 gui.handleClick(event.getPlayer(), packet)
@@ -31,7 +31,7 @@ class WindowEventsListener : PacketListenerAbstract() {
 
             PacketType.Play.Client.CLOSE_WINDOW -> {
                 val packet = WrapperPlayClientCloseWindow(event)
-                val gui = GuiManager.getInstance<PacketEventsGuiManager>()
+                val gui = KtGui.getInstance<PacketEventsKtGui>()
                     .getActiveGui(event.getPlayer())
                     ?: return
                 gui.handleClose(event.getPlayer(), packet)
@@ -44,7 +44,7 @@ class WindowEventsListener : PacketListenerAbstract() {
 
             PacketType.Play.Client.HELD_ITEM_CHANGE -> {
                 val packet = WrapperPlayClientHeldItemChange(event)
-                val gui = GuiManager.getInstance<PacketEventsGuiManager>()
+                val gui = KtGui.getInstance<PacketEventsKtGui>()
                     .getActiveGui(event.getPlayer())
                     ?: return
 

@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.sound
 
-import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.KtGui
 import com.mattmx.ktgui.TaskWrapper
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.key.Key
@@ -33,7 +33,7 @@ open class MultiSoundBuilder {
     }
 
     fun playFor(audience: Audience) {
-        val taskTracker = GuiManager.getInstance().createTaskTracker<TaskWrapper>(Unit)
+        val taskTracker = KtGui.getInstance().createTaskTracker<TaskWrapper>(Unit)
 
         var index = 0
 

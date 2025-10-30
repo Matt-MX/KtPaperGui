@@ -8,7 +8,7 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCl
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenWindow
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems
-import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.KtGui
 import com.mattmx.ktgui.click.ClickEventCallback
 import com.mattmx.ktgui.click.ClickTypes
 import com.mattmx.ktgui.event.PlayerClickButtonEvent
@@ -22,7 +22,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
     guiType: GuiType,
     title: Component
 ) : GuiScreen<Any, PacketGuiButton<*>>(guiType, title) {
-    var windowId = GuiManager.getInstance<PacketEventsGuiManager>().getWindowId()
+    var windowId = KtGui.getInstance<PacketEventsKtGui>().getWindowId()
     var stateId: Int = 0
     open val click by lazy { ClickEventCallback<T, PlayerClickButtonEvent<*>>(this as T) }
     override val close by lazy { ParentEventCallback<Any, T>(this as T) }
@@ -66,7 +66,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
 
             if (event.getClickType() in ClickTypes.ANY_OTHER_INVENTORY) {
                 // Resend inventory contents
-                GuiManager.getInstance<PacketEventsGuiManager>()
+                KtGui.getInstance<PacketEventsKtGui>()
                     .inventoryTracker
                     .resetPlayerInventory(player)
             }
@@ -77,7 +77,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
         // What if window id is not this window's id?
         unsetActiveGui(player)
 
-        GuiManager.getInstance<PacketEventsGuiManager>()
+        KtGui.getInstance<PacketEventsKtGui>()
             .inventoryTracker
             .resetPlayerInventory(player)
 

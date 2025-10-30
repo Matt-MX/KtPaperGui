@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-class PaperGuiManagerImpl(
+class PaperKtGuiImpl(
     private val plugin: JavaPlugin
-) : PacketEventsGuiManager(), Listener {
+) : PacketEventsKtGui(), Listener {
     private val paperTaskProvider = PaperTaskProviderImpl(plugin) {}
     override var playerLocationTracker: Optional<PlayerLocationTracker> = Optional.of(DummyPlayerLocationTracker())
 

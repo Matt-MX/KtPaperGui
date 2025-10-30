@@ -7,13 +7,13 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 
 fun multiPlatformGui(title: Component, type: GuiType, block: GuiScreen<*, *>.() -> Unit): GuiScreen<*, *> {
-    return GuiManager.getInstance()
+    return KtGui.getInstance()
         .createPlatformGui(title, type)
         .apply(block)
 }
 
 fun multiPlatformButton(type: Key, block: GuiButton<*, *, *, *>.() -> Unit): GuiButton<*, *, *, *> {
-    return GuiManager.getInstance()
+    return KtGui.getInstance()
         .createPlatformButtonOfType(type)
         .apply(block)
 }

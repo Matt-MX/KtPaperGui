@@ -7,10 +7,10 @@ import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
 import com.velocitypowered.api.proxy.ProxyServer
 
-class VelocityGuiManagerImpl(
+class VelocityKtGuiImpl(
     private val plugin: Any,
     private val proxy: ProxyServer
-) : PacketEventsGuiManager() {
+) : PacketEventsKtGui() {
     private val velocityTaskProvider = VelocityTaskProvider(plugin, proxy) {}
 
     init {

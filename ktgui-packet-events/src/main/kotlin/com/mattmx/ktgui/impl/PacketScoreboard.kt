@@ -8,10 +8,9 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerRe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective.ObjectiveMode
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore
-import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.KtGui
 import com.mattmx.ktgui.TaskWrapper
 import com.mattmx.ktgui.scoreboard.Scoreboard
-import com.mattmx.ktgui.tasks.TaskTracker
 import net.kyori.adventure.text.Component
 import java.util.*
 
@@ -49,7 +48,7 @@ open class PacketScoreboard(initialTitle: Component) : Scoreboard(initialTitle) 
     }
 
     override fun updating(plugin: Any) = apply {
-        this.tasks = GuiManager.getInstance().createTaskTracker<TaskWrapper>(plugin)
+        this.tasks = KtGui.getInstance().createTaskTracker<TaskWrapper>(plugin)
     }
 
     /**

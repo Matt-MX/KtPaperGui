@@ -24,7 +24,7 @@ open class RefreshBlock(
         }
 
         owner.close {
-            if (GuiManager.getInstance().getActiveOfInstance(owner).isEmpty()) {
+            if (KtGui.getInstance().getActiveOfInstance(owner).isEmpty()) {
                 task?.cancel()
                 task = null
             }
@@ -47,7 +47,7 @@ open class RefreshBlock(
             Optional.of(refreshDuration)
         )
 
-        return GuiManager.getInstance()
+        return KtGui.getInstance()
             .getTaskProvider()
             .createTaskAny(spec)
     }

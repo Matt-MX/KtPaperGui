@@ -10,8 +10,8 @@ import com.mattmx.ktgui.command.arg.string
 import com.mattmx.ktgui.example.PlayerSettingsSchema
 import com.mattmx.ktgui.example.createOptionsGui
 import com.mattmx.ktgui.example.createStatefulGui
-import com.mattmx.ktgui.impl.PacketEventsGuiManager
-import com.mattmx.ktgui.impl.VelocityGuiManagerImpl
+import com.mattmx.ktgui.impl.PacketEventsKtGui
+import com.mattmx.ktgui.impl.VelocityKtGuiImpl
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.screen.Slots
 import com.mattmx.ktgui.util.not
@@ -42,7 +42,7 @@ class VelocityKtGuiPlugin @Inject constructor(
     val proxyServer: ProxyServer,
     val logger: Logger
 ) {
-    private val manager = VelocityGuiManagerImpl(this, proxyServer)
+    private val manager = VelocityKtGuiImpl(this, proxyServer)
 
     init {
         instance = this
@@ -63,7 +63,7 @@ class VelocityKtGuiPlugin @Inject constructor(
                 runs<Player> {
                     proxyServer.getPlayer(username())
                         .ifPresent { player ->
-                            val openGui = GuiManager.getInstance<PacketEventsGuiManager>().getActiveGui(player)
+                            val openGui = KtGui.getInstance<PacketEventsKtGui>().getActiveGui(player)
                             val named = openGui?.let { gui -> gui::class.java.simpleName } ?: "None"
                             reply(Component.text("${player.username}: $named"))
                         }
@@ -73,10 +73,10 @@ class VelocityKtGuiPlugin @Inject constructor(
 
                 sub("meow") {
                     runs<Player> {
-                        val gui = GuiManager.getInstance()
+                        val gui = KtGui.getInstance()
                             .createPlatformGui(!"Non platform specific", GuiType.ofRows(3))
 
-                        val button = GuiManager.getInstance()
+                        val button = KtGui.getInstance()
                             .createPlatformButtonOfType(Key.key("minecraft:stone_sword"))
                             .named(!"<gray>Item Name")
                             .lore {

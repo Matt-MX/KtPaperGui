@@ -5,7 +5,7 @@ import com.github.retrooper.packetevents.event.PacketListenerAbstract
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCloseWindow
-import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.KtGui
 import com.mattmx.ktgui.listener.WindowEventsListener
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.listener.InventoryTracker
@@ -17,7 +17,7 @@ import net.kyori.adventure.text.Component
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-abstract class PacketEventsGuiManager : GuiManager<Any, PacketGuiButton<*>, PacketGuiInventoryScreen<*>>() {
+abstract class PacketEventsKtGui : KtGui<Any, PacketGuiButton<*>, PacketGuiInventoryScreen<*>>() {
     private val windowIdCounter = AtomicInteger(1)
     private val listener = WindowEventsListener()
     open val inventoryTracker = InventoryTracker()

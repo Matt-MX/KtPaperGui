@@ -1,7 +1,7 @@
 package com.mattmx.ktgui
 
 import com.mattmx.ktgui.impl.BukkitConvertedButton
-import com.mattmx.ktgui.impl.PacketEventsGuiManager
+import com.mattmx.ktgui.impl.PacketEventsKtGui
 import com.mattmx.ktgui.impl.PacketGuiButton
 import com.mattmx.ktgui.screen.GuiScreen
 import com.mattmx.ktgui.screen.InventoryType
@@ -30,7 +30,7 @@ inline fun <reified E : Event> GuiScreen<*, *>.onEventByPlayer(
     return onEvent<E>(priority, ignoreCancelled) { event: E ->
         val player = playerSupplier.call(event)
 
-        val isThisOpen = GuiManager.getInstance<PacketEventsGuiManager>().getActiveGui(player) == this
+        val isThisOpen = KtGui.getInstance<PacketEventsKtGui>().getActiveGui(player) == this
 
         if (isThisOpen) {
             callback(event)

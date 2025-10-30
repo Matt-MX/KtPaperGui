@@ -1,7 +1,7 @@
 package com.mattmx.ktgui.screen
 
 import com.mattmx.ktgui.button.GuiButton
-import com.mattmx.ktgui.GuiManager
+import com.mattmx.ktgui.KtGui
 import com.mattmx.ktgui.event.SlotUpdatedEvent
 import com.mattmx.ktgui.trait.TraitHolder
 import com.mattmx.ktgui.event.EventCallback
@@ -180,11 +180,11 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     fun slot(x: Int, y: Int) = Slots.ofPosition(x, y)
 
     fun setActiveGui(player: P) {
-        GuiManager.getInstance().setActiveGui(player, this)
+        KtGui.getInstance().setActiveGui(player, this)
     }
 
     fun unsetActiveGui(player: P) {
-        GuiManager.getInstance().removeActiveGui(player)
+        KtGui.getInstance().removeActiveGui(player)
     }
 
     open fun getVisibleGuiButtons(): List<Int> {
@@ -204,7 +204,7 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     fun refreshTitleAsAny(player: Any) = (player as? P)?.let { refreshTitle(it) }
 
     fun forcefullyClose(player: Any) {
-        GuiManager.getInstance().forcefullyClose(player)
+        KtGui.getInstance().forcefullyClose(player)
     }
 
     fun forcefullyCloseAll() {
@@ -226,18 +226,18 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     }
 
     fun getWatchingInstance(): Map<out Any, GuiScreen<*, *>> {
-        return GuiManager.getInstance().getActiveOfInstance(this)
+        return KtGui.getInstance().getActiveOfInstance(this)
     }
 
     fun <P : Any> getAllPlayersWatchingInstance(): List<P> {
-        return GuiManager.getInstance()
+        return KtGui.getInstance()
             .getActiveOfInstance(this)
             .keys
             .mapNotNull { player -> player as? P }
     }
 
     fun <P : Any> getAllWatchingInstance(): Map<P, GuiScreen<*, *>> {
-        return GuiManager.getInstance()
+        return KtGui.getInstance()
             .getActiveOfInstance(this)
             .mapNotNull { (player, gui) ->
                 (player as? P)?.let { player to gui }

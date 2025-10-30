@@ -1,6 +1,6 @@
 package com.mattmx.ktgui.listener
 
-import com.mattmx.ktgui.impl.BukkitGuiManager
+import com.mattmx.ktgui.impl.BukkitKtGui
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 class BukkitPlatformListener(
-    private val manager: BukkitGuiManager
+    private val manager: BukkitKtGui
 ) : Listener {
 
     @EventHandler

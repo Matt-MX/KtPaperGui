@@ -10,7 +10,7 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import java.util.*
 
-abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B>> {
+abstract class KtGui<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B>> {
     private val activeSessions = Collections.synchronizedMap(hashMapOf<P, G>())
 
     fun setActiveGui(player: Any, gui: Any) {
@@ -63,14 +63,14 @@ abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B
     abstract fun <T : TaskWrapper> createKeyedTaskTracker(plugin: Any): KeyedTaskTracker<T>
 
     companion object {
-        private lateinit var instance: GuiManager<*, *, *>
+        private lateinit var instance: KtGui<*, *, *>
 
-        fun setInstance(instance: GuiManager<*, *, *>) {
+        fun setInstance(instance: KtGui<*, *, *>) {
             this.instance = instance
         }
 
         @JvmName("getInstanceAny")
-        fun getInstance(): GuiManager<*, *, *> {
+        fun getInstance(): KtGui<*, *, *> {
             if (!::instance.isInitialized) {
                 error("GuiManager is not initialized yet!")
             }
@@ -79,7 +79,7 @@ abstract class GuiManager<P : Any, B : GuiButton<*, *, *, *>, G : GuiScreen<P, B
         }
 
         @Suppress("UNCHECKED_CAST")
-        fun <T : GuiManager<*, *, *>> getInstance(): T {
+        fun <T : KtGui<*, *, *>> getInstance(): T {
             return getInstance() as T
         }
     }
