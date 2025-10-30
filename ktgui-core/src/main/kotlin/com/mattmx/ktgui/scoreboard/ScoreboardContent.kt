@@ -8,10 +8,11 @@ open class ScoreboardContent(
 ) {
     val content = mutableListOf<ScoreboardLine>()
 
-    operator fun Component.unaryPlus() {
+    operator fun Component.unaryPlus(): Int {
         require(content.size <= MAX_ENTRIES)
 
         content.add(ScoreboardLine.of(this))
+        return content.size - 1
     }
 
     operator fun (() -> Component).unaryPlus(): UpdatableScoreboardLine {
@@ -40,7 +41,7 @@ open class ScoreboardContent(
         content[line] = ScoreboardLine.of(text)
     }
 
-    fun remove(line: Int) : Boolean {
+    fun remove(line: Int): Boolean {
         if (content.size <= line) {
             return false
         }
@@ -58,7 +59,7 @@ open class ScoreboardContent(
         repeat(length) { remove(0) }
     }
 
-    fun fillUntil(line: Int) : Int {
+    fun fillUntil(line: Int): Int {
         require(line < MAX_ENTRIES)
 
         var i = 0

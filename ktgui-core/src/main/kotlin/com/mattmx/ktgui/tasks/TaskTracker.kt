@@ -1,11 +1,16 @@
 package com.mattmx.ktgui.tasks
 
 import com.mattmx.ktgui.TaskWrapper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
 
 abstract class TaskTracker<T : TaskWrapper> : TaskProvider<T>() {
-    protected val tasks = Collections.synchronizedSet(mutableSetOf<T>())
+    protected val tasks: MutableSet<T> = ConcurrentHashMap.newKeySet<T>()
 
     fun track(task: T) = tasks.add(task)
 
@@ -25,7 +30,7 @@ abstract class TaskTracker<T : TaskWrapper> : TaskProvider<T>() {
         return createTask(TaskSpec(callback, async = false))
     }
 
-    fun runAsync(callback: (T) -> Unit): T {
+    fun runAsync(callback: suspend (T) -> Unit): T {
         return createTask(TaskSpec(callback, async = true))
     }
 
@@ -33,7 +38,7 @@ abstract class TaskTracker<T : TaskWrapper> : TaskProvider<T>() {
         return createTask(TaskSpec(callback, async = false, delay = Optional.of(delay)))
     }
 
-    fun runAsyncDelayed(delay: Duration, callback: (T) -> Unit): T {
+    fun runAsyncDelayed(delay: Duration, callback: suspend (T) -> Unit): T {
         return createTask(TaskSpec(callback, async = true, delay = Optional.of(delay)))
     }
 
@@ -43,7 +48,7 @@ abstract class TaskTracker<T : TaskWrapper> : TaskProvider<T>() {
         )
     }
 
-    fun runAsyncRepeat(period: Duration, delay: Duration = period, callback: (T) -> Unit): T {
+    fun runAsyncRepeat(period: Duration, delay: Duration = period, callback: suspend (T) -> Unit): T {
         return createTask(
             TaskSpec(callback, async = true, period = Optional.of(period), delay = Optional.of(delay))
         )

@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.tasks
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.concurrent.TimeUnit
@@ -16,7 +17,7 @@ class PaperTaskProviderImpl(
         var wrapper: PaperTaskWrapper? = null
 
         val stupidCallback: (ScheduledTask) -> Unit = { task ->
-            spec.callback.invoke(wrapper!!)
+            runBlocking { spec.callback.invoke(wrapper!!) }
 
             if (!spec.isRepeating()) {
                 after(wrapper!!)
@@ -33,7 +34,12 @@ class PaperTaskProviderImpl(
                 spec.delay.orElse(0.seconds).inWholeMilliseconds,
                 TimeUnit.MILLISECONDS
             )
-            else if (spec.delay.isPresent) scheduler.runDelayed(plugin, stupidCallback, spec.delay.get().inWholeMilliseconds, TimeUnit.MILLISECONDS)
+            else if (spec.delay.isPresent) scheduler.runDelayed(
+                plugin,
+                stupidCallback,
+                spec.delay.get().inWholeMilliseconds,
+                TimeUnit.MILLISECONDS
+            )
             else scheduler.runNow(plugin, stupidCallback)
         } else {
             val scheduler = Bukkit.getGlobalRegionScheduler()

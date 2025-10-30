@@ -2,6 +2,24 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
+      <module name="KtBukkitGui.ktgui.ktgui-command.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-command.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-core.ktgui-core-brigadier.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-core.ktgui-core-brigadier.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-core.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-core.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-json.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-json.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-packet-events.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-packet-events.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-paper.ktgui-paper-command.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-paper.ktgui-paper-command.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-paper.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-paper.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-velocity.ktgui-velocity-command.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-velocity.ktgui-velocity-command.test" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-velocity.main" target="21" />
+      <module name="KtBukkitGui.ktgui.ktgui-velocity.test" target="21" />
       <module name="KtBukkitGui.ktgui.main" target="21" />
       <module name="ktgui.ktgui-brigadier" target="21" />
       <module name="ktgui.ktgui-brigadier.main" target="21" />

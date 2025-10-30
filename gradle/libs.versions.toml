@@ -32,6 +32,7 @@ packet-events-spigot = { module = "com.github.retrooper:packetevents-spigot", ve
 
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity"}
 packet-events-api = { module = "com.github.retrooper:packetevents-api", version.ref = "packetEvents" }
+kotlinx-coroutines-reactive = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactive", version = "1.10.2" }
 
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 

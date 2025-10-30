@@ -13,6 +13,7 @@ dependencies {
     compileOnly(libs.adventure)
     compileOnly(libs.adventure.minimessage)
 
+    implementation(libs.kotlinx.coroutines.reactive)
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 

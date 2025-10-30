@@ -24,6 +24,8 @@ dependencies {
     implementation(project(":ktgui-paper:ktgui-paper-command"))
     implementation(project(":ktgui-core:ktgui-core-brigadier"))
     implementation(kotlin("reflect"))
+
+    compileOnly(libs.kotlinx.coroutines.reactive)
 }
 
 kotlin {

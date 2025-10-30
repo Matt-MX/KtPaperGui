@@ -46,7 +46,7 @@ fun createTrackingGui(target: Player): PacketGuiInventoryScreen<*> {
             }
 
             button(item) {
-                click.handle(DROP) {
+                click(DROP) {
                     // TODO(matt): Add cursor support
                     target.inventory.setItem(index, null)
                     target.updateInventory()
