@@ -9,26 +9,25 @@ class GuiType(
     val middle: Int
         get() = rows?.let { Slots.ofRow(floor(rows / 2.0 + 1).toInt()).middle }
             ?: (type.slots / 2)
-    val last = getTotalSlots() - 1
+    val last = totalSlots - 1
     val first = 0
 
     infix fun row(n: Int) = rows?.let { Slots.ofRow(n) }
         ?: error("Can only get rows of a row gui type!")
 
-    fun getTotalSlots(): Int {
-        return if (rows != null) {
+    val totalSlots: Int
+        get() = if (rows != null) {
             rows * 9
         } else {
             type.slots
         }
-    }
 
     companion object {
         @JvmStatic
-        fun ofRows(rows: Int) = GuiType(rows, InventoryTypes.GENERICS[rows - 1])
+        fun rows(rows: Int) = GuiType(rows, InventoryTypes.GENERICS[rows - 1])
 
         @JvmStatic
-        fun ofType(type: InventoryType) = GuiType(null, type)
+        fun type(type: InventoryType) = GuiType(null, type)
     }
 }
 

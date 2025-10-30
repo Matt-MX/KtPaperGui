@@ -2,9 +2,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 plugins {
-    alias(libs.plugins.kotlinJvm) apply true
     alias(libs.plugins.paperweight) apply false
-
+    alias(libs.plugins.kotlinJvm) apply true
     `maven-publish`
 }
 

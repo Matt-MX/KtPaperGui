@@ -1,10 +1,16 @@
 package com.mattmx.ktgui
 
+import com.github.retrooper.packetevents.protocol.component.ComponentTypes
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
+import com.github.retrooper.packetevents.util.Dummy
+import com.mattmx.ktgui.click.ClickTypes.DROP
 import com.mattmx.ktgui.command.*
 import com.mattmx.ktgui.command.arg.*
 import com.mattmx.ktgui.example.createInventorySeeCommand
 import com.mattmx.ktgui.impl.PacketScoreboard.Companion.scoreboard
 import com.mattmx.ktgui.impl.PaperKtGuiImpl
+import com.mattmx.ktgui.screen.GuiType
+import com.mattmx.ktgui.screen.InventoryTypes.HOPPER
 import com.mattmx.ktgui.util.minimessage
 import com.mattmx.ktgui.util.not
 import net.kyori.adventure.text.Component
@@ -114,6 +120,40 @@ class PaperKtGuiPlugin : JavaPlugin() {
             }
         }.register(this)
 
+
+        command("test") {
+            runs<Player> {
+                gui(Component.empty(), GuiType.type(HOPPER)) {
+                    updateOnModify(true)
+
+                    val bg = button(ItemTypes.WHITE_STAINED_GLASS_PANE) {
+                        slots((0..guiType.totalSlots).toList())
+                        component(ComponentTypes.HIDE_TOOLTIP, Dummy.DUMMY)
+                    }
+
+                    button(ItemTypes.RED_STAINED_GLASS_PANE) {
+                        slot = 0
+
+                        lore {
+                            +Component.empty()
+                        }
+
+                        click(DROP) {
+                            player.sendRichMessage("<red>Clicked gui button")
+
+                            val previous = slot
+
+                            // One to right or wrap around
+                            if (slot + 1 < guiType.totalSlots) slot++ else slot = 0
+                            title = Component.text("Slot $slot")
+
+                            bg.slot(previous)
+                        }
+                    }
+                }.open(sender)
+            }
+        }.register(this)
+
         createInventorySeeCommand()
     }
 
@@ -124,5 +164,7 @@ class PaperKtGuiPlugin : JavaPlugin() {
     companion object {
         private lateinit var instance: PaperKtGuiPlugin
         fun getInstance() = instance
+
+        val ktgui get() = instance
     }
 }

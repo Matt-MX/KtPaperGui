@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenWindow
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetCursorItem
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems
 import com.mattmx.ktgui.KtGui
@@ -40,7 +41,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
 
         if (event.cancelled) {
 
-            if (packet.slot in (0..<guiType.getTotalSlots())) {
+            if (packet.slot in (0..<guiType.totalSlots)) {
                 // Keep clicked item as was
                 val setItemPacket = WrapperPlayServerSetSlot(
                     windowId,
@@ -54,12 +55,8 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
             }
 
             // Set held item to nothing todo(matt): maybe we should track their held item in manager?
-            val setCursorItemPacket = WrapperPlayServerSetSlot(
-                -1,
-                stateId,
-                packet.slot,
-                ItemStack.EMPTY
-            )
+            val setCursorItemPacket = WrapperPlayServerSetCursorItem(ItemStack.EMPTY)
+
             PacketEvents.getAPI()
                 .playerManager
                 .sendPacket(player, setCursorItemPacket)
@@ -92,7 +89,7 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
         val visibleSlots = getVisibleGuiButtons()
 
         val contents = mutableListOf<ItemStack>()
-        for (i in (0..<guiType.getTotalSlots())) {
+        for (i in (0..<guiType.totalSlots)) {
             val offsetSlot = visibleSlots.first() + i
             val itemStack = items[offsetSlot]?.buildItem() ?: ItemStack.EMPTY
             contents.add(itemStack)
@@ -109,6 +106,16 @@ open class PacketGuiInventoryScreen<T : PacketGuiInventoryScreen<T>>(
         playerManager.sendPacket(player, createOpenWindowPacket())
         playerManager.sendPacket(player, createWindowContentsPacket())
     } as T
+
+    fun update(vararg buttons: PacketGuiButton<*>) {
+        sendPacketsToViewers(
+            *buttons.map { button ->
+                getSlots(button).map { slot ->
+                    WrapperPlayServerSetSlot(windowId, stateId, slot, button.buildItem())
+                }
+            }.flatten().toTypedArray()
+        )
+    }
 
     override fun refresh(player: Any) {
         val contents = createWindowContentsPacket()

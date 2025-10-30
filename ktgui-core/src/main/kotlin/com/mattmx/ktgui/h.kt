@@ -17,7 +17,7 @@ fun createMultiPlatformGui(): GuiScreen<*, *> {
     val stone = Key.key("minecraft:stone")
     val diamond = Key.key("minecraft:diamond")
 
-    return multiPlatformGui(!"Multi-Platform gui impl", GuiType.ofType(InventoryTypes.HOPPER)) {
+    return multiPlatformGui(!"Multi-Platform gui impl", GuiType.type(InventoryTypes.HOPPER)) {
 
         this[guiType.first] = multiPlatformButton(stone) {
             name = !"<white>A rock"

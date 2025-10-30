@@ -15,7 +15,7 @@ class CramMultiPageTrait(owner: GuiScreen<*, *>) : AbstractTrait<GuiScreen<*, *>
 
     override fun onEnable() {
         getOwner().visiblePagesOverride = Optional.of {
-            val slots = getOwner().guiType.getTotalSlots()
+            val slots = getOwner().guiType.totalSlots
             val start = currentPage * slots
             val end = (currentPage + 1) * slots
 
@@ -29,7 +29,7 @@ class CramMultiPageTrait(owner: GuiScreen<*, *>) : AbstractTrait<GuiScreen<*, *>
 
     fun isFirstPage() = currentPage == 0
 
-    fun isLastPage() = getOwner().items.keys.max() >= (currentPage + 1) * getOwner().guiType.getTotalSlots()
+    fun isLastPage() = getOwner().items.keys.max() >= (currentPage + 1) * getOwner().guiType.totalSlots
 }
 
 fun GuiScreen<*, *>.cramPages(block: MultiPageTrait.() -> Unit) =

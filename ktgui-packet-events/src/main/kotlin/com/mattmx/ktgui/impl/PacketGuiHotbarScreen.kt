@@ -8,7 +8,7 @@ import com.mattmx.ktgui.screen.InventoryTypes
 import net.kyori.adventure.text.Component
 
 open class PacketGuiHotbarScreen<T : PacketGuiHotbarScreen<T>> : PacketGuiInventoryScreen<T>(
-    GuiType.ofType(InventoryTypes.CUSTOM_HOTBAR),
+    GuiType.type(InventoryTypes.CUSTOM_HOTBAR),
     Component.empty()
 ) {
     var currentIndex: Int = 0

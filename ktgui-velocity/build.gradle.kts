@@ -26,6 +26,8 @@ dependencies {
     implementation(project(":ktgui-velocity:ktgui-velocity-command"))
     implementation(project(":ktgui-core:ktgui-core-brigadier"))
     implementation(kotlin("reflect"))
+
+    implementation(libs.kotlinx.coroutines.reactive)
 }
 
 kotlin {

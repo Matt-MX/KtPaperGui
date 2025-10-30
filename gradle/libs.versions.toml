@@ -1,19 +1,19 @@
 [versions]
 
-paperweight = "1.7.1"
+paperweight = "2.0.0-beta.14"
 kotlin = "2.0.0"
 updateVersions = "0.51.0"
 shadow = "8.1.8"
 runPaper = "2.2.4"
 runVelocity = "2.2.4"
 
-paperApi = "1.21.1-R0.1-SNAPSHOT"
+paperApi = "1.21.4-R0.1-SNAPSHOT"
 
 brigadier = "1.0.18"
 placeholderapi = "2.11.6"
 protocolLib = "5.1.0"
 adventure = "4.17.0"
-packetEvents = "2.6.0"
+packetEvents = "2.10.0"
 velocity = "3.4.0-SNAPSHOT"
 gson = "2.11.0"
 

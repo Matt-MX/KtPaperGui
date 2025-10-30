@@ -74,7 +74,7 @@ class VelocityKtGuiPlugin @Inject constructor(
                 sub("meow") {
                     runs<Player> {
                         val gui = KtGui.getInstance()
-                            .createPlatformGui(!"Non platform specific", GuiType.ofRows(3))
+                            .createPlatformGui(!"Non platform specific", GuiType.rows(3))
 
                         val button = KtGui.getInstance()
                             .createPlatformButtonOfType(Key.key("minecraft:stone_sword"))
@@ -102,7 +102,7 @@ class VelocityKtGuiPlugin @Inject constructor(
                     opensGui {
                         val timeOpened = LocalDateTime.now()
                         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        renderingGui(!"Refreshing", GuiType.ofRows(1)) {
+                        renderingGui(!"Refreshing", GuiType.rows(1)) {
                             updateOnModify(true)
 
                             val now = LocalDateTime.now()
@@ -144,9 +144,9 @@ class VelocityKtGuiPlugin @Inject constructor(
                             (0..100).map { if (Random.nextBoolean()) ItemTypes.DIRT else ItemTypes.STONE }
 
                         var page = 0
-                        gui(!"All Items", GuiType.ofRows(6)) {
+                        gui(!"All Items", GuiType.rows(6)) {
                             visiblePagesOverride = Optional.of {
-                                val size = guiType.getTotalSlots()
+                                val size = guiType.totalSlots
                                 val start = size * page
                                 val end = start + size
                                 (start..<end).toList()
@@ -200,5 +200,7 @@ class VelocityKtGuiPlugin @Inject constructor(
     companion object {
         private lateinit var instance: VelocityKtGuiPlugin
         fun getInstance() = instance
+
+        val ktgui get() = instance
     }
 }

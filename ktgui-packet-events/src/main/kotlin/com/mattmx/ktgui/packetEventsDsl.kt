@@ -1,5 +1,6 @@
 package com.mattmx.ktgui
 
+import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.mattmx.ktgui.impl.PacketGuiButton
 import com.mattmx.ktgui.impl.PacketGuiInventoryScreen
@@ -25,5 +26,8 @@ fun renderingGui(
 fun gui(title: Component, type: GuiType, block: PacketGuiInventoryScreen<*>.() -> Unit) =
     PacketGuiInventoryScreen(type, title).apply(block)
 
+fun button(item: ItemStack, block: PacketGuiButton<*>.() -> Unit) =
+    PacketGuiButton(item).apply(block)
+
 fun button(material: ItemType, block: PacketGuiButton<*>.() -> Unit) =
-    PacketGuiButton(material).apply(block)
+    PacketGuiButton(ItemStack.builder().type(material).build()).apply(block)

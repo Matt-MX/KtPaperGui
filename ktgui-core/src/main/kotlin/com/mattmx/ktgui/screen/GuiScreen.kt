@@ -1,11 +1,11 @@
 package com.mattmx.ktgui.screen
 
-import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.KtGui
-import com.mattmx.ktgui.event.SlotUpdatedEvent
-import com.mattmx.ktgui.trait.TraitHolder
+import com.mattmx.ktgui.button.GuiButton
 import com.mattmx.ktgui.event.EventCallback
 import com.mattmx.ktgui.event.ParentEventCallback
+import com.mattmx.ktgui.event.SlotUpdatedEvent
+import com.mattmx.ktgui.trait.TraitHolder
 import net.kyori.adventure.text.Component
 import java.util.*
 
@@ -25,6 +25,14 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
     abstract val open: ParentEventCallback<P, *>
     abstract val close: ParentEventCallback<P, *>
     var visiblePagesOverride: Optional<() -> List<Int>> = Optional.empty()
+
+    var B.slot: Int
+        get() = getSlots(this).firstOrNull() ?: -1
+        set(value) {
+            clear(this.slots.toList())
+
+            this.slots(listOf(value))
+        }
 
     /**
      * Register a button to a slot.
@@ -189,8 +197,16 @@ abstract class GuiScreen<P : Any, B : GuiButton<*, *, *, *>>(
 
     open fun getVisibleGuiButtons(): List<Int> {
         return visiblePagesOverride.orElse {
-            (0..guiType.getTotalSlots()).toList()
+            (0..guiType.totalSlots).toList()
         }.invoke()
+    }
+
+    /**
+     * Attempts to automatically send updates to player when the
+     * item changes.
+     */
+    fun B.auto() = apply {
+        onChanges { refresh(this@GuiScreen) }
     }
 
     abstract fun open(player: P): GuiScreen<P, B>

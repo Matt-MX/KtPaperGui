@@ -38,7 +38,7 @@ class MultiPageTrait(owner: GuiScreen<*, *>) : AbstractTrait<GuiScreen<*, *>>(ow
 
     fun isFirstPage() = currentPage == 0
 
-    fun isLastPage() = getOwner().items.keys.max() >= (currentPage + 1) * getOwner().guiType.getTotalSlots()
+    fun isLastPage() = getOwner().items.keys.max() >= (currentPage + 1) * getOwner().guiType.totalSlots
 }
 
 fun GuiScreen<*, *>.pages(block: MultiPageTrait.() -> Unit) =

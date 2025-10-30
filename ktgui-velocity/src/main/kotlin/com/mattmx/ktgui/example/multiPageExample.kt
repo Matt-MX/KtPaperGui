@@ -10,7 +10,7 @@ import com.mattmx.ktgui.trait.impl.pages
 import com.mattmx.ktgui.util.not
 
 fun createMultiPageGui(): PacketGuiInventoryScreen<*> {
-    return gui(!"Nav Page 1", GuiType.ofRows(6)) {
+    return gui(!"Nav Page 1", GuiType.rows(6)) {
         pages {
 
             onPageChange {

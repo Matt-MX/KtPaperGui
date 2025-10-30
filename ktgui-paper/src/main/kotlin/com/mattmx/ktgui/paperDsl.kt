@@ -1,5 +1,6 @@
 package com.mattmx.ktgui
 
+import com.mattmx.ktgui.event.PlayerClickButtonEvent
 import com.mattmx.ktgui.impl.BukkitConvertedButton
 import com.mattmx.ktgui.impl.PacketEventsKtGui
 import com.mattmx.ktgui.impl.PacketGuiButton
@@ -90,7 +91,9 @@ inline fun <reified E : Event> JavaPlugin.event(
     return listener
 }
 
-fun button(item: ItemStack, block: PacketGuiButton<*>.() -> Unit): BukkitConvertedButton<*> {
+val PlayerClickButtonEvent<*>.player: Player get() = getPlayer<Player>()
+
+fun convertedButton(item: ItemStack, block: PacketGuiButton<*>.() -> Unit): BukkitConvertedButton<*> {
     return BukkitConvertedButton(item).apply(block)
 }
 

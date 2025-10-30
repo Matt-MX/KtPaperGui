@@ -45,10 +45,10 @@ class BooleanSettingButton(
         val state = get()
         named(if (state) !"<green>${meta.name}" else !"<gray>${meta.name}")
 
-        material = if (button == switch) {
+        type = if (button == switch) {
             if (get()) ItemTypes.LIME_CANDLE else ItemTypes.GRAY_CANDLE
         } else {
-            ItemTypes.getByName(meta.icon) ?: material
+            ItemTypes.getByName(meta.icon) ?: type
         }
 
         if (state) {

@@ -1,6 +1,5 @@
 package com.mattmx.ktgui.utils
 
-import org.apache.commons.lang.time.DurationFormatUtils
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.Duration

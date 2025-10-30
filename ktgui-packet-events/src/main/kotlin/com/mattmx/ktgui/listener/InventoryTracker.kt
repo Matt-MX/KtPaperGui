@@ -71,6 +71,7 @@ open class InventoryTracker : PacketListenerAbstract() {
     fun resetPlayerInventory(player: Any) {
         val inventory = inventory[player] ?: return
 
+        // FIXME: Causing network protocol error
         for ((index, item) in inventory.contents.withIndex()) {
             val packet = WrapperPlayServerSetSlot(0, inventory.stateId, index, item ?: ItemStack.EMPTY)
 

@@ -49,7 +49,6 @@ class KotlinGui : JavaPlugin() {
         val examples by multiChoiceArgument(hashMapOf(
             "animated-scoreboard" to { animatedScoreboard },
             "scoreboard" to { scoreboardExample },
-            "anvil-input" to { AnvilInputGuiExample() },
             "config" to { ConfigScreenExample() },
             "conversation" to { ConversationGuiExample() },
             "random" to { CustomGUI() },

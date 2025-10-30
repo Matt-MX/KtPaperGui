@@ -2,6 +2,7 @@ package com.mattmx.ktgui.impl
 
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.event.PacketListenerAbstract
+import com.github.retrooper.packetevents.protocol.item.ItemStack
 import com.github.retrooper.packetevents.protocol.item.type.ItemType
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCloseWindow
@@ -62,12 +63,12 @@ abstract class PacketEventsKtGui : KtGui<Any, PacketGuiButton<*>, PacketGuiInven
 
     override fun createPlatformButtonOfType(typeKeyed: Key): PacketGuiButton<*> {
         val itemType = ItemTypes.getByName(typeKeyed.value()) ?: ItemTypes.AIR
-        return PacketGuiButton(itemType)
+        return PacketGuiButton(ItemStack.builder().type(itemType).build())
     }
 
     override fun createPlatformButton(type: Any): PacketGuiButton<*> {
         val itemType = type as? ItemType ?: error("Type must be of ItemTypes")
-        return PacketGuiButton(itemType)
+        return PacketGuiButton(ItemStack.builder().type(itemType).build())
     }
 
     override fun createPlatformGui(title: Component, type: GuiType): PacketGuiInventoryScreen<*> {

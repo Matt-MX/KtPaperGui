@@ -22,7 +22,7 @@ fun createStatefulGui(): PacketGuiInventoryScreen<*> {
         ItemTypes.COD
     )
 
-    return gui(!"Stateful", GuiType.ofRows(5)) {
+    return gui(!"Stateful", GuiType.rows(5)) {
         updateOnModify(true)
 
         stateful(States.INITIAL) {
@@ -37,7 +37,7 @@ fun createStatefulGui(): PacketGuiInventoryScreen<*> {
             }
 
             state(States.RANDOM) {
-                for (slot in 0..<gui.guiType.getTotalSlots()) {
+                for (slot in 0..<gui.guiType.totalSlots) {
                     button(items.random()) {
                         named(!"<light_purple>Meow")
 

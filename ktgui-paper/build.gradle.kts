@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinJvm) apply true
     alias(libs.plugins.shadow) apply true
-    alias(libs.plugins.paperweight) apply true
     alias(libs.plugins.runPaper)
     `maven-publish`
 }
@@ -10,12 +9,14 @@ version = rootProject.version
 
 repositories {
     maven("https://repo.codemc.io/repository/maven-releases/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 val mcVersion = libs.versions.paperApi.get()
 
 dependencies {
-    paperweight.paperDevBundle(mcVersion)
+//    paperweight.paperDevBundle(mcVersion)
+    compileOnly(libs.paper.api)
     compileOnly(libs.placeholder.api)
     compileOnly(libs.packet.events.spigot)
 
@@ -25,7 +26,7 @@ dependencies {
     implementation(project(":ktgui-core:ktgui-core-brigadier"))
     implementation(kotlin("reflect"))
 
-    compileOnly(libs.kotlinx.coroutines.reactive)
+    implementation(libs.kotlinx.coroutines.reactive)
 }
 
 kotlin {
@@ -37,9 +38,9 @@ tasks {
         minecraftVersion(mcVersion.split("-")[0])
 
         downloadPlugins {
-            hangar("ViaVersion", "5.2.0")
-            hangar("ViaBackwards", "5.2.0")
-            github("retrooper", "packetevents", "v2.7.0", "packetevents-spigot-2.7.0.jar")
+            hangar("ViaVersion", "5.5.1")
+            hangar("ViaBackwards", "5.5.1")
+            modrinth("packetevents", "2.10.0")
         }
     }
 

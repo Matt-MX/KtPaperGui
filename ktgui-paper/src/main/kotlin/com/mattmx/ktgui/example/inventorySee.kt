@@ -2,7 +2,7 @@ package com.mattmx.ktgui.example
 
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
 import com.mattmx.ktgui.button
-import com.mattmx.ktgui.click.ClickTypes
+import com.mattmx.ktgui.convertedButton
 import com.mattmx.ktgui.click.ClickTypes.DROP
 import com.mattmx.ktgui.click.ClickTypes.LEFT
 import com.mattmx.ktgui.command.RegisteredPaperCommand
@@ -13,7 +13,6 @@ import com.mattmx.ktgui.command.register
 import com.mattmx.ktgui.command.runs
 import com.mattmx.ktgui.impl.PacketGuiInventoryScreen
 import com.mattmx.ktgui.onEvent
-import com.mattmx.ktgui.onEventByPlayer
 import com.mattmx.ktgui.renderingGui
 import com.mattmx.ktgui.screen.GuiType
 import com.mattmx.ktgui.util.not
@@ -36,7 +35,7 @@ fun JavaPlugin.createInventorySeeCommand(): RegisteredPaperCommand {
 fun createTrackingGui(target: Player): PacketGuiInventoryScreen<*> {
     return renderingGui(
         !"Tracking ${target.name}'s inventory",
-        GuiType.ofRows(6),
+        GuiType.rows(6),
         refresh = 100.milliseconds
     ) {
         for ((index, item) in target.inventory.contents.withIndex()) {
@@ -45,7 +44,7 @@ fun createTrackingGui(target: Player): PacketGuiInventoryScreen<*> {
                 continue
             }
 
-            button(item) {
+            convertedButton(item) {
                 click(DROP) {
                     // TODO(matt): Add cursor support
                     target.inventory.setItem(index, null)

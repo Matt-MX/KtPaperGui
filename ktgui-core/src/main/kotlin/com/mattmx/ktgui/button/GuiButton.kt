@@ -16,6 +16,7 @@ abstract class GuiButton<S : GuiButton<S, M, E, I>, M, E, I> {
     var amount: Int = 1
     var enchantments = mutableMapOf<E, Int>()
     val postBuild by lazy { ParentEventCallback<I, S>(this as S) }
+    val onChanges by lazy { ParentEventCallback<S, S>(this as S) }
     val traits by lazy { TraitHolder(this as S) }
     abstract val click: ClickEventCallback<S, *>
 

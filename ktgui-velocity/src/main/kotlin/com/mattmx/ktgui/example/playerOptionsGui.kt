@@ -7,7 +7,7 @@ import com.mattmx.ktgui.util.not
 
 fun createOptionsGui(settingsSchema: PlayerSettingsSchema): PacketGuiInventoryScreen<*> {
     var i = 0
-    return gui(!"Settings", GuiType.ofRows(2)) {
+    return gui(!"Settings", GuiType.rows(2)) {
         booleanButton(settingsSchema::optionOne) slot i++
         booleanButton(settingsSchema::optionTwo) slot i++
     }

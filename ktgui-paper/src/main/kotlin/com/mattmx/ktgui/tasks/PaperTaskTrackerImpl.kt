@@ -20,6 +20,15 @@ class PaperTaskTrackerImpl(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
+    fun loop(scope: CoroutineScope = GlobalScope, block: suspend CoroutineScope.() -> Unit): Job {
+        return coroutine(scope) {
+            while (true) {
+                block()
+            }
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
     fun coroutine(scope: CoroutineScope = GlobalScope, block: suspend CoroutineScope.() -> Unit): Job {
         val job = scope.launch { block() }
         val taskSpec = TaskSpec<PaperTaskWrapper>({ block(GlobalScope) }, true)

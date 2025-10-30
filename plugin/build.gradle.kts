@@ -2,7 +2,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 plugins {
-    alias(libs.plugins.paperweight) apply true
     alias(libs.plugins.kotlinJvm) apply true
     alias(libs.plugins.shadow) apply true
 
@@ -10,13 +9,9 @@ plugins {
 }
 
 dependencies {
+    compileOnly(libs.paper.api)
     shadow(implementation(project(":api"))!!)
-
-    paperweight.paperDevBundle(libs.versions.paperApi.get())
     compileOnly(libs.placeholder.api)
-
-    shadow(implementation("co.pvphub:ProtocolLibDsl:-SNAPSHOT")!!)
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }
 
 sourceSets["main"].resources.srcDir("src/resources/")
@@ -54,10 +49,6 @@ tasks {
         filesMatching("plugin.yml") {
             expand(props)
         }
-    }
-
-    assemble {
-        dependsOn("reobfJar")
     }
 }
 

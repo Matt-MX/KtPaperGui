@@ -1,12 +1,11 @@
 plugins {
-    alias(libs.plugins.paperweight) apply true
     alias(libs.plugins.kotlinJvm) apply true
     alias(libs.plugins.shadow) apply true
     `maven-publish`
 }
 
 dependencies {
-    paperweight.paperDevBundle(libs.versions.paperApi.get())
+    compileOnly(libs.paper.api)
     compileOnly(libs.placeholder.api)
 
     compileOnly(libs.kotlin.stdlib)
@@ -29,10 +28,6 @@ tasks {
     shadowJar {
         mergeServiceFiles()
         archiveBaseName.set("ktgui")
-    }
-
-    assemble {
-        dependsOn("reobfJar")
     }
 }
 

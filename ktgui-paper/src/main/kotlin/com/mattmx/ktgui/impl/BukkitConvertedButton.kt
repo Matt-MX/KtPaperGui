@@ -7,14 +7,16 @@ import com.github.retrooper.packetevents.protocol.item.ItemStack as PacketEvents
 class BukkitConvertedButton<T : BukkitConvertedButton<T>>(
     val bukkit: ItemStack,
     private val packetEvents: PacketEventsItemStack = SpigotConversionUtil.fromBukkitItemStack(bukkit)
-) : PacketGuiButton<T>(packetEvents.type) {
+) : PacketGuiButton<T>(packetEvents) {
 
     init {
         amount = packetEvents.amount
+
         components = packetEvents.components
             .patches
             .mapNotNull { (k, v) -> v.orElse(null)?.let { k to it } }
             .toMap(mutableMapOf())
+
         postBuild {
             nbt = packetEvents.nbt?.copy()
         }

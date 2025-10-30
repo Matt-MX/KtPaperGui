@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 
 fun main() {
-    gui(Component.empty(), GuiType.ofRows(6)) {
+    gui(Component.empty(), GuiType.rows(6)) {
 
         click {
 

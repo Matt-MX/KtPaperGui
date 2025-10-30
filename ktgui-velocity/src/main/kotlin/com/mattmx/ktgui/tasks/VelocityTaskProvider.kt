@@ -1,6 +1,7 @@
 package com.mattmx.ktgui.tasks
 
 import com.velocitypowered.api.proxy.ProxyServer
+import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
@@ -14,7 +15,9 @@ class VelocityTaskProvider(
 
         wrapper.instance = proxyServer.scheduler
             .buildTask(this.plugin) { task ->
-                spec.callback.invoke(wrapper)
+                runBlocking {
+                    spec.callback.invoke(wrapper)
+                }
 
                 // If not a repeating task then we are done
                 if (!spec.isRepeating()) {
